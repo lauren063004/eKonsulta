@@ -1,0 +1,155 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Appointment;
+use App\Models\Medicine;
+use App\Models\Prescription;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
+
+class DoctorPrescriptionController extends Controller
+{
+    /**
+ * Display prescriptions created by the logged-in doctor.
+ */
+public function index(): View
+{
+    $doctor = auth()->user()->doctor;
+
+    if (!$doctor) {
+        abort(403, 'Doctor record not found.');
+    }
+
+    $prescriptions = Prescription::where('doctor_id', $doctor->id)
+        ->with([
+            'patient.user',
+            'items.medicine',
+        ])
+        ->latest('prescription_date')
+        ->get();
+
+    return view('doctor.prescriptions.index', compact('prescriptions'));
+}
+    /**
+     * Show the prescription form for a completed consultation.
+     */
+    public function create(Appointment $appointment): View
+    {
+        $doctor = auth()->user()->doctor;
+
+        if (!$doctor) {
+            abort(403, 'Doctor record not found.');
+        }
+
+        // Make sure this appointment belongs to the logged-in doctor.
+        if ($appointment->doctor_id !== $doctor->id) {
+            abort(403, 'You are not authorized to create a prescription for this appointment.');
+        }
+
+        // A prescription can only be created after the consultation is completed.
+        if ($appointment->status !== 'completed') {
+            abort(403, 'A prescription can only be created for a completed consultation.');
+        }
+
+        $consultation = $appointment->consultation;
+
+        if (!$consultation) {
+            abort(404, 'Consultation record not found.');
+        }
+
+        $medicines = Medicine::where('status', 'active')
+            ->where('stock_quantity', '>', 0)
+            ->orderBy('name')
+            ->get();
+
+        return view('doctor.prescriptions.create', compact(
+            'appointment',
+            'consultation',
+            'medicines'
+        ));
+    }
+
+    /**
+     * Store a new prescription.
+     */
+    public function store(Request $request, Appointment $appointment)
+    {
+        $doctor = auth()->user()->doctor;
+
+        if (!$doctor) {
+            abort(403, 'Doctor record not found.');
+        }
+
+        if ($appointment->doctor_id !== $doctor->id) {
+            abort(403, 'You are not authorized to create a prescription for this appointment.');
+        }
+
+        if ($appointment->status !== 'completed') {
+            abort(403, 'A prescription can only be created for a completed consultation.');
+        }
+
+        $consultation = $appointment->consultation;
+
+        if (!$consultation) {
+            abort(404, 'Consultation record not found.');
+        }
+
+        $validated = $request->validate([
+            'prescription_date' => ['required', 'date'],
+            'instructions' => ['nullable', 'string', 'max:2000'],
+            'medicine_id' => ['required', 'exists:medicines,id'],
+            'dosage' => ['required', 'string', 'max:255'],
+            'frequency' => ['required', 'string', 'max:255'],
+            'duration' => ['required', 'string', 'max:255'],
+            'quantity' => ['required', 'integer', 'min:1'],
+            'item_instructions' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $medicine = Medicine::where('id', $validated['medicine_id'])
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        if ($validated['quantity'] > $medicine->stock_quantity) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'quantity' => 'Not enough stock available for this medicine.'
+                ]);
+        }
+
+        DB::transaction(function () use (
+            $validated,
+            $consultation,
+            $appointment,
+            $doctor,
+            $medicine
+        ) {
+            $prescription = Prescription::create([
+                'consultation_id' => $consultation->id,
+                'patient_id' => $appointment->patient_id,
+                'doctor_id' => $doctor->id,
+                'prescription_number' => 'RX-' . now()->format('YmdHis'),
+                'prescription_date' => $validated['prescription_date'],
+                'instructions' => $validated['instructions'] ?? null,
+                'status' => 'active',
+            ]);
+
+            $prescription->items()->create([
+                'medicine_id' => $medicine->id,
+                'dosage' => $validated['dosage'],
+                'frequency' => $validated['frequency'],
+                'duration' => $validated['duration'],
+                'quantity' => $validated['quantity'],
+                'instructions' => $validated['item_instructions'] ?? null,
+            ]);
+
+            $medicine->decrement('stock_quantity', $validated['quantity']);
+        });
+
+        return redirect()
+            ->route('doctor.appointments.index')
+            ->with('success', 'Prescription created successfully.');
+    }
+}
