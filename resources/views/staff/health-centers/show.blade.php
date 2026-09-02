@@ -6,74 +6,79 @@
 
 @section('content')
 
-<div class="dashboard-card">
+<div class="health-center-details-page">
 
-    <div class="card-header">
+    {{-- HEALTH CENTER PROFILE --}}
 
-        <div>
-            <h3>Health Center Details</h3>
-            <p>Health center information and resources</p>
+    <div class="dashboard-card health-center-profile-card">
+
+        <div class="health-center-profile-header">
+
+            <div class="health-center-avatar">
+                &#127973;
+            </div>
+
+            <div class="health-center-profile-name">
+
+                <span class="profile-label">
+                    HEALTH CENTER
+                </span>
+
+                <h2>
+                    {{ $healthCenter->name }}
+                </h2>
+
+                @if($healthCenter->address)
+                    <p>
+                        {{ $healthCenter->address }}
+                    </p>
+                @endif
+
+            </div>
+
+            <div class="health-center-profile-action">
+
+                <span class="status-badge {{ $healthCenter->status === 'active' ? 'status-active' : 'status-inactive' }}">
+                    {{ ucfirst($healthCenter->status) }}
+                </span>
+
+            </div>
+
         </div>
 
-        <a href="{{ route('staff.health-centers.index') }}">
-            Back to Health Centers
-        </a>
 
-    </div>
-
-
-    {{-- HEALTH CENTER INFORMATION --}}
-
-    <div class="appointment-preview">
-
-        <div class="appointment-date">
-
-            <strong>🏥</strong>
-
-            <span>
-                {{ strtoupper(substr($healthCenter->name, 0, 1)) }}
-            </span>
-
-        </div>
-
-        <div class="appointment-details">
-
-            <h4>
-                {{ $healthCenter->name }}
-            </h4>
-
-            @if($healthCenter->address)
-                <p>
-                    <strong>Address:</strong>
-                    {{ $healthCenter->address }}
-                </p>
-            @endif
+        <div class="health-center-information-grid">
 
             @if($healthCenter->contact_number)
-                <p>
-                    <strong>Contact:</strong>
-                    {{ $healthCenter->contact_number }}
-                </p>
+                <div class="health-center-info-item">
+                    <span>CONTACT</span>
+                    <strong>{{ $healthCenter->contact_number }}</strong>
+                </div>
             @endif
 
             @if($healthCenter->email)
-                <p>
-                    <strong>Email:</strong>
-                    {{ $healthCenter->email }}
-                </p>
+                <div class="health-center-info-item">
+                    <span>EMAIL</span>
+                    <strong>{{ $healthCenter->email }}</strong>
+                </div>
             @endif
 
             @if($healthCenter->operating_hours)
-                <p>
-                    <strong>Operating Hours:</strong>
-                    {{ $healthCenter->operating_hours }}
-                </p>
+                <div class="health-center-info-item">
+                    <span>OPERATING HOURS</span>
+                    <strong>{{ $healthCenter->operating_hours }}</strong>
+                </div>
             @endif
 
-            <p>
-                <strong>Status:</strong>
-                {{ ucfirst($healthCenter->status) }}
-            </p>
+            <div class="health-center-info-item">
+                <span>DOCTORS</span>
+                <strong>{{ $healthCenter->doctors->count() }}</strong>
+            </div>
+
+            <div class="health-center-info-item">
+                <span>STAFF</span>
+                <strong>{{ $healthCenter->staff->count() }}</strong>
+            </div>
 
         </div>
 
@@ -82,187 +87,352 @@
 
     {{-- DOCTORS --}}
 
-    <hr>
+    <div class="dashboard-card health-center-section-card">
 
-    <h3>👨‍⚕️ Doctors</h3>
+        <div class="section-title">
 
-    @if($healthCenter->doctors->count())
+            <div class="section-icon">
+                &#128104;
+            </div>
 
-        <div class="medical-records-list">
-
-            @foreach($healthCenter->doctors as $doctor)
-
-                <div class="appointment-details">
-
-                    <h4>
-                      {{ $doctor->user->name ?? 'Doctor' }}
-                    </h4>
-
-                    @if($doctor->specialization)
-                        <p>
-                            <strong>Specialization:</strong>
-                            {{ $doctor->specialization }}
-                        </p>
-                    @endif
-
-                </div>
-
-                <hr>
-
-            @endforeach
+            <div>
+                <h3>Doctors</h3>
+                <p>Doctors assigned to this health center</p>
+            </div>
 
         </div>
 
-    @else
 
-        <p>No doctors are currently assigned to this health center.</p>
+        @if($healthCenter->doctors->count())
 
-    @endif
+            <div class="health-center-resource-list">
+
+                @foreach($healthCenter->doctors as $doctor)
+
+                    <div class="health-center-resource-card">
+
+                        <div class="resource-avatar">
+                            &#128100;
+                        </div>
+
+                        <div class="resource-information">
+
+                            <h4>
+                                {{ $doctor->user->name ?? 'Doctor' }}
+                            </h4>
+
+                            @if($doctor->specialization)
+                                <p>
+                                    {{ $doctor->specialization }}
+                                </p>
+                            @else
+                                <p>
+                                    Medical Doctor
+                                </p>
+                            @endif
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            <div class="health-center-empty-state">
+
+                <div class="empty-icon">
+                    &#128104;
+                </div>
+
+                <h4>No doctors assigned</h4>
+
+                <p>
+                    No doctors are currently assigned to this health center.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
 
 
     {{-- STAFF --}}
 
-    <hr>
+    <div class="dashboard-card health-center-section-card">
 
-    <h3>👥 Staff</h3>
+        <div class="section-title">
 
-    @if($healthCenter->staff->count())
+            <div class="section-icon">
+                &#128101;
+            </div>
 
-        <div class="medical-records-list">
-
-            @foreach($healthCenter->staff as $staff)
-
-                <div class="appointment-details">
-
-                    <h4>
-                        {{ $staff->user->name ?? 'Staff Member' }}
-                    </h4>
-
-                </div>
-
-                <hr>
-
-            @endforeach
+            <div>
+                <h3>Staff</h3>
+                <p>Staff members assigned to this health center</p>
+            </div>
 
         </div>
 
-    @else
 
-        <p>No staff members are currently assigned to this health center.</p>
+        @if($healthCenter->staff->count())
 
-    @endif
+            <div class="health-center-resource-list">
+
+                @foreach($healthCenter->staff as $staff)
+
+                    <div class="health-center-resource-card">
+
+                        <div class="resource-avatar">
+                            &#128100;
+                        </div>
+
+                        <div class="resource-information">
+
+                            <h4>
+                                {{ $staff->user->name ?? 'Staff Member' }}
+                            </h4>
+
+                            <p>
+                                Health Center Staff
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            <div class="health-center-empty-state">
+
+                <div class="empty-icon">
+                    &#128101;
+                </div>
+
+                <h4>No staff assigned</h4>
+
+                <p>
+                    No staff members are currently assigned to this health center.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
 
 
     {{-- APPOINTMENTS --}}
 
-    <hr>
+    <div class="dashboard-card health-center-section-card">
 
-    <h3>📅 Appointments</h3>
+        <div class="section-title">
 
-    @if($healthCenter->appointments->count())
+            <div class="section-icon">
+                &#128197;
+            </div>
 
-        <div class="medical-records-list">
-
-            @foreach($healthCenter->appointments as $appointment)
-
-                <div class="appointment-details">
-
-                    <h4>
-                        {{ $appointment->patient->user->name ?? 'Patient' }}
-                    </h4>
-
-                    @if($appointment->doctor && $appointment->doctor->user)
-                        <p>
-                            <strong>Doctor:</strong>
-                            {{ $appointment->doctor->user->name }}
-                        </p>
-                    @endif
-
-                    <p>
-                        <strong>Date:</strong>
-                        {{ $appointment->appointment_date->format('F j, Y') }}
-                    </p>
-
-                    <p>
-                        <strong>Time:</strong>
-                        {{ $appointment->appointment_time->format('g:i A') }}
-                    </p>
-
-                    <p>
-                        <strong>Status:</strong>
-                        {{ ucfirst($appointment->status) }}
-                    </p>
-
-                </div>
-
-                <hr>
-
-            @endforeach
+            <div>
+                <h3>Appointments</h3>
+                <p>Appointments recorded for this health center</p>
+            </div>
 
         </div>
 
-    @else
 
-        <p>No appointments are currently recorded for this health center.</p>
+        @if($healthCenter->appointments->count())
 
-    @endif
+            <div class="health-center-appointment-list">
+
+                @foreach($healthCenter->appointments as $appointment)
+
+                    <div class="health-center-appointment-card">
+
+                        <div class="appointment-patient">
+
+                            <div class="resource-avatar">
+                                &#128100;
+                            </div>
+
+                            <div>
+                                <span class="profile-label">
+                                    PATIENT
+                                </span>
+
+                                <h4>
+                                    {{ $appointment->patient->user->name ?? 'Patient' }}
+                                </h4>
+                            </div>
+
+                        </div>
+
+
+                        <div class="appointment-information">
+
+                            @if($appointment->doctor && $appointment->doctor->user)
+                                <div>
+                                    <span>DOCTOR</span>
+                                    <strong>
+                                        {{ $appointment->doctor->user->name }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                            <div>
+                                <span>DATE</span>
+                                <strong>
+                                    {{ $appointment->appointment_date->format('F j, Y') }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>TIME</span>
+                                <strong>
+                                    {{ $appointment->appointment_time->format('g:i A') }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>STATUS</span>
+                                <strong>
+                                    <span class="status-badge appointment-status">
+                                        {{ ucfirst($appointment->status) }}
+                                    </span>
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            <div class="health-center-empty-state">
+
+                <div class="empty-icon">
+                    &#128197;
+                </div>
+
+                <h4>No appointments recorded</h4>
+
+                <p>
+                    No appointments are currently recorded for this health center.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
 
 
     {{-- MEDICINES --}}
 
-    <hr>
+    <div class="dashboard-card health-center-section-card">
 
-    <h3>💊 Medicines</h3>
+        <div class="section-title">
 
-    @if($healthCenter->medicines->count())
+            <div class="section-icon">
+                &#128138;
+            </div>
 
-        <div class="medical-records-list">
-
-            @foreach($healthCenter->medicines as $medicine)
-
-                <div class="appointment-details">
-
-                    <h4>
-                        {{ $medicine->name }}
-                    </h4>
-
-                    @if($medicine->generic_name)
-                        <p>
-                            <strong>Generic Name:</strong>
-                            {{ $medicine->generic_name }}
-                        </p>
-                    @endif
-
-                    @if($medicine->strength)
-                        <p>
-                            <strong>Strength:</strong>
-                            {{ $medicine->strength }}
-                        </p>
-                    @endif
-
-                    @if($medicine->dosage_form)
-                        <p>
-                            <strong>Dosage Form:</strong>
-                            {{ $medicine->dosage_form }}
-                        </p>
-                    @endif
-
-                </div>
-
-                <hr>
-
-            @endforeach
+            <div>
+                <h3>Medicines</h3>
+                <p>Medicines available at this health center</p>
+            </div>
 
         </div>
 
-    @else
 
-        <p>No medicines are currently recorded for this health center.</p>
+        @if($healthCenter->medicines->count())
 
-    @endif
+            <div class="health-center-medicine-list">
+
+                @foreach($healthCenter->medicines as $medicine)
+
+                    <div class="health-center-medicine-card">
+
+                        <div class="medicine-icon">
+                            &#128138;
+                        </div>
+
+                        <div class="medicine-information">
+
+                            <h4>
+                                {{ $medicine->name }}
+                            </h4>
+
+                            @if($medicine->generic_name)
+                                <p>
+                                    {{ $medicine->generic_name }}
+                                </p>
+                            @endif
+
+                        </div>
+
+                        <div class="medicine-details">
+
+                            @if($medicine->strength)
+                                <div>
+                                    <span>STRENGTH</span>
+                                    <strong>
+                                        {{ $medicine->strength }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                            @if($medicine->dosage_form)
+                                <div>
+                                    <span>DOSAGE FORM</span>
+                                    <strong>
+                                        {{ $medicine->dosage_form }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            <div class="health-center-empty-state">
+
+                <div class="empty-icon">
+                    &#128138;
+                </div>
+
+                <h4>No medicines recorded</h4>
+
+                <p>
+                    No medicines are currently recorded for this health center.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
 
 
-    <div style="margin-top: 20px;">
+    {{-- BACK BUTTON --}}
+
+    <div class="health-center-back-action">
 
         <a
             href="{{ route('staff.health-centers.index') }}"

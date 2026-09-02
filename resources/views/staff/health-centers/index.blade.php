@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="dashboard-card">
+<div class="dashboard-card health-centers-page">
 
     <div class="card-header">
 
@@ -23,87 +23,103 @@
 
     @if($healthCenters->count())
 
-        <div class="medical-records-list">
+        <div class="health-center-list">
 
             @foreach($healthCenters as $healthCenter)
 
-                <div class="appointment-preview">
+                <div class="health-center-card">
 
-                    <div class="appointment-date">
+                    <div class="health-center-header">
 
-                        <strong>🏥</strong>
+                        <div class="health-center-icon">
+                            &#127973;
+                        </div>
 
-                        <span>
-                            {{ strtoupper(substr($healthCenter->name, 0, 1)) }}
-                        </span>
+                        <div class="health-center-title">
 
-                    </div>
+                            <span class="health-center-label">
+                                HEALTH CENTER
+                            </span>
 
-                    <div class="appointment-details">
+                            <h4>
+                                {{ $healthCenter->name }}
+                            </h4>
 
-                        <h4>
-                            {{ $healthCenter->name }}
-                        </h4>
+                            @if($healthCenter->address)
+                                <p>
+                                    {{ $healthCenter->address }}
+                                </p>
+                            @endif
 
-                        @if($healthCenter->address)
-                            <p>
-                                <strong>Address:</strong>
-                                {{ $healthCenter->address }}
-                            </p>
-                        @endif
+                        </div>
 
-                        @if($healthCenter->contact_number)
-                            <p>
-                                <strong>Contact:</strong>
-                                {{ $healthCenter->contact_number }}
-                            </p>
-                        @endif
-
-                        @if($healthCenter->email)
-                            <p>
-                                <strong>Email:</strong>
-                                {{ $healthCenter->email }}
-                            </p>
-                        @endif
-
-                        @if($healthCenter->operating_hours)
-                            <p>
-                                <strong>Operating Hours:</strong>
-                                {{ $healthCenter->operating_hours }}
-                            </p>
-                        @endif
-
-                        <p>
-                            <strong>Status:</strong>
-                            {{ ucfirst($healthCenter->status) }}
-                        </p>
-
-                        <p>
-                            <strong>Doctors:</strong>
-                            {{ $healthCenter->doctors->count() }}
-                        </p>
-
-                        <p>
-                            <strong>Staff:</strong>
-                            {{ $healthCenter->staff->count() }}
-                        </p>
-
-                        <div style="margin-top: 15px;">
-
-                            <a
-                                href="{{ route('staff.health-centers.show', $healthCenter) }}"
-                                class="primary-button"
-                            >
-                                View Details
-                            </a>
-
+                        <div class="health-center-status">
+                            <span class="status-badge">
+                                {{ ucfirst($healthCenter->status) }}
+                            </span>
                         </div>
 
                     </div>
 
-                </div>
 
-                <hr>
+                    <div class="health-center-information">
+
+                        @if($healthCenter->contact_number)
+                            <div>
+                                <span>CONTACT</span>
+                                <strong>
+                                    {{ $healthCenter->contact_number }}
+                                </strong>
+                            </div>
+                        @endif
+
+                        @if($healthCenter->email)
+                            <div>
+                                <span>EMAIL</span>
+                                <strong>
+                                    {{ $healthCenter->email }}
+                                </strong>
+                            </div>
+                        @endif
+
+                        @if($healthCenter->operating_hours)
+                            <div>
+                                <span>OPERATING HOURS</span>
+                                <strong>
+                                    {{ $healthCenter->operating_hours }}
+                                </strong>
+                            </div>
+                        @endif
+
+                        <div>
+                            <span>DOCTORS</span>
+                            <strong>
+                                {{ $healthCenter->doctors->count() }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>STAFF</span>
+                            <strong>
+                                {{ $healthCenter->staff->count() }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="health-center-footer">
+
+                        <a
+                            href="{{ route('staff.health-centers.show', $healthCenter) }}"
+                            class="primary-button"
+                        >
+                            View Details
+                        </a>
+
+                    </div>
+
+                </div>
 
             @endforeach
 
@@ -114,7 +130,7 @@
         <div class="empty-state">
 
             <div class="empty-icon">
-                🏥
+                &#127973;
             </div>
 
             <h4>No health centers found</h4>

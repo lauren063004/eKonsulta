@@ -23,57 +23,61 @@
 
     @if($patients->count())
 
-        <div class="medical-records-list">
+        <div class="patient-list">
 
             @foreach($patients as $patient)
 
-                <div class="appointment-preview">
+                <div class="patient-card">
 
-                    <div class="appointment-date">
-                        <strong>👤</strong>
+                    <div class="patient-avatar">
+                        👤
                     </div>
 
-                    <div class="appointment-details">
+                    <div class="patient-information">
 
                         <h4>
                             {{ $patient->user->name ?? 'Patient' }}
                         </h4>
 
-                        @if($patient->patient_number)
-                            <p>
-                                <strong>Patient No:</strong>
-                                {{ $patient->patient_number }}
-                            </p>
-                        @endif
+                        <div class="patient-meta">
 
-                        @if($patient->user && $patient->user->email)
-                            <p>
-                                <strong>Email:</strong>
-                                {{ $patient->user->email }}
-                            </p>
-                        @endif
+                            @if($patient->patient_number)
+                                <span>
+                                    <strong>Patient No:</strong>
+                                    {{ $patient->patient_number }}
+                                </span>
+                            @endif
 
-                        @if($patient->contact_number)
-                            <p>
-                                <strong>Contact:</strong>
-                                {{ $patient->contact_number }}
-                            </p>
-                        @endif
+                            @if($patient->user && $patient->user->email)
+                                <span>
+                                    <strong>Email:</strong>
+                                    {{ $patient->user->email }}
+                                </span>
+                            @endif
 
-                        <div style="margin-top: 15px;">
-                            <a
-                                href="{{ route('staff.patients.show', $patient) }}"
-                                class="primary-button"
-                            >
-                                View Patient
-                            </a>
+                            @if($patient->contact_number)
+                                <span>
+                                    <strong>Contact:</strong>
+                                    {{ $patient->contact_number }}
+                                </span>
+                            @endif
+
                         </div>
 
                     </div>
 
-                </div>
+                    <div class="patient-action">
 
-                <hr>
+                        <a
+                            href="{{ route('staff.patients.show', $patient) }}"
+                            class="primary-button"
+                        >
+                            View Patient
+                        </a>
+
+                    </div>
+
+                </div>
 
             @endforeach
 

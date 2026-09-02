@@ -33,45 +33,45 @@
         <div class="main-content">
 
             {{-- Top Navigation --}}
-            <header class="topbar">
+           <header class="topbar">
 
-                <button
-                    class="mobile-menu-button"
-                    onclick="toggleSidebar()"
-                    type="button"
-                >
-                    ☰
-                </button>
+    <button
+        class="mobile-menu-button"
+        onclick="toggleSidebar()"
+        type="button"
+    >
+        ☰
+    </button>
 
-                <div class="topbar-title">
-                    <h2>
-                        @yield('page-title', 'Dashboard')
-                    </h2>
+    <div class="topbar-title">
+        <h2>
+            @yield('page-title', 'Dashboard')
+        </h2>
 
-                    <p>
-                        Welcome back, {{ auth()->user()->name }}
-                    </p>
-                </div>
+        <p>
+            Welcome back, {{ auth()->user()->name }}
+        </p>
+    </div>
 
-                <div class="topbar-user">
+    <div class="topbar-user">
 
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    </div>
+        <div class="user-avatar">
+            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+        </div>
 
-                    <div class="user-info">
-                        <strong>
-                            {{ auth()->user()->name }}
-                        </strong>
+        <div class="user-info">
+            <strong>
+                {{ auth()->user()->name }}
+            </strong>
 
-                        <span>
-                            {{ ucfirst(auth()->user()->role) }}
-                        </span>
-                    </div>
+            <span>
+                {{ ucfirst(auth()->user()->role) }}
+            </span>
+        </div>
 
-                </div>
+    </div>
 
-            </header>
+</header>
 
             {{-- Page Content --}}
             <main class="page-content">

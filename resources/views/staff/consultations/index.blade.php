@@ -23,13 +23,15 @@
 
     @if($consultations->count())
 
-        <div class="medical-records-list">
+        <div class="consultation-list">
 
             @foreach($consultations as $consultation)
 
-                <div class="appointment-preview">
+                <div class="consultation-list-card">
 
-                    <div class="appointment-date">
+                    {{-- DATE --}}
+
+                    <div class="consultation-list-date">
 
                         <strong>
                             {{ $consultation->consultation_date->format('M') }}
@@ -41,54 +43,113 @@
 
                     </div>
 
-                    <div class="appointment-details">
 
-                        <h4>
-                            {{ $consultation->patient->user->name ?? 'Patient' }}
-                        </h4>
+                    {{-- CONSULTATION CONTENT --}}
 
-                        @if($consultation->patient)
+                    <div class="consultation-list-content">
 
-                            <p>
-                                <strong>Patient No:</strong>
-                                {{ $consultation->patient->patient_number }}
-                            </p>
+                        <div class="consultation-list-header">
 
-                        @endif
+                            <div>
 
-                        @if($consultation->doctor && $consultation->doctor->user)
+                                <span class="consultation-list-label">
+                                    PATIENT
+                                </span>
 
-                            <p>
-                                <strong>Doctor:</strong>
-                                {{ $consultation->doctor->user->name }}
-                            </p>
+                                <h4>
+                                    {{ $consultation->patient->user->name ?? 'Patient' }}
+                                </h4>
 
-                        @endif
+                                @if($consultation->patient)
 
-                        <p>
-                            <strong>Date:</strong>
-                            {{ $consultation->consultation_date->format('F j, Y g:i A') }}
-                        </p>
+                                    <p>
+                                        {{ $consultation->patient->patient_number }}
+                                    </p>
 
-                        @if($consultation->chief_complaint)
+                                @endif
 
-                            <p>
-                                <strong>Chief Complaint:</strong>
-                                {{ $consultation->chief_complaint }}
-                            </p>
+                            </div>
 
-                        @endif
+                            <div>
 
-                        @if($consultation->diagnosis)
+                                <span class="status-badge">
+                                    {{ ucfirst($consultation->status ?? 'Completed') }}
+                                </span>
 
-                            <p>
-                                <strong>Diagnosis:</strong>
-                                {{ $consultation->diagnosis }}
-                            </p>
+                            </div>
 
-                        @endif
+                        </div>
 
-                        <div style="margin-top: 15px;">
+
+                        {{-- INFORMATION --}}
+
+                        <div class="consultation-list-information">
+
+                            @if($consultation->doctor && $consultation->doctor->user)
+
+                                <div>
+
+                                    <span>Doctor</span>
+
+                                    <strong>
+                                        {{ $consultation->doctor->user->name }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+
+                            @if($consultation->consultation_date)
+
+                                <div>
+
+                                    <span>Date & Time</span>
+
+                                    <strong>
+                                        {{ $consultation->consultation_date->format('F j, Y g:i A') }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+
+                            @if($consultation->chief_complaint)
+
+                                <div>
+
+                                    <span>Chief Complaint</span>
+
+                                    <strong>
+                                        {{ $consultation->chief_complaint }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+
+                            @if($consultation->diagnosis)
+
+                                <div>
+
+                                    <span>Diagnosis</span>
+
+                                    <strong>
+                                        {{ $consultation->diagnosis }}
+                                    </strong>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+
+                        {{-- ACTION --}}
+
+                        <div class="consultation-list-action">
 
                             <a
                                 href="{{ route('staff.consultations.show', $consultation) }}"
@@ -103,8 +164,6 @@
 
                 </div>
 
-                <hr>
-
             @endforeach
 
         </div>
@@ -114,7 +173,7 @@
         <div class="empty-state">
 
             <div class="empty-icon">
-                🩺
+                &#129658;
             </div>
 
             <h4>No consultations yet</h4>

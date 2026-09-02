@@ -6,180 +6,181 @@
 
 @section('content')
 
-    <div class="dashboard-card">
+<div class="dashboard-card">
 
-        <div class="card-header">
-            <div>
-                <h3>Patient Appointments</h3>
-                <p>Manage appointments assigned to you</p>
-            </div>
-
-            <a href="{{ route('doctor.dashboard') }}">
-                Back to Dashboard
-            </a>
+    <div class="card-header">
+        <div>
+            <h3>Patient Appointments</h3>
+            <p>Manage appointments assigned to you</p>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+        <a href="{{ route('doctor.dashboard') }}">
+            Back to Dashboard
+        </a>
+    </div>
 
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
-        @if($appointments->count())
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
-            <div class="appointments-list">
+    @if($appointments->count())
 
-                @foreach($appointments as $appointment)
+        <div class="doctor-appointments-list">
 
-                @if($appointment->status === 'pending')
-    <form
-        action="{{ route('doctor.appointments.approve', $appointment) }}"
-        method="POST"
-        style="display: inline;"
-    >
-        @csrf
-        @method('PATCH')
+            @foreach($appointments as $appointment)
 
-        <button type="submit" class="primary-button">
-            Approve Appointment
-        </button>
-    </form>
-@endif
+                <div class="doctor-appointment-card">
 
-                    <div class="appointment-preview">
+                    <div class="doctor-appointment-date">
+                        <strong>
+                            {{ $appointment->appointment_date->format('M') }}
+                        </strong>
 
-                        <div class="appointment-date">
+                        <span>
+                            {{ $appointment->appointment_date->format('d') }}
+                        </span>
+                    </div>
 
-                            <strong>
-                                {{ $appointment->appointment_date->format('M') }}
-                            </strong>
+                    <div class="doctor-appointment-content">
 
-                            <span>
-                                {{ $appointment->appointment_date->format('d') }}
+                        <div class="doctor-appointment-header">
+
+                            <div>
+                                <span class="doctor-appointment-label">
+                                    PATIENT APPOINTMENT
+                                </span>
+
+                                <h4>
+                                    {{ $appointment->patient->user->name ?? 'Patient' }}
+                                </h4>
+
+                                <p>
+                                    {{ $appointment->patient->patient_number ?? 'N/A' }}
+                                </p>
+                            </div>
+
+                            <span class="appointment-status">
+                                {{ ucfirst($appointment->status) }}
                             </span>
 
                         </div>
 
-                        <div class="appointment-details">
+                        <div class="doctor-appointment-information">
 
-                            <h4>
-                                {{ $appointment->appointment_date->format('l, F j, Y') }}
-                            </h4>
+                            <div>
+                                <span>Date & Time</span>
+                                <strong>
+                                    {{ $appointment->appointment_date->format('F j, Y') }}
+                                    —
+                                    {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A') }}
+                                </strong>
+                            </div>
 
-                            <p>
-                                🕐
-                                {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A') }}
-                            </p>
+                            <div>
+                                <span>Health Center</span>
+                                <strong>
+                                    {{ $appointment->healthCenter->name ?? 'Not available' }}
+                                </strong>
+                            </div>
 
-                            @if($appointment->patient && $appointment->patient->user)
+                            <div>
+                                <span>Reason</span>
+                                <strong>
+                                    {{ $appointment->reason ?? 'No reason provided' }}
+                                </strong>
+                            </div>
 
-                                <p>
-                                    👤
-                                    {{ $appointment->patient->user->name }}
-                                </p>
-
-                            @endif
-
-                            @if($appointment->patient)
-
-                                <p>
-                                    Patient No:
-                                    {{ $appointment->patient->patient_number }}
-                                </p>
-
-                            @endif
-
-                            @if($appointment->healthCenter)
-
-                                <p>
-                                    🏥
-                                    {{ $appointment->healthCenter->name }}
-                                </p>
-
-                            @endif
-
-                            @if($appointment->reason)
-
-                                <p>
-                                    Reason:
-                                    {{ $appointment->reason }}
-                                </p>
-
-                            @endif
-
-                          <span class="appointment-status">
-    {{ ucfirst($appointment->status) }}
-</span>
-
-@if($appointment->status === 'completed')
-    <a
-        href="{{ route('doctor.appointments.prescription.create', $appointment) }}"
-        class="primary-button"
-        style="display: inline-block; margin-top: 15px;"
-    >
-        💊 Create Prescription
-    </a>
-@endif
-
-@if($appointment->status === 'pending')
-    <form
-        action="{{ route('doctor.appointments.approve', $appointment) }}"
-        method="POST"
-        style="margin-top: 15px;"
-    >
-        @csrf
-        @method('PATCH')
-
-        <button type="submit" class="primary-button">
-            Approve Appointment
-        </button>
-    </form>
-@endif
-
-@if($appointment->status === 'approved')
-    <a
-        href="{{ route('doctor.appointments.consultation.create', $appointment) }}"
-        class="primary-button"
-        style="display: inline-block; margin-top: 15px;"
-    >
-        Start Consultation
-    </a>
-@endif
+                            <div>
+                                <span>Patient Number</span>
+                                <strong>
+                                    {{ $appointment->patient->patient_number ?? 'N/A' }}
+                                </strong>
+                            </div>
 
                         </div>
 
+                        {{-- ACTIONS --}}
+
+                        @if($appointment->status === 'pending')
+
+                            <div class="doctor-appointment-actions">
+
+                                <form
+                                    action="{{ route('doctor.appointments.approve', $appointment) }}"
+                                    method="POST"
+                                >
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <button type="submit" class="primary-button">
+                                        Approve Appointment
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        @elseif($appointment->status === 'approved')
+
+                            <div class="doctor-appointment-actions">
+
+                                <a
+                                    href="{{ route('doctor.appointments.consultation.create', $appointment) }}"
+                                    class="primary-button"
+                                >
+                                    Start Consultation
+                                </a>
+
+                            </div>
+
+                        @elseif($appointment->status === 'completed')
+
+                            <div class="doctor-appointment-actions">
+
+                                <a
+                                    href="{{ route('doctor.appointments.prescription.create', $appointment) }}"
+                                    class="primary-button"
+                                >
+                                    Create Prescription
+                                </a>
+
+                            </div>
+
+                        @endif
+
                     </div>
 
-                    <hr>
-
-                @endforeach
-
-            </div>
-
-        @else
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    📅
                 </div>
 
-                <h4>No appointments</h4>
+            @endforeach
 
-                <p>
-                    You currently have no appointments assigned to you.
-                </p>
+        </div>
 
+    @else
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                📅
             </div>
 
-        @endif
+            <h4>No appointments</h4>
 
-    </div>
+            <p>
+                You currently have no appointments assigned to you.
+            </p>
+
+        </div>
+
+    @endif
+
+</div>
 
 @endsection

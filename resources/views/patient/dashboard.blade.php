@@ -261,7 +261,7 @@
     <strong>
         My Profile
     </strong>
-
+ 
     <small>
         Update your information
     </small>

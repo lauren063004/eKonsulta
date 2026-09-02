@@ -6,106 +6,100 @@
 
 @section('content')
 
-    <div class="dashboard-card">
+<div class="dashboard-card">
 
-        <div class="card-header">
-
-            <div>
-                <h3>My Patients</h3>
-                <p>Patients who have appointments with you</p>
-            </div>
-
-            <a href="{{ route('doctor.dashboard') }}">
-                Back to Dashboard
-            </a>
-
+    <div class="card-header">
+        <div>
+            <h3>My Patients</h3>
+            <p>Patients who have appointments with you</p>
         </div>
 
-
-        @if($patients->count())
-
-            <div class="medical-records-list">
-
-                @foreach($patients as $patient)
-
-                    <div class="appointment-preview">
-
-                        <div class="appointment-date">
-
-                            <strong>
-                                👤
-                            </strong>
-
-                        </div>
-
-
-                     <div class="appointment-details">
-
-    <h4>
-        <a href="{{ route('doctor.patients.show', $patient) }}">
-            {{ $patient->user->name ?? 'Patient' }}
+        <a href="{{ route('doctor.dashboard') }}">
+            Back to Dashboard
         </a>
-    </h4>
+    </div>
 
+    @if($patients->count())
+
+        <div class="patient-list">
+
+            @foreach($patients as $patient)
+
+                <div class="patient-card">
+
+                    <div class="patient-avatar">
+                        &#128100;
+                    </div>
+
+                    <div class="patient-information">
+
+                        <h4>
+                            {{ $patient->user->name ?? 'Patient' }}
+                        </h4>
+
+                        <div class="patient-meta">
 
                             @if($patient->patient_number)
-
-                                <p>
+                                <span>
                                     <strong>Patient No:</strong>
                                     {{ $patient->patient_number }}
-                                </p>
-
+                                </span>
                             @endif
-
 
                             @if($patient->user && $patient->user->email)
-
-                                <p>
+                                <span>
                                     <strong>Email:</strong>
                                     {{ $patient->user->email }}
-                                </p>
-
+                                </span>
                             @endif
 
-
                             @if($patient->user && $patient->user->phone)
-
-                                <p>
+                                <span>
                                     <strong>Phone:</strong>
                                     {{ $patient->user->phone }}
-                                </p>
-
+                                </span>
                             @endif
 
                         </div>
 
                     </div>
 
-                    <hr>
+                    <div class="patient-action">
 
-                @endforeach
+                        <a
+                            href="{{ route('doctor.patients.show', $patient) }}"
+                            class="primary-button"
+                        >
+                            View Patient
+                        </a>
 
-            </div>
+                    </div>
 
-        @else
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    👥
                 </div>
 
-                <h4>No patients yet</h4>
+            @endforeach
 
-                <p>
-                    Patients who have appointments with you
-                    will appear here.
-                </p>
+        </div>
 
+    @else
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                &#128100;
             </div>
 
-        @endif
+            <h4>No patients yet</h4>
 
-    </div>
+            <p>
+                Patients who have appointments with you
+                will appear here.
+            </p>
+
+        </div>
+
+    @endif
+
+</div>
 
 @endsection

@@ -28,39 +28,45 @@
 
             <a
                 href="{{ route('patient.dashboard') }}"
-                class="nav-link"
+                class="nav-link {{ request()->routeIs('patient.dashboard') ? 'active' : '' }}"
             >
                 <span>🏠</span>
                 <span>Dashboard</span>
             </a>
+
+            <a
+                href="{{ route('patient.appointments.index') }}"
+                class="nav-link {{ request()->routeIs('patient.appointments.*') ? 'active' : '' }}"
+            >
+                <span>📅</span>
+                <span>Appointments</span>
+            </a>
+
+           <a
 <a
-href="{{ route('patient.appointments.index') }}"
-    class="nav-link"
+    href="{{ route('staff.patients.index') }}"
+    class="nav-link {{ request()->is('staff/patients*') ? 'active' : '' }}"
 >
-    <span>📅</span>
-    <span>Appointments</span>
+    <span>&#128101;</span>
+    <span>Patients</span>
 </a>
 
-<a href="#" class="nav-link">
-    <span>🩺</span>
-    <span>Consultations</span>
-</a>
+            <a
+                href="{{ route('patient.prescriptions.index') }}"
+                class="nav-link {{ request()->routeIs('patient.prescriptions.*') ? 'active' : '' }}"
+            >
+                <span>💊</span>
+                <span>Prescriptions</span>
+            </a>
 
-<a
-    href="{{ route('patient.prescriptions.index') }}"
-    class="nav-link"
->
-    <span>💊</span>
-    <span>Prescriptions</span>
-</a>
+            <a
+                href="{{ route('patient.medical-records.index') }}"
+                class="nav-link {{ request()->routeIs('patient.medical-records.*') ? 'active' : '' }}"
+            >
+                <span>📋</span>
+                <span>Medical Records</span>
+            </a>
 
-<a
-    href="{{ route('patient.medical-records.index') }}"
-    class="nav-link"
->
-    <span>📋</span>
-    <span>Medical Records</span>
-</a>
             <div class="nav-section">
                 <span>ACCOUNT</span>
             </div>
@@ -90,43 +96,43 @@ href="{{ route('patient.appointments.index') }}"
 
             <a
                 href="{{ route('doctor.dashboard') }}"
-                class="nav-link"
+                class="nav-link {{ request()->routeIs('doctor.dashboard') ? 'active' : '' }}"
             >
                 <span>🏠</span>
                 <span>Dashboard</span>
             </a>
 
-         <a
-    href="{{ route('doctor.appointments.index') }}"
-    class="nav-link"
->
-    <span>📅</span>
-    <span>Appointments</span>
-</a>
+            <a
+                href="{{ route('doctor.appointments.index') }}"
+                class="nav-link {{ request()->routeIs('doctor.appointments.*') ? 'active' : '' }}"
+            >
+                <span>📅</span>
+                <span>Appointments</span>
+            </a>
 
-<a
-    href="{{ route('doctor.consultations.index') }}"
-    class="nav-link"
->
-    <span>🩺</span>
-    <span>Consultations</span>
-</a>
+            <a
+                href="{{ route('doctor.consultations.index') }}"
+                class="nav-link {{ request()->routeIs('doctor.consultations.*') ? 'active' : '' }}"
+            >
+                <span>🩺</span>
+                <span>Consultations</span>
+            </a>
 
-<a
-href="{{ route('doctor.patients.index') }}"
-    class="nav-link"
->
-    <span>👥</span>
-    <span>Patients</span>
-</a>
+            <a
+                href="{{ route('doctor.patients.index') }}"
+                class="nav-link {{ request()->routeIs('doctor.patients.*') ? 'active' : '' }}"
+            >
+                <span>👥</span>
+                <span>Patients</span>
+            </a>
 
-<a
-    href="{{ route('doctor.prescriptions.index') }}"
-    class="nav-link"
->
-    <span>💊</span>
-    <span>Prescriptions</span>
-</a>
+            <a
+                href="{{ route('doctor.prescriptions.index') }}"
+                class="nav-link {{ request()->routeIs('doctor.prescriptions.*') ? 'active' : '' }}"
+            >
+                <span>💊</span>
+                <span>Prescriptions</span>
+            </a>
 
         @endif
 
@@ -143,36 +149,41 @@ href="{{ route('doctor.patients.index') }}"
 
             <a
                 href="{{ route('staff.dashboard') }}"
-                class="nav-link"
+                class="nav-link {{ request()->routeIs('staff.dashboard') ? 'active' : '' }}"
             >
                 <span>🏠</span>
                 <span>Dashboard</span>
             </a>
 
-          <a href="#" class="nav-link">
-    <span>👤</span>
-    <span>My Profile</span>
-</a>
             <a href="#" class="nav-link">
-                <span>👥</span>
-                <span>Patients</span>
+                <span>👤</span>
+                <span>My Profile</span>
             </a>
 
             <a
-    href="{{ route('staff.consultations.index') }}"
-    class="nav-link"
+    href="{{ route('staff.patients.index') }}"
+    class="nav-link {{ request()->routeIs('staff.patients.*') ? 'active' : '' }}"
 >
-    <span>🩺</span>
-    <span>Consultations</span>
+    <span>&#128101;</span>
+    <span>Patients</span>
 </a>
 
             <a
-    href="{{ route('staff.health-centers.index') }}"
-    class="nav-link"
->
-    <span>🏥</span>
-    <span>Health Centers</span>
-</a>
+                href="{{ route('staff.consultations.index') }}"
+                class="nav-link {{ request()->routeIs('staff.consultations.*') ? 'active' : '' }}"
+            >
+                <span>🩺</span>
+                <span>Consultations</span>
+            </a>
+
+            <a
+                href="{{ route('staff.health-centers.index') }}"
+                class="nav-link {{ request()->routeIs('staff.health-centers.*') ? 'active' : '' }}"
+            >
+                <span>🏥</span>
+                <span>Health Centers</span>
+            </a>
+
         @endif
 
 
@@ -188,27 +199,27 @@ href="{{ route('doctor.patients.index') }}"
 
             <a
                 href="{{ route('admin.dashboard') }}"
-                class="nav-link"
+                class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
             >
                 <span>🏠</span>
                 <span>Dashboard</span>
             </a>
 
-           <a
-    href="{{ route('admin.users.index') }}"
-    class="nav-link"
->
-    <span>👥</span>
-    <span>Users</span>
-</a>
+            <a
+                href="{{ route('admin.users.index') }}"
+                class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+            >
+                <span>👥</span>
+                <span>Users</span>
+            </a>
 
-           <a
-    href="{{ route('admin.health-centers.index') }}"
-    class="nav-link"
->
-    <span>🏥</span>
-    <span>Health Centers</span>
-</a>
+            <a
+                href="{{ route('admin.health-centers.index') }}"
+                class="nav-link {{ request()->routeIs('admin.health-centers.*') ? 'active' : '' }}"
+            >
+                <span>🏥</span>
+                <span>Health Centers</span>
+            </a>
 
             <a href="#" class="nav-link">
                 <span>🩺</span>
@@ -231,6 +242,7 @@ href="{{ route('doctor.patients.index') }}"
 
 
     {{-- Bottom Sidebar --}}
+
     <div class="sidebar-bottom">
 
         <div class="system-status">
@@ -239,6 +251,7 @@ href="{{ route('doctor.patients.index') }}"
         </div>
 
         <form method="POST" action="{{ route('logout') }}">
+
             @csrf
 
             <button

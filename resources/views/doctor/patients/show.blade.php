@@ -6,18 +6,13 @@
 
 @section('content')
 
-<div class="dashboard-card">
+<div class="dashboard-card patient-profile-page">
 
     {{-- Header --}}
     <div class="card-header">
         <div>
-            <h3>
-                {{ $patient->user->name ?? 'Patient' }}
-            </h3>
-
-            <p>
-                Clinical profile and medical history
-            </p>
+            <h3>{{ $patient->user->name ?? 'Patient' }}</h3>
+            <p>Clinical profile and medical history</p>
         </div>
 
         <a href="{{ route('doctor.patients.index') }}">
@@ -26,30 +21,40 @@
     </div>
 
 
-    {{-- Patient Information --}}
-    <div class="appointment-preview">
+    {{-- Patient Profile --}}
+    <div class="patient-profile-header">
 
-        <div class="appointment-date">
-            <strong>👤</strong>
+        <div class="patient-profile-avatar">
+            &#128100;
         </div>
 
-        <div class="appointment-details">
+        <div class="patient-profile-information">
 
-            <h4>
+            <span class="patient-profile-label">
+                PATIENT PROFILE
+            </span>
+
+            <h2>
                 {{ $patient->user->name ?? 'Patient' }}
-            </h4>
+            </h2>
 
-            <p>
-                <strong>Patient No:</strong>
-                {{ $patient->patient_number }}
-            </p>
+            <div class="patient-profile-meta">
 
-            @if($patient->user)
-                <p>
-                    <strong>Email:</strong>
-                    {{ $patient->user->email }}
-                </p>
-            @endif
+                @if($patient->patient_number)
+                    <span>
+                        <strong>Patient No:</strong>
+                        {{ $patient->patient_number }}
+                    </span>
+                @endif
+
+                @if($patient->user && $patient->user->email)
+                    <span>
+                        <strong>Email:</strong>
+                        {{ $patient->user->email }}
+                    </span>
+                @endif
+
+            </div>
 
         </div>
 
@@ -57,206 +62,312 @@
 
 
     {{-- Appointments --}}
-    <div style="margin-top: 30px;">
+    <section class="patient-history-section">
 
-        <h3>📅 Appointments</h3>
+        <div class="patient-section-heading">
+            <div>
+                <span class="patient-section-label">
+                    APPOINTMENT HISTORY
+                </span>
+
+                <h3>
+                    <span class="patient-section-icon">&#128197;</span>
+                    Appointments
+                </h3>
+
+                <p>Scheduled and previous appointments</p>
+            </div>
+        </div>
 
         @if($patient->appointments->count())
 
-            @foreach($patient->appointments as $appointment)
+            <div class="patient-history-list">
 
-                <div class="dashboard-card" style="margin-top: 15px;">
+                @foreach($patient->appointments as $appointment)
 
-                    <div class="card-header">
+                    <div class="patient-history-card">
 
-                        <div>
-                            <strong>
-                                {{ $appointment->appointment_date->format('M d, Y') }}
-                            </strong>
+                        <div class="patient-history-top">
 
-                            <p>
-                                {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A') }}
-                            </p>
+                            <div>
+                                <span class="patient-history-date">
+                                    {{ $appointment->appointment_date->format('M d, Y') }}
+                                </span>
+
+                                <p class="patient-history-time">
+                                    {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A') }}
+                                </p>
+                            </div>
+
+                            <span class="appointment-status">
+                                {{ ucfirst($appointment->status) }}
+                            </span>
+
                         </div>
 
-                        <span class="appointment-status">
-                            {{ ucfirst($appointment->status) }}
-                        </span>
+                        <div class="patient-history-details">
+
+                            @if($appointment->reason)
+                                <div>
+                                    <span>Reason</span>
+                                    <strong>
+                                        {{ $appointment->reason }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                            @if($appointment->healthCenter)
+                                <div>
+                                    <span>Health Center</span>
+                                    <strong>
+                                        {{ $appointment->healthCenter->name }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                        </div>
 
                     </div>
 
-                    @if($appointment->reason)
-                        <p>
-                            <strong>Reason:</strong>
-                            {{ $appointment->reason }}
-                        </p>
-                    @endif
+                @endforeach
 
-                    @if($appointment->healthCenter)
-                        <p>
-                            🏥 {{ $appointment->healthCenter->name }}
-                        </p>
-                    @endif
-
-                </div>
-
-            @endforeach
+            </div>
 
         @else
 
-            <p>No appointments found.</p>
+            <div class="patient-empty-state">
+                <h4>No appointments found</h4>
+                <p>This patient does not have any appointment records yet.</p>
+            </div>
 
         @endif
 
-    </div>
+    </section>
 
 
     {{-- Consultations --}}
-    <div style="margin-top: 30px;">
+    <section class="patient-history-section">
 
-        <h3>🩺 Consultations</h3>
+        <div class="patient-section-heading">
+            <div>
+                <span class="patient-section-label">
+                    CLINICAL RECORDS
+                </span>
+
+                <h3>
+                    <span class="patient-section-icon">&#129658;</span>
+                    Consultations
+                </h3>
+
+                <p>Medical consultations and clinical findings</p>
+            </div>
+        </div>
 
         @if($patient->consultations->count())
 
-            @foreach($patient->consultations as $consultation)
+            <div class="patient-consultation-list">
 
-                <div class="dashboard-card" style="margin-top: 15px;">
+                @foreach($patient->consultations as $consultation)
 
-                    <div class="card-header">
+                    <div class="patient-consultation-card">
 
-                        <div>
-                            <strong>
-                                {{ $consultation->consultation_date
-                                    ? \Carbon\Carbon::parse($consultation->consultation_date)->format('M d, Y g:i A')
-                                    : 'Consultation'
-                                }}
-                            </strong>
+                        <div class="patient-consultation-header">
+
+                            <div>
+                                <span class="patient-section-label">
+                                    CONSULTATION
+                                </span>
+
+                                <h4>
+                                    {{ $consultation->consultation_date
+                                        ? \Carbon\Carbon::parse($consultation->consultation_date)->format('F d, Y g:i A')
+                                        : 'Consultation'
+                                    }}
+                                </h4>
+                            </div>
+
+                        </div>
+
+                        <div class="patient-consultation-information">
+
+                            <div>
+                                <span>Chief Complaint</span>
+                                <strong>
+                                    {{ $consultation->chief_complaint }}
+                                </strong>
+                            </div>
+
+                            @if($consultation->symptoms)
+                                <div>
+                                    <span>Symptoms</span>
+                                    <strong>
+                                        {{ $consultation->symptoms }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                            <div>
+                                <span>Diagnosis</span>
+                                <strong>
+                                    {{ $consultation->diagnosis }}
+                                </strong>
+                            </div>
+
+                            @if($consultation->treatment_plan)
+                                <div>
+                                    <span>Treatment Plan</span>
+                                    <strong>
+                                        {{ $consultation->treatment_plan }}
+                                    </strong>
+                                </div>
+                            @endif
+
+                            @if($consultation->notes)
+                                <div>
+                                    <span>Additional Notes</span>
+                                    <strong>
+                                        {{ $consultation->notes }}
+                                    </strong>
+                                </div>
+                            @endif
+
                         </div>
 
                     </div>
 
-                    <p>
-                        <strong>Chief Complaint:</strong><br>
-                        {{ $consultation->chief_complaint }}
-                    </p>
+                @endforeach
 
-                    @if($consultation->symptoms)
-                        <p>
-                            <strong>Symptoms:</strong><br>
-                            {{ $consultation->symptoms }}
-                        </p>
-                    @endif
-
-                    <p>
-                        <strong>Diagnosis:</strong><br>
-                        {{ $consultation->diagnosis }}
-                    </p>
-
-                    @if($consultation->treatment_plan)
-                        <p>
-                            <strong>Treatment Plan:</strong><br>
-                            {{ $consultation->treatment_plan }}
-                        </p>
-                    @endif
-
-                    @if($consultation->notes)
-                        <p>
-                            <strong>Notes:</strong><br>
-                            {{ $consultation->notes }}
-                        </p>
-                    @endif
-
-                </div>
-
-            @endforeach
+            </div>
 
         @else
 
-            <p>No consultations recorded yet.</p>
+            <div class="patient-empty-state">
+                <h4>No consultations recorded</h4>
+                <p>No clinical consultation records are available for this patient.</p>
+            </div>
 
         @endif
 
-    </div>
+    </section>
 
 
     {{-- Prescriptions --}}
-    <div style="margin-top: 30px;">
+    <section class="patient-history-section">
 
-        <h3>💊 Prescriptions</h3>
+        <div class="patient-section-heading">
+            <div>
+                <span class="patient-section-label">
+                    MEDICATION RECORDS
+                </span>
+
+                <h3>
+                    <span class="patient-section-icon">&#128138;</span>
+                    Prescriptions
+                </h3>
+
+                <p>Prescribed medicines and instructions</p>
+            </div>
+        </div>
 
         @if($patient->prescriptions->count())
 
-            @foreach($patient->prescriptions as $prescription)
+            <div class="patient-prescription-list">
 
-                <div class="dashboard-card" style="margin-top: 15px;">
+                @foreach($patient->prescriptions as $prescription)
 
-                    <div class="card-header">
+                    <div class="patient-prescription-card">
 
-                        <div>
-                            <strong>
-                                Prescription
-                            </strong>
+                        <div class="patient-prescription-header">
 
-                            @if($prescription->created_at)
-                                <p>
-                                    {{ $prescription->created_at->format('M d, Y') }}
-                                </p>
-                            @endif
+                            <div>
+                                <span class="patient-section-label">
+                                    PRESCRIPTION
+                                </span>
+
+                                <h4>
+                                    Prescription
+                                </h4>
+
+                                @if($prescription->created_at)
+                                    <p>
+                                        {{ $prescription->created_at->format('F d, Y') }}
+                                    </p>
+                                @endif
+                            </div>
+
                         </div>
+
+                        @if($prescription->items->count())
+
+                            <div class="patient-prescription-items">
+
+                                @foreach($prescription->items as $item)
+
+                                    <div class="patient-prescription-item">
+
+                                        <strong>
+                                            {{ $item->medicine_name ?? $item->name ?? 'Medicine' }}
+                                        </strong>
+
+                                        <div class="patient-prescription-details">
+
+                                            @if(!empty($item->dosage))
+                                                <span>
+                                                    <strong>Dosage:</strong>
+                                                    {{ $item->dosage }}
+                                                </span>
+                                            @endif
+
+                                            @if(!empty($item->frequency))
+                                                <span>
+                                                    <strong>Frequency:</strong>
+                                                    {{ $item->frequency }}
+                                                </span>
+                                            @endif
+
+                                            @if(!empty($item->duration))
+                                                <span>
+                                                    <strong>Duration:</strong>
+                                                    {{ $item->duration }}
+                                                </span>
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+                                @endforeach
+
+                            </div>
+
+                        @else
+
+                            <p class="patient-prescription-empty">
+                                No prescription items recorded.
+                            </p>
+
+                        @endif
 
                     </div>
 
-                    @if($prescription->items->count())
+                @endforeach
 
-                        <ul>
-
-                            @foreach($prescription->items as $item)
-
-                                <li style="margin-bottom: 8px;">
-
-                                    <strong>
-                                        {{ $item->medicine_name ?? $item->name ?? 'Medicine' }}
-                                    </strong>
-
-                                    @if(!empty($item->dosage))
-                                        — {{ $item->dosage }}
-                                    @endif
-
-                                    @if(!empty($item->frequency))
-                                        — {{ $item->frequency }}
-                                    @endif
-
-                                    @if(!empty($item->duration))
-                                        — {{ $item->duration }}
-                                    @endif
-
-                                </li>
-
-                            @endforeach
-
-                        </ul>
-
-                    @else
-
-                        <p>No prescription items recorded.</p>
-
-                    @endif
-
-                </div>
-
-            @endforeach
+            </div>
 
         @else
 
-            <p>No prescriptions recorded yet.</p>
+            <div class="patient-empty-state">
+                <h4>No prescriptions recorded</h4>
+                <p>No medication records are available for this patient.</p>
+            </div>
 
         @endif
 
-    </div>
+    </section>
 
 
     {{-- Back Button --}}
-    <div style="margin-top: 30px;">
+    <div class="patient-profile-footer">
 
         <a
             href="{{ route('doctor.patients.index') }}"
