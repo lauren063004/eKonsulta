@@ -6,8 +6,7 @@
 
 @section('content')
 
-```
-<section class="dashboard-card">
+<div class="dashboard-card">
 
     <div class="card-header">
 
@@ -24,39 +23,43 @@
 
     @if($users->count())
 
-        <div class="medical-records-list">
+        <div class="admin-user-list">
 
             @foreach($users as $user)
 
-                <div class="appointment-preview">
+                <div class="admin-user-card">
 
-                    <div class="appointment-date">
-
-                        <strong>
-                            {{ strtoupper(substr($user->role, 0, 1)) }}
-                        </strong>
-
-                        <span>
-                            {{ ucfirst($user->role) }}
-                        </span>
-
+                    <div class="admin-user-avatar">
+                        &#128100;
                     </div>
 
-                    <div class="appointment-details">
+                    <div class="admin-user-information">
+
+                        <span class="admin-user-label">
+                            {{ strtoupper($user->role) }}
+                        </span>
 
                         <h4>
                             {{ $user->name }}
                         </h4>
 
-                        <p>
-                            <strong>Email:</strong>
-                            {{ $user->email }}
-                        </p>
+                        <div class="admin-user-meta">
 
-                        <p>
-                            <strong>Role:</strong>
-                            {{ ucfirst($user->role) }}
-                        </p>
+                            <span>
+                                <strong>Email:</strong>
+                                {{ $user->email }}
+                            </span>
+
+                            <span>
+                                <strong>Role:</strong>
+                                {{ ucfirst($user->role) }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="admin-user-action">
 
                         <a
                             href="{{ route('admin.users.show', $user) }}"
@@ -69,8 +72,6 @@
 
                 </div>
 
-                <hr>
-
             @endforeach
 
         </div>
@@ -80,7 +81,7 @@
         <div class="empty-state">
 
             <div class="empty-icon">
-                👥
+                &#128100;
             </div>
 
             <h4>No users found</h4>
@@ -93,7 +94,6 @@
 
     @endif
 
-</section>
-```
+</div>
 
 @endsection

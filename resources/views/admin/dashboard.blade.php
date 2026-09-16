@@ -24,7 +24,7 @@
         </div>
 
         <div class="welcome-icon">
-            ⚙️
+            &#9881;
         </div>
 
     </section>
@@ -33,25 +33,25 @@
     <section class="stats-grid">
 
         <x-stat-card
-            icon="👥"
+            icon="&#128101;"
             label="Total Patients"
             value="0"
         />
 
         <x-stat-card
-            icon="🩺"
+            icon="&#129658;"
             label="Doctors"
             value="0"
         />
 
         <x-stat-card
-            icon="🏥"
+            icon="&#127973;"
             label="Health Centers"
             value="0"
         />
 
         <x-stat-card
-            icon="📅"
+            icon="&#128197;"
             label="Appointments"
             value="0"
         />
@@ -79,7 +79,7 @@
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    📊
+                    &#128202;
                 </div>
 
                 <h4>Dashboard analytics</h4>
@@ -107,26 +107,32 @@
 
             <div class="quick-actions">
 
-              <a href="{{ route('admin.users.index') }}" class="quick-action">
-    <span>👥</span>
-    <strong>User Management</strong>
-    <small>Manage system users</small>
-</a>
+                <a
+                    href="{{ route('admin.users.index') }}"
+                    class="quick-action"
+                >
+                    <span>&#128101;</span>
+                    <strong>User Management</strong>
+                    <small>Manage system users</small>
+                </a>
 
-              <a href="{{ route('admin.health-centers.index') }}" class="quick-action">
-    <span>🏥</span>
-    <strong>Health Centers</strong>
-    <small>Manage health centers</small>
-</a>
+                <a
+                    href="{{ route('admin.health-centers.index') }}"
+                    class="quick-action"
+                >
+                    <span>&#127973;</span>
+                    <strong>Health Centers</strong>
+                    <small>Manage health centers</small>
+                </a>
 
                 <a href="#" class="quick-action">
-                    <span>📊</span>
+                    <span>&#128202;</span>
                     <strong>Reports</strong>
                     <small>View system reports</small>
                 </a>
 
                 <a href="#" class="quick-action">
-                    <span>📋</span>
+                    <span>&#128203;</span>
                     <strong>Activity Logs</strong>
                     <small>Monitor system activity</small>
                 </a>

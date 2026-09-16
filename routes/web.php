@@ -19,6 +19,8 @@ use App\Http\Controllers\StaffHealthCenterController;
 use App\Http\Controllers\PatientProfileController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminHealthCenterController;
+use App\Http\Controllers\StaffProfileController;
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -182,7 +184,8 @@ Route::get('/consultations', [StaffConsultationController::class, 'index'])
 Route::get('/consultations/{consultation}', [StaffConsultationController::class, 'show'])
     ->name('consultations.show');
 
-
+Route::get('/profile', [StaffProfileController::class, 'show'])
+    ->name('profile');
     });
 
 

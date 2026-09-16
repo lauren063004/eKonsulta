@@ -6,9 +6,10 @@
 
 @section('content')
 
-<section class="dashboard-card">
+<div class="dashboard-card admin-health-centers-page">
 
     <div class="card-header">
+
         <div>
             <h3>Health Centers</h3>
             <p>Manage registered health centers and their information</p>
@@ -17,58 +18,90 @@
         <a href="{{ route('admin.dashboard') }}">
             Back to Dashboard
         </a>
+
     </div>
 
     @if($healthCenters->count())
 
-        <div class="medical-records-list">
+        <div class="admin-health-center-list">
 
             @foreach($healthCenters as $healthCenter)
 
-                <div class="appointment-preview">
+                <div class="admin-health-center-card">
 
-                    <div class="appointment-date">
-                        <strong>🏥</strong>
-                        <span>{{ strtoupper(substr($healthCenter->name, 0, 1)) }}</span>
+                    <div class="admin-health-center-header">
+
+                        <div class="admin-health-center-icon">
+                            &#127973;
+                        </div>
+
+                        <div class="admin-health-center-title">
+
+                            <span class="admin-health-center-label">
+                                HEALTH CENTER
+                            </span>
+
+                            <h4>
+                                {{ $healthCenter->name }}
+                            </h4>
+
+                            @if($healthCenter->address)
+                                <p>
+                                    {{ $healthCenter->address }}
+                                </p>
+                            @endif
+
+                        </div>
+
+                        <div class="admin-health-center-status">
+
+                            <span class="status-badge {{ $healthCenter->status === 'active' ? 'status-active' : 'status-inactive' }}">
+                                {{ ucfirst($healthCenter->status) }}
+                            </span>
+
+                        </div>
+
                     </div>
 
-                    <div class="appointment-details">
 
-                        <h4>{{ $healthCenter->name }}</h4>
-
-                        @if($healthCenter->address)
-                            <p>
-                                <strong>Address:</strong>
-                                {{ $healthCenter->address }}
-                            </p>
-                        @endif
+                    <div class="admin-health-center-information">
 
                         @if($healthCenter->contact_number)
-                            <p>
-                                <strong>Contact:</strong>
-                                {{ $healthCenter->contact_number }}
-                            </p>
+                            <div>
+                                <span>CONTACT</span>
+                                <strong>
+                                    {{ $healthCenter->contact_number }}
+                                </strong>
+                            </div>
                         @endif
 
                         @if($healthCenter->email)
-                            <p>
-                                <strong>Email:</strong>
-                                {{ $healthCenter->email }}
-                            </p>
+                            <div>
+                                <span>EMAIL</span>
+                                <strong>
+                                    {{ $healthCenter->email }}
+                                </strong>
+                            </div>
                         @endif
 
-                        <p>
-                            <strong>Status:</strong>
-                            {{ ucfirst($healthCenter->status) }}
-                        </p>
+                        <div>
+                            <span>DOCTORS</span>
+                            <strong>
+                                {{ $healthCenter->doctors->count() }}
+                            </strong>
+                        </div>
 
-                        <p>
-                            <strong>Doctors:</strong>
-                            {{ $healthCenter->doctors->count() }}
-                            &nbsp; | &nbsp;
-                            <strong>Staff:</strong>
-                            {{ $healthCenter->staff->count() }}
-                        </p>
+                        <div>
+                            <span>STAFF</span>
+                            <strong>
+                                {{ $healthCenter->staff->count() }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-health-center-footer">
 
                         <a
                             href="{{ route('admin.health-centers.show', $healthCenter) }}"
@@ -81,8 +114,6 @@
 
                 </div>
 
-                <hr>
-
             @endforeach
 
         </div>
@@ -91,7 +122,9 @@
 
         <div class="empty-state">
 
-            <div class="empty-icon">🏥</div>
+            <div class="empty-icon">
+                &#127973;
+            </div>
 
             <h4>No health centers found</h4>
 
@@ -103,6 +136,6 @@
 
     @endif
 
-</section>
+</div>
 
 @endsection

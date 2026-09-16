@@ -155,7 +155,9 @@
                 <span>Dashboard</span>
             </a>
 
-            <a href="#" class="nav-link">
+            <a href="{{ route('staff.profile') }}"
+                class="nav-link {{ request()->routeIs('staff.profile') ? 'active' : '' }}"
+            >
                 <span>👤</span>
                 <span>My Profile</span>
             </a>

@@ -2729,7 +2729,7 @@ button {
         grid-template-columns: 1fr;
     }
 
-    .doctor-appointment-information > div {
+       .doctor-appointment-information > div {
         padding: 14px 0;
         border-left: none !important;
     }
@@ -2739,6 +2739,7 @@ button {
 
 .patient-profile-page {
     padding-bottom: 30px;
+}
 }
 
 .patient-profile-header {
@@ -3026,9 +3027,1133 @@ button {
         gap: 12px;
     }
 
-    .patient-prescription-details {
+.patient-prescription-details {
+    flex-direction: column;
+    gap: 6px;
+}
+}
+
+
+/* ========================================
+   DOCTOR PRESCRIPTIONS
+======================================== */
+
+    /* ========================================
+   DOCTOR PRESCRIPTIONS
+======================================== */
+
+.doctor-prescriptions-page {
+    padding-bottom: 30px;
+}
+
+.doctor-prescription-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.doctor-prescription-card {
+    padding: 20px;
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+}
+
+.doctor-prescription-card:hover {
+    border-color: #BFD5EA;
+    box-shadow: 0 5px 16px rgba(30, 70, 110, 0.06);
+}
+
+.doctor-prescription-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #EDF0F3;
+}
+
+.doctor-prescription-date {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.doctor-prescription-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.doctor-prescription-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #0757B5;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.doctor-prescription-header h4 {
+    margin: 0;
+    color: #172033;
+    font-size: 16px;
+}
+
+.doctor-prescription-header p {
+    margin: 4px 0 0;
+    color: #78818F;
+    font-size: 11px;
+}
+
+.doctor-prescription-information {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.doctor-prescription-information > div {
+    padding: 15px 18px 15px 0;
+    border-bottom: 1px solid #F0F3F6;
+}
+
+.doctor-prescription-information > div + div {
+    padding-left: 18px;
+    border-left: 1px solid #F0F3F6;
+}
+
+.doctor-prescription-information span,
+.doctor-prescription-instructions > span {
+    display: block;
+    margin-bottom: 6px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.doctor-prescription-information strong {
+    display: block;
+    color: #172033;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.doctor-prescription-medicines {
+    padding-top: 17px;
+}
+
+.doctor-prescription-section-title {
+    margin-bottom: 5px;
+}
+
+.doctor-prescription-section-title span {
+    display: block;
+    margin-bottom: 4px;
+    color: #0757B5;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.doctor-prescription-section-title strong {
+    color: #172033;
+    font-size: 13px;
+}
+
+.doctor-prescription-items {
+    margin-top: 8px;
+}
+
+.doctor-prescription-item {
+    padding: 15px 0;
+    border-top: 1px solid #F0F3F6;
+}
+
+.doctor-prescription-medicine-name strong {
+    display: block;
+    margin-bottom: 9px;
+    color: #172033;
+    font-size: 13px;
+}
+
+.doctor-prescription-medicine-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+}
+
+.doctor-prescription-medicine-details span {
+    color: #78818F;
+    font-size: 11px;
+}
+
+.doctor-prescription-medicine-details strong {
+    color: #4C5665;
+}
+
+.doctor-prescription-instructions {
+    margin-top: 5px;
+    padding-top: 16px;
+    border-top: 1px solid #EDF0F3;
+}
+
+.doctor-prescription-instructions p {
+    margin: 0;
+    color: #4C5665;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+
+    .doctor-prescription-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .doctor-prescription-information {
+        grid-template-columns: 1fr;
+    }
+
+    .doctor-prescription-information > div,
+    .doctor-prescription-information > div + div {
+        padding: 14px 0;
+        border-left: none;
+    }
+
+    .doctor-prescription-medicine-details {
         flex-direction: column;
         gap: 6px;
     }
+
+    /* ========================================
+   STAFF PROFILE
+======================================== */
+
+.staff-profile-page {
+    padding-bottom: 30px;
+}
+
+.staff-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    margin-top: 4px;
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    background: #F8FBFF;
+}
+
+.staff-profile-avatar {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #EAF4FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.staff-profile-information {
+    min-width: 0;
+}
+
+.staff-profile-label,
+.staff-profile-section-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #0757B5;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.staff-profile-information h2 {
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: 21px;
+}
+
+.staff-profile-information p {
+    margin: 0;
+    color: #78818F;
+    font-size: 12px;
+}
+
+.staff-profile-section {
+    margin-top: 28px;
+}
+
+.staff-profile-section-heading {
+    margin-bottom: 15px;
+}
+
+.staff-profile-section-heading h3 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+}
+
+.staff-profile-section-heading p {
+    margin: 5px 0 0;
+    color: #78818F;
+    font-size: 12px;
+}
+
+.staff-profile-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+}
+
+.staff-profile-info-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid #EDF0F3;
+}
+
+.staff-profile-info-item:nth-child(odd) {
+    border-right: 1px solid #EDF0F3;
+}
+
+.staff-profile-info-item:nth-last-child(-n + 2) {
+    border-bottom: none;
+}
+
+.staff-profile-info-item span {
+    display: block;
+    margin-bottom: 6px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.staff-profile-info-item strong {
+    display: block;
+    color: #172033;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.staff-profile-status {
+    color: #16834B !important;
+}
+
+.staff-profile-footer {
+    margin-top: 30px;
+}
+
+@media (max-width: 700px) {
+
+    .staff-profile-header {
+        align-items: flex-start;
+    }
+
+    .staff-profile-information-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-profile-info-item,
+    .staff-profile-info-item:nth-child(odd),
+    .staff-profile-info-item:nth-last-child(-n + 2) {
+        border-right: none;
+        border-bottom: 1px solid #EDF0F3;
+    }
+
+    .staff-profile-info-item:last-child {
+        border-bottom: none;
+    }
+/* ========================================
+   ADMIN USERS
+======================================== */
+
+.admin-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.admin-user-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+}
+
+.admin-user-card:hover {
+    border-color: #BFD5EA;
+    box-shadow: 0 5px 16px rgba(30, 70, 110, 0.07);
+    transform: translateY(-1px);
+}
+
+.admin-user-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.admin-user-information {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-user-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #0757B5;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-user-information h4 {
+    margin: 0 0 8px;
+    color: #172033;
+    font-size: 15px;
+}
+
+.admin-user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+}
+
+.admin-user-meta span {
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-user-meta strong {
+    color: #4C5665;
+}
+
+.admin-user-action {
+    flex-shrink: 0;
+}
+
+.admin-user-action .primary-button {
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+
+    .admin-user-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-user-information {
+        width: calc(100% - 64px);
+    }
+
+    .admin-user-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .admin-user-action {
+        width: 100%;
+        margin-left: 64px;
+    }
+
+}
+
+/* ========================================
+   ADMIN USER PROFILE
+======================================== */
+
+.admin-user-profile-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 30px;
+}
+
+.admin-user-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: #F8FBFF;
+}
+
+.admin-user-profile-avatar {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #EAF4FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.admin-user-profile-information {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-user-profile-label,
+.admin-user-section-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #0757B5;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-user-profile-information h2 {
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: 21px;
+}
+
+.admin-user-profile-information p {
+    margin: 0;
+    color: #78818F;
+    font-size: 12px;
+}
+
+.admin-user-profile-action {
+    margin-left: auto;
+}
+
+.admin-user-section-card {
+    padding: 24px 26px;
+}
+
+.admin-user-section-heading {
+    margin-bottom: 16px;
+}
+
+.admin-user-section-heading h3 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+}
+
+.admin-user-section-heading p {
+    margin: 5px 0 0;
+    color: #78818F;
+    font-size: 12px;
+}
+
+.admin-user-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+}
+
+.admin-user-info-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid #EDF0F3;
+}
+
+.admin-user-info-item:nth-child(odd) {
+    border-right: 1px solid #EDF0F3;
+}
+
+.admin-user-info-item:nth-last-child(-n + 2) {
+    border-bottom: none;
+}
+
+.admin-user-info-item span {
+    display: block;
+    margin-bottom: 6px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.admin-user-info-item strong {
+    display: block;
+    color: #172033;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.admin-user-profile-footer {
+    padding-bottom: 5px;
+}
+
+@media (max-width: 700px) {
+
+    .admin-user-profile-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-user-profile-action {
+        width: 100%;
+        margin-left: 84px;
+    }
+
+    .admin-user-information-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-user-info-item,
+    .admin-user-info-item:nth-child(odd),
+    .admin-user-info-item:nth-last-child(-n + 2) {
+        border-right: none;
+        border-bottom: 1px solid #EDF0F3;
+    }
+
+    .admin-user-info-item:last-child {
+        border-bottom: none;
+    }
+
+    /* ========================================
+   ADMIN HEALTH CENTERS
+======================================== */
+
+.admin-health-centers-page {
+    padding-bottom: 30px;
+}
+
+.admin-health-center-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.admin-health-center-card {
+    padding: 20px;
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+}
+
+.admin-health-center-card:hover {
+    border-color: #BFD5EA;
+    box-shadow: 0 6px 18px rgba(30, 70, 110, 0.07);
+}
+
+.admin-health-center-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #EDF0F3;
+}
+
+.admin-health-center-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.admin-health-center-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-health-center-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #0757B5;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-health-center-title h4 {
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 16px;
+}
+
+.admin-health-center-title p {
+    margin: 0;
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-health-center-status {
+    margin-left: auto;
+}
+
+.admin-health-center-information {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.admin-health-center-information > div {
+    padding: 15px 16px 3px 0;
+    border-right: 1px solid #F0F3F6;
+}
+
+.admin-health-center-information > div:not(:first-child) {
+    padding-left: 16px;
+}
+
+.admin-health-center-information > div:last-child {
+    border-right: none;
+}
+
+.admin-health-center-information span {
+    display: block;
+    margin-bottom: 6px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.admin-health-center-information strong {
+    display: block;
+    color: #172033;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.admin-health-center-footer {
+    margin-top: 16px;
+}
+
+.admin-health-center-footer .primary-button {
+    display: inline-block;
+}
+
+@media (max-width: 700px) {
+
+    .admin-health-center-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-health-center-status {
+        width: 100%;
+        margin-left: 68px;
+    }
+
+    .admin-health-center-information {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-health-center-information > div {
+        border-right: none;
+        border-bottom: 1px solid #F0F3F6;
+    }
+
+    .admin-health-center-information > div:not(:first-child) {
+        padding-left: 0;
+    }
+
+    .admin-health-center-information > div:nth-child(odd) {
+        border-right: 1px solid #F0F3F6;
+    }
+
+    /* ========================================
+   ADMIN HEALTH CENTER DETAILS
+======================================== */
+
+.admin-health-center-details-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 30px;
+}
+
+.admin-health-center-profile-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.admin-health-center-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 26px;
+    border-bottom: 1px solid #E1E8F0;
+}
+
+.admin-health-center-profile-icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.admin-health-center-profile-information {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-health-center-profile-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #0757B5;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-health-center-profile-information h2 {
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 22px;
+}
+
+.admin-health-center-profile-information p {
+    margin: 0;
+    color: #78818F;
+    font-size: 12px;
+}
+
+.admin-health-center-profile-status {
+    margin-left: auto;
+}
+
+.admin-health-center-summary {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.admin-health-center-summary > div {
+    padding: 18px 20px;
+    border-right: 1px solid #E8EDF2;
+}
+
+.admin-health-center-summary > div:last-child {
+    border-right: none;
+}
+
+.admin-health-center-summary span,
+.admin-health-center-appointment-information span,
+.admin-health-center-medicine-details span {
+    display: block;
+    margin-bottom: 6px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.admin-health-center-summary strong,
+.admin-health-center-appointment-information strong,
+.admin-health-center-medicine-details strong {
+    display: block;
+    color: #172033;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.admin-health-center-section-card {
+    padding: 24px 26px;
+}
+
+.admin-health-center-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.admin-health-center-section-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.admin-health-center-section-heading span {
+    display: block;
+    margin-bottom: 3px;
+    color: #0757B5;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-health-center-section-heading h3 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+}
+
+.admin-health-center-section-heading p {
+    margin: 4px 0 0;
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-health-center-resource-list,
+.admin-health-center-appointment-list,
+.admin-health-center-medicine-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-health-center-resource-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 16px;
+    border: 1px solid #DCE6F0;
+    border-radius: 11px;
+    background: #FBFDFF;
+}
+
+.admin-health-center-resource-avatar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.admin-health-center-resource-information h4 {
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 13px;
+}
+
+.admin-health-center-resource-information p {
+    margin: 0;
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-health-center-empty-state {
+    padding: 28px 20px;
+    border: 1px dashed #D5DFE9;
+    border-radius: 11px;
+    background: #FBFDFF;
+    text-align: center;
+}
+
+.admin-health-center-empty-state > div {
+    margin-bottom: 8px;
+    font-size: 24px;
+}
+
+.admin-health-center-empty-state h4 {
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: 13px;
+}
+
+.admin-health-center-empty-state p {
+    margin: 0;
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-health-center-appointment-card {
+    padding: 18px;
+    border: 1px solid #DCE6F0;
+    border-radius: 11px;
+    background: #FFFFFF;
+}
+
+.admin-health-center-appointment-patient {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #EDF0F3;
+}
+
+.admin-health-center-appointment-patient span {
+    color: #0757B5;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-health-center-appointment-patient h4 {
+    margin: 4px 0 0;
+    color: #172033;
+    font-size: 14px;
+}
+
+.admin-health-center-appointment-information {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 4px;
+}
+
+.admin-health-center-appointment-information > div {
+    padding: 14px 16px 2px 0;
+    border-right: 1px solid #EDF0F3;
+}
+
+.admin-health-center-appointment-information > div:not(:first-child) {
+    padding-left: 16px;
+}
+
+.admin-health-center-appointment-information > div:last-child {
+    border-right: none;
+}
+
+.admin-health-center-medicine-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid #DCE6F0;
+    border-radius: 11px;
+    background: #FBFDFF;
+}
+
+.admin-health-center-medicine-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #FFF4E7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.admin-health-center-medicine-information {
+    flex: 1;
+}
+
+.admin-health-center-medicine-information h4 {
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 13px;
+}
+
+.admin-health-center-medicine-information p {
+    margin: 0;
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-health-center-medicine-details {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.admin-health-center-medicine-details > div {
+    min-width: 100px;
+}
+
+.admin-health-center-footer {
+    padding-bottom: 5px;
+}
+
+@media (max-width: 700px) {
+
+    .admin-health-center-profile-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-health-center-profile-status {
+        width: 100%;
+        margin-left: 82px;
+    }
+
+    .admin-health-center-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-health-center-summary > div {
+        border-right: none;
+        border-bottom: 1px solid #E8EDF2;
+    }
+
+    .admin-health-center-summary > div:nth-child(odd) {
+        border-right: 1px solid #E8EDF2;
+    }
+
+    .admin-health-center-appointment-information {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-health-center-appointment-information > div {
+        border-right: none;
+        border-bottom: 1px solid #EDF0F3;
+    }
+
+    .admin-health-center-appointment-information > div:not(:first-child) {
+        padding-left: 0;
+    }
+
+    .admin-health-center-appointment-information > div:nth-child(odd) {
+        border-right: 1px solid #EDF0F3;
+    }
+
+    .admin-health-center-medicine-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-health-center-medicine-information {
+        width: calc(100% - 58px);
+    }
+
+    .admin-health-center-medicine-details {
+        width: 100%;
+        margin-left: 58px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+}
+}
+}
 }
 }

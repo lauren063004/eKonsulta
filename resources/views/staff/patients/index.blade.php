@@ -12,7 +12,7 @@
 
         <div>
             <h3>Registered Patients</h3>
-            <p>Manage patients registered in the health center</p>
+            <p>Patients registered in the health center</p>
         </div>
 
         <a href="{{ route('staff.dashboard') }}">
@@ -30,7 +30,7 @@
                 <div class="patient-card">
 
                     <div class="patient-avatar">
-                        👤
+                        &#128100;
                     </div>
 
                     <div class="patient-information">
@@ -88,7 +88,7 @@
         <div class="empty-state">
 
             <div class="empty-icon">
-                👥
+                &#128100;
             </div>
 
             <h4>No registered patients</h4>

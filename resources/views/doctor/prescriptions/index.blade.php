@@ -6,137 +6,169 @@
 
 @section('content')
 
-    <div class="dashboard-card">
+<div class="dashboard-card doctor-prescriptions-page">
 
-        <div class="card-header">
-            <div>
-                <h3>My Prescriptions</h3>
-                <p>Prescriptions issued to your patients</p>
-            </div>
-
-            <a href="{{ route('doctor.dashboard') }}">
-                Back to Dashboard
-            </a>
+    <div class="card-header">
+        <div>
+            <h3>My Prescriptions</h3>
+            <p>Prescriptions issued to your patients</p>
         </div>
 
+        <a href="{{ route('doctor.dashboard') }}">
+            Back to Dashboard
+        </a>
+    </div>
 
-        @if($prescriptions->count())
+    @if($prescriptions->count())
 
-            <div class="medical-records-list">
+        <div class="doctor-prescription-list">
 
-                @foreach($prescriptions as $prescription)
+            @foreach($prescriptions as $prescription)
 
-                    <div class="appointment-preview">
+                <div class="doctor-prescription-card">
 
-                        <div class="appointment-date">
-                            <strong>💊</strong>
+                    <div class="doctor-prescription-header">
 
-                            <span>
-                                {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('M d') }}
-                            </span>
+                        <div class="doctor-prescription-date">
+
+                            <div class="doctor-prescription-icon">
+                                &#128138;
+                            </div>
+
+                            <div>
+                                <span class="doctor-prescription-label">
+                                    PRESCRIPTION
+                                </span>
+
+                                <h4>
+                                    {{ $prescription->patient->user->name ?? 'Patient' }}
+                                </h4>
+
+                                <p>
+                                    {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('F d, Y') }}
+                                </p>
+                            </div>
+
                         </div>
 
+                        <span class="appointment-status">
+                            {{ ucfirst($prescription->status) }}
+                        </span>
 
-                        <div class="appointment-details">
+                    </div>
 
-                            <h4>
-                                {{ $prescription->patient->user->name ?? 'Patient' }}
-                            </h4>
+                    <div class="doctor-prescription-information">
 
-                            <p>
-                                <strong>Prescription No:</strong>
+                        <div>
+                            <span>Prescription No.</span>
+                            <strong>
                                 {{ $prescription->prescription_number }}
-                            </p>
+                            </strong>
+                        </div>
 
-                            <p>
-                                <strong>Date:</strong>
+                        <div>
+                            <span>Date Issued</span>
+                            <strong>
                                 {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('F d, Y') }}
-                            </p>
+                            </strong>
+                        </div>
 
+                    </div>
 
-                            @if($prescription->items->count())
+                    @if($prescription->items->count())
 
-                                <div style="margin-top: 10px;">
+                        <div class="doctor-prescription-medicines">
 
-                                    <strong>Medicines:</strong>
+                            <div class="doctor-prescription-section-title">
+                                <span>MEDICATIONS</span>
+                                <strong>Prescribed Medicines</strong>
+                            </div>
 
-                                    @foreach($prescription->items as $item)
+                            <div class="doctor-prescription-items">
 
-                                        <div style="margin-top: 8px;">
+                                @foreach($prescription->items as $item)
 
+                                    <div class="doctor-prescription-item">
+
+                                        <div class="doctor-prescription-medicine-name">
                                             <strong>
                                                 {{ $item->medicine->name ?? 'Medicine' }}
                                             </strong>
+                                        </div>
 
-                                            <br>
+                                        <div class="doctor-prescription-medicine-details">
 
                                             <span>
+                                                <strong>Dosage:</strong>
                                                 {{ $item->dosage }}
-                                                —
+                                            </span>
+
+                                            <span>
+                                                <strong>Frequency:</strong>
                                                 {{ $item->frequency }}
-                                                —
+                                            </span>
+
+                                            <span>
+                                                <strong>Duration:</strong>
                                                 {{ $item->duration }}
                                             </span>
 
-                                            <br>
-
                                             <span>
-                                                Quantity:
+                                                <strong>Quantity:</strong>
                                                 {{ $item->quantity }}
                                             </span>
 
                                         </div>
 
-                                    @endforeach
+                                    </div>
 
-                                </div>
+                                @endforeach
 
-                            @endif
-
-
-                            @if($prescription->instructions)
-
-                                <p style="margin-top: 10px;">
-                                    <strong>Instructions:</strong>
-                                    {{ $prescription->instructions }}
-                                </p>
-
-                            @endif
-
-
-                            <span class="appointment-status">
-                                {{ ucfirst($prescription->status) }}
-                            </span>
+                            </div>
 
                         </div>
 
-                    </div>
+                    @endif
 
-                    <hr>
+                    @if($prescription->instructions)
 
-                @endforeach
+                        <div class="doctor-prescription-instructions">
 
-            </div>
+                            <span>INSTRUCTIONS</span>
 
-        @else
+                            <p>
+                                {{ $prescription->instructions }}
+                            </p>
 
-            <div class="empty-state">
+                        </div>
 
-                <div class="empty-icon">
-                    💊
+                    @endif
+
                 </div>
 
-                <h4>No prescriptions yet</h4>
+            @endforeach
 
-                <p>
-                    Prescriptions you create for your patients
-                    will appear here.
-                </p>
+        </div>
 
+    @else
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                &#128138;
             </div>
 
-        @endif
+            <h4>No prescriptions yet</h4>
 
-    </div>
+            <p>
+                Prescriptions you create for your patients
+                will appear here.
+            </p>
+
+        </div>
+
+    @endif
+
+</div>
 
 @endsection

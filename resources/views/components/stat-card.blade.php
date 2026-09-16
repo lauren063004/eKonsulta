@@ -1,7 +1,7 @@
 <div class="stat-card">
 
     <div class="stat-icon {{ $color ?? '' }}">
-        {{ $icon }}
+       {!! $icon !!}
     </div>
 
     <div class="stat-information">
