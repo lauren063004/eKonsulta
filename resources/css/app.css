@@ -2733,13 +2733,13 @@ button {
         padding: 14px 0;
         border-left: none !important;
     }
+}
     /* ========================================
    DOCTOR PATIENT PROFILE
 ======================================== */
 
 .patient-profile-page {
     padding-bottom: 30px;
-}
 }
 
 .patient-profile-header {
@@ -3233,7 +3233,7 @@ button {
         flex-direction: column;
         gap: 6px;
     }
-
+}
     /* ========================================
    STAFF PROFILE
 ======================================== */
@@ -3377,6 +3377,7 @@ button {
     .staff-profile-info-item:last-child {
         border-bottom: none;
     }
+}
 /* ========================================
    ADMIN USERS
 ======================================== */
@@ -3633,6 +3634,7 @@ button {
     .admin-user-info-item:last-child {
         border-bottom: none;
     }
+}
 
     /* ========================================
    ADMIN HEALTH CENTERS
@@ -3782,6 +3784,7 @@ button {
     .admin-health-center-information > div:nth-child(odd) {
         border-right: 1px solid #F0F3F6;
     }
+}
 
     /* ========================================
    ADMIN HEALTH CENTER DETAILS
@@ -4090,7 +4093,11 @@ button {
 }
 
 .admin-health-center-footer {
-    padding-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
 }
 
 @media (max-width: 700px) {
@@ -4152,8 +4159,255 @@ button {
         gap: 10px;
     }
 
+    /* ========================================
+   ADMIN USER STATUS
+======================================== */
+
+.user-status-badge {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
 }
+
+.user-status-badge.active {
+    background: #E8F7EE;
+    color: #218739;
 }
+
+.user-status-badge.inactive {
+    background: #FDECEC;
+    color: #C43D3D;
 }
+
+.admin-user-status-form {
+    margin: 8px 0 0;
+}
+
+.status-button {
+    display: inline-block;
+    width: 100%;
+    padding: 9px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-button.deactivate {
+    background: #FFF4F4;
+    border-color: #F1CACA;
+    color: #C43D3D;
+}
+
+.status-button.deactivate:hover {
+    background: #FDECEC;
+    border-color: #E8AFAF;
+}
+
+.status-button.activate {
+    background: #E8F7EE;
+    border-color: #BFE2C9;
+    color: #218739;
+}
+
+.status-button.activate:hover {
+    background: #DDF2E4;
+    border-color: #A9D5B5;
+}
+
+.current-admin-label {
+    display: block;
+    margin-top: 10px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ========================================
+   ADMIN USER MANAGEMENT
+======================================== */
+
+.admin-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.admin-user-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid #DCE6F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+}
+
+.admin-user-card:hover {
+    border-color: #BFD5EA;
+    box-shadow: 0 5px 16px rgba(30, 70, 110, 0.07);
+    transform: translateY(-1px);
+}
+
+.admin-user-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #EEF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.admin-user-information {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-user-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #0757B5;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.admin-user-information h4 {
+    margin: 0 0 8px;
+    color: #172033;
+    font-size: 15px;
+}
+
+.admin-user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+}
+
+.admin-user-meta span {
+    color: #78818F;
+    font-size: 11px;
+}
+
+.admin-user-meta strong {
+    color: #4C5665;
+}
+
+.admin-user-action {
+    flex-shrink: 0;
+    width: 130px;
+}
+
+.admin-user-action .primary-button {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.admin-user-status-form {
+    margin: 8px 0 0;
+}
+
+.status-button {
+    display: block;
+    width: 100%;
+    padding: 9px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-button.deactivate {
+    background: #FFF4F4;
+    border-color: #F1CACA;
+    color: #C43D3D;
+}
+
+.status-button.deactivate:hover {
+    background: #FDECEC;
+    border-color: #E8AFAF;
+}
+
+.status-button.activate {
+    background: #E8F7EE;
+    border-color: #BFE2C9;
+    color: #218739;
+}
+
+.status-button.activate:hover {
+    background: #DDF2E4;
+    border-color: #A9D5B5;
+}
+
+.user-status-badge {
+    display: inline-block !important;
+    width: auto !important;
+    padding: 4px 9px !important;
+    border-radius: 999px;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.user-status-badge.active {
+    background: #E8F7EE;
+    color: #218739 !important;
+}
+
+.user-status-badge.inactive {
+    background: #FDECEC;
+    color: #C43D3D !important;
+}
+
+.current-admin-label {
+    display: block;
+    margin-top: 10px;
+    color: #78818F;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Admin User Management - Mobile */
+
+@media (max-width: 700px) {
+
+    .admin-user-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .admin-user-information {
+        width: calc(100% - 64px);
+    }
+
+    .admin-user-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .admin-user-action {
+        width: 100%;
+        margin-left: 64px;
+    }
 }
 }

@@ -25,54 +25,75 @@
 
         <div class="admin-user-list">
 
-            @foreach($users as $user)
+       @foreach($users as $user)
+    <div class="admin-user-card">
 
-                <div class="admin-user-card">
+        <div class="admin-user-avatar">
+            &#128100;
+        </div>
 
-                    <div class="admin-user-avatar">
-                        &#128100;
-                    </div>
+        <div class="admin-user-information">
 
-                    <div class="admin-user-information">
+            <span class="admin-user-label">
+                {{ strtoupper($user->role) }}
+            </span>
 
-                        <span class="admin-user-label">
-                            {{ strtoupper($user->role) }}
-                        </span>
+            <h4>{{ $user->name }}</h4>
 
-                        <h4>
-                            {{ $user->name }}
-                        </h4>
+            <div class="admin-user-meta">
+                <span>
+                    <strong>Email:</strong> {{ $user->email }}
+                </span>
 
-                        <div class="admin-user-meta">
+                <span>
+                    <strong>Role:</strong> {{ ucfirst($user->role) }}
+                </span>
 
-                            <span>
-                                <strong>Email:</strong>
-                                {{ $user->email }}
-                            </span>
+                <span>
+                    <strong>Status:</strong>
+                    <span class="user-status-badge {{ $user->status === 'active' ? 'active' : 'inactive' }}">
+                        {{ ucfirst($user->status) }}
+                    </span>
+                </span>
+            </div>
 
-                            <span>
-                                <strong>Role:</strong>
-                                {{ ucfirst($user->role) }}
-                            </span>
+        </div>
 
-                        </div>
+        <div class="admin-user-action">
 
-                    </div>
+            <a
+                href="{{ route('admin.users.show', $user) }}"
+                class="primary-button"
+            >
+                View Details
+            </a>
 
-                    <div class="admin-user-action">
+            @if($user->id !== auth()->id())
+                <form
+                    method="POST"
+                    action="{{ route('admin.users.toggle-status', $user) }}"
+                    class="admin-user-status-form"
+                >
+                    @csrf
+                    @method('PATCH')
 
-                        <a
-                            href="{{ route('admin.users.show', $user) }}"
-                            class="primary-button"
-                        >
-                            View Details
-                        </a>
+                    <button
+                        type="submit"
+                        class="status-button {{ $user->status === 'active' ? 'deactivate' : 'activate' }}"
+                    >
+                        {{ $user->status === 'active' ? 'Deactivate' : 'Activate' }}
+                    </button>
+                </form>
+            @else
+                <span class="current-admin-label">
+                    Current Account
+                </span>
+            @endif
 
-                    </div>
+        </div>
 
-                </div>
-
-            @endforeach
+    </div>
+@endforeach
 
         </div>
 

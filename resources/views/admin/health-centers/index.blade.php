@@ -101,16 +101,32 @@
                     </div>
 
 
-                    <div class="admin-health-center-footer">
+                 <div class="admin-health-center-footer">
 
-                        <a
-                            href="{{ route('admin.health-centers.show', $healthCenter) }}"
-                            class="primary-button"
-                        >
-                            View Details
-                        </a>
+    <a
+        href="{{ route('admin.health-centers.show', $healthCenter) }}"
+        class="primary-button"
+    >
+        View Details
+    </a>
 
-                    </div>
+    <form
+        method="POST"
+        action="{{ route('admin.health-centers.toggle-status', $healthCenter) }}"
+        class="admin-health-center-status-form"
+    >
+        @csrf
+        @method('PATCH')
+
+        <button
+            type="submit"
+            class="status-button {{ $healthCenter->status === 'active' ? 'deactivate' : 'activate' }}"
+        >
+            {{ $healthCenter->status === 'active' ? 'Deactivate' : 'Activate' }}
+        </button>
+    </form>
+
+</div>
 
                 </div>
 

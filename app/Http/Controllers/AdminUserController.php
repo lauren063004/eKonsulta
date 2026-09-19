@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class AdminUserController extends Controller
@@ -29,5 +30,32 @@ class AdminUserController extends Controller
         ]);
 
         return view('admin.users.show', compact('user'));
+    }
+
+    /**
+     * Toggle a user's active status.
+     */
+    public function toggleStatus(User $user): RedirectResponse
+    {
+        // Prevent the administrator from disabling their own account.
+        if ($user->id === auth()->id()) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'You cannot deactivate your own administrator account.');
+        }
+
+        $user->status = $user->status === 'active'
+            ? 'inactive'
+            : 'active';
+
+        $user->save();
+
+        $message = $user->status === 'active'
+            ? 'User account activated successfully.'
+            : 'User account deactivated successfully.';
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', $message);
     }
 }

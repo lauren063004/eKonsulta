@@ -32,29 +32,29 @@
 
     <section class="stats-grid">
 
-        <x-stat-card
-            icon="&#128101;"
-            label="Total Patients"
-            value="0"
-        />
+    <x-stat-card
+    icon="&#128101;"
+    label="Total Patients"
+    value="{{ $totalPatients }}"
+/>
 
-        <x-stat-card
-            icon="&#129658;"
-            label="Doctors"
-            value="0"
-        />
+<x-stat-card
+    icon="&#129658;"
+    label="Doctors"
+    value="{{ $totalDoctors }}"
+/>
 
-        <x-stat-card
-            icon="&#127973;"
-            label="Health Centers"
-            value="0"
-        />
+<x-stat-card
+    icon="&#127973;"
+    label="Health Centers"
+    value="{{ $totalHealthCenters }}"
+/>
 
-        <x-stat-card
-            icon="&#128197;"
-            label="Appointments"
-            value="0"
-        />
+<x-stat-card
+    icon="&#128197;"
+    label="Appointments"
+    value="{{ $totalAppointments }}"
+/>
 
     </section>
 

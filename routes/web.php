@@ -20,7 +20,7 @@ use App\Http\Controllers\PatientProfileController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminHealthCenterController;
 use App\Http\Controllers\StaffProfileController;
-
+use App\Http\Controllers\AdminDashboardController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -70,11 +70,14 @@ Route::middleware(['auth', 'role:admin'])
 
 
 
-      Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+   Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+    ->name('dashboard');
+
 Route::get('/users', [AdminUserController::class, 'index'])
     ->name('users.index');
+
+    Route::patch('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])
+    ->name('users.toggle-status');
 
 Route::get('/users/{user}', [AdminUserController::class, 'show'])
     ->name('users.show');
@@ -85,6 +88,9 @@ Route::get('/health-centers', [AdminHealthCenterController::class, 'index'])
 Route::get('/health-centers/{healthCenter}', [AdminHealthCenterController::class, 'show'])
     ->name('health-centers.show');
 
+
+Route::patch('/health-centers/{healthCenter}/toggle-status', [AdminHealthCenterController::class, 'toggleStatus'])
+    ->name('health-centers.toggle-status');
     });
 
 

@@ -29,27 +29,40 @@ class AuthController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+ public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
 
-        $remember = $request->boolean('remember');
+    $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
+    if (Auth::attempt($credentials, $remember)) {
 
-            return $this->redirectByRole(Auth::user());
+        $user = Auth::user();
+
+        if ($user->status !== 'active') {
+            Auth::logout();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Your account has been deactivated. Please contact the administrator.',
+                ])
+                ->onlyInput('email');
         }
 
-        return back()
-            ->withErrors([
-                'email' => 'The provided credentials are incorrect.',
-            ])
-            ->onlyInput('email');
+        $request->session()->regenerate();
+
+        return $this->redirectByRole($user);
     }
+
+    return back()
+        ->withErrors([
+            'email' => 'The provided credentials are incorrect.',
+        ])
+        ->onlyInput('email');
+}
 
 
     /*

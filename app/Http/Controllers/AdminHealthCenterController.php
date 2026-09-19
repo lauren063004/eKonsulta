@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\HealthCenter;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class AdminHealthCenterController extends Controller
 {
@@ -40,5 +41,22 @@ class AdminHealthCenterController extends Controller
         return view('admin.health-centers.show', compact(
             'healthCenter'
         ));
+
     }
+    public function toggleStatus(HealthCenter $healthCenter): RedirectResponse
+{
+    $healthCenter->status = $healthCenter->status === 'active'
+        ? 'inactive'
+        : 'active';
+
+    $healthCenter->save();
+
+    $message = $healthCenter->status === 'active'
+        ? 'Health center activated successfully.'
+        : 'Health center deactivated successfully.';
+
+    return redirect()
+        ->route('admin.health-centers.index')
+        ->with('success', $message);
+}
 }
