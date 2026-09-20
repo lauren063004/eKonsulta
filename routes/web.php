@@ -21,6 +21,8 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminHealthCenterController;
 use App\Http\Controllers\StaffProfileController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\StaffPrescriptionController;
+use App\Http\Controllers\StaffAppointmentScheduleController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -192,6 +194,27 @@ Route::get('/consultations/{consultation}', [StaffConsultationController::class,
 
 Route::get('/profile', [StaffProfileController::class, 'show'])
     ->name('profile');
+
+    Route::get('/prescriptions', [StaffPrescriptionController::class, 'index'])
+    ->name('prescriptions.index');
+
+Route::get('/prescriptions/{prescription}', [StaffPrescriptionController::class, 'show'])
+    ->name('prescriptions.show');
+
+Route::patch('/prescriptions/{prescription}/release', [StaffPrescriptionController::class, 'release'])
+    ->name('prescriptions.release');
+    
+    Route::get('/appointment-schedules', [StaffAppointmentScheduleController::class, 'index'])
+    ->name('appointment-schedules.index');
+
+Route::get('/appointment-schedules/create', [StaffAppointmentScheduleController::class, 'create'])
+    ->name('appointment-schedules.create');
+
+Route::post('/appointment-schedules', [StaffAppointmentScheduleController::class, 'store'])
+    ->name('appointment-schedules.store');
+
+Route::delete('/appointment-schedules/{appointmentSchedule}', [StaffAppointmentScheduleController::class, 'destroy'])
+    ->name('appointment-schedules.destroy');
     });
 
 

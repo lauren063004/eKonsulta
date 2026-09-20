@@ -13,7 +13,6 @@
 
     </div>
 
-
     <nav class="sidebar-navigation">
 
         {{-- ============================= --}}
@@ -41,15 +40,6 @@
                 <span>📅</span>
                 <span>Appointments</span>
             </a>
-
-           <a
-<a
-    href="{{ route('staff.patients.index') }}"
-    class="nav-link {{ request()->is('staff/patients*') ? 'active' : '' }}"
->
-    <span>&#128101;</span>
-    <span>Patients</span>
-</a>
 
             <a
                 href="{{ route('patient.prescriptions.index') }}"
@@ -155,7 +145,8 @@
                 <span>Dashboard</span>
             </a>
 
-            <a href="{{ route('staff.profile') }}"
+            <a
+                href="{{ route('staff.profile') }}"
                 class="nav-link {{ request()->routeIs('staff.profile') ? 'active' : '' }}"
             >
                 <span>👤</span>
@@ -163,12 +154,12 @@
             </a>
 
             <a
-    href="{{ route('staff.patients.index') }}"
-    class="nav-link {{ request()->routeIs('staff.patients.*') ? 'active' : '' }}"
->
-    <span>&#128101;</span>
-    <span>Patients</span>
-</a>
+                href="{{ route('staff.patients.index') }}"
+                class="nav-link {{ request()->routeIs('staff.patients.*') ? 'active' : '' }}"
+            >
+                <span>👥</span>
+                <span>Patients</span>
+            </a>
 
             <a
                 href="{{ route('staff.consultations.index') }}"
@@ -184,6 +175,14 @@
             >
                 <span>🏥</span>
                 <span>Health Centers</span>
+            </a>
+
+            <a
+                href="{{ route('staff.prescriptions.index') }}"
+                class="nav-link {{ request()->routeIs('staff.prescriptions.*') ? 'active' : '' }}"
+            >
+                <span>💊</span>
+                <span>Prescriptions</span>
             </a>
 
         @endif
@@ -243,7 +242,9 @@
     </nav>
 
 
-    {{-- Bottom Sidebar --}}
+    {{-- ============================= --}}
+    {{-- BOTTOM SIDEBAR --}}
+    {{-- ============================= --}}
 
     <div class="sidebar-bottom">
 
