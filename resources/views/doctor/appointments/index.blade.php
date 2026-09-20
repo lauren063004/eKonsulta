@@ -140,20 +140,24 @@
 
                             </div>
 
-                        @elseif($appointment->status === 'completed')
+      @elseif($appointment->status === 'completed')
 
-                            <div class="doctor-appointment-actions">
+    @if(!$appointment->consultation->prescriptions->count())
 
-                                <a
-                                    href="{{ route('doctor.appointments.prescription.create', $appointment) }}"
-                                    class="primary-button"
-                                >
-                                    Create Prescription
-                                </a>
+        <div class="doctor-appointment-actions">
 
-                            </div>
+            <a
+                href="{{ route('doctor.appointments.prescription.create', $appointment) }}"
+                class="primary-button"
+            >
+                Create Prescription
+            </a>
 
-                        @endif
+        </div>
+
+    @endif
+
+@endif
 
                     </div>
 

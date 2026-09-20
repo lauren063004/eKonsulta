@@ -39,12 +39,19 @@
                     {{ $appointment->patient->user->name ?? 'Patient' }}
                 </h4>
 
-                @if($appointment->patient)
-                    <p>
-                        Patient No:
-                        {{ $appointment->patient->patient_number }}
-                    </p>
-                @endif
+           @if($appointment->patient)
+    <p>
+        Patient No:
+        {{ $appointment->patient->patient_number }}
+    </p>
+@endif
+
+@if($appointment->healthCenter)
+    <p>
+        🏥
+        {{ $appointment->healthCenter->name }}
+    </p>
+@endif
 
                 <p>
                     🕐

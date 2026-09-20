@@ -86,23 +86,23 @@
 
                             {{-- Doctor --}}
 
-                            @if($appointment->doctor && $appointment->doctor->user)
+                          @if($appointment->doctor && $appointment->doctor->user)
 
-                                <p>
-                                    👨‍⚕️
-                                     {{ $appointment->doctor->user->name }}
-                                </p>
+    <p>
+        👨‍⚕️
+        {{ $appointment->doctor->user->name }}
+    </p>
 
-                                @if($appointment->doctor->specialization)
+    @if($appointment->doctor->specialization)
 
-                                    <p>
-                                        🩺
-                                        {{ $appointment->doctor->specialization }}
-                                    </p>
+        <p>
+            🩺
+            {{ $appointment->doctor->specialization }}
+        </p>
 
-                                @endif
+    @endif
 
-                            @endif
+@endif
 
 
                             {{-- Health Center --}}

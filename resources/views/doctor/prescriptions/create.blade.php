@@ -8,7 +8,7 @@
 
 <div class="dashboard-card">
 
-```
+
 <div class="card-header">
     <div>
         <h3>Create Prescription</h3>
@@ -330,7 +330,7 @@
     </div>
 
 </form>
-```
+
 
 </div>
 
