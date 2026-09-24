@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Models\ActivityLog;
+
 
 class AuthController extends Controller
 {
@@ -52,9 +54,16 @@ class AuthController extends Controller
                 ->onlyInput('email');
         }
 
-        $request->session()->regenerate();
+       $request->session()->regenerate();
 
-        return $this->redirectByRole($user);
+ActivityLog::record(
+    $user->id,
+    'User Login',
+    'User logged into the system.',
+    $request->ip()
+);
+
+return $this->redirectByRole($user);
     }
 
     return back()
@@ -178,9 +187,16 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        $request->session()->regenerate();
+$request->session()->regenerate();
 
-        return redirect()->route('patient.dashboard');
+ActivityLog::record(
+    $user->id,
+    'Patient Registration',
+    'Patient account was registered successfully.',
+    $request->ip()
+);
+
+return redirect()->route('patient.dashboard');
     }
 
 
@@ -190,14 +206,25 @@ class AuthController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
+   public function logout(Request $request)
+{
+    $user = Auth::user();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login');
+    if ($user) {
+        ActivityLog::record(
+            $user->id,
+            'User Logout',
+            'User logged out of the system.',
+            $request->ip()
+        );
     }
+
+    Auth::logout();
+
+    $request->session()->invalidate();
+
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login');
+}
 }

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Appointment;
 use App\Models\AppointmentSchedule;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 
 class PatientAppointmentController extends Controller
 {
@@ -90,9 +92,11 @@ class PatientAppointmentController extends Controller
             abort(403, 'Patient record not found.');
         }
 
-        try {
+       $appointment = null;
 
-            DB::transaction(function () use ($validated, $patient) {
+try {
+
+    DB::transaction(function () use ($validated, $patient, &$appointment) {
 
                 $schedule = AppointmentSchedule::with('healthCenter')
                     ->lockForUpdate()
@@ -156,7 +160,7 @@ class PatientAppointmentController extends Controller
                     );
                 }
 
-                Appointment::create([
+               $appointment = Appointment::create([
                     'patient_id' => $patient->id,
                     'doctor_id' => $doctor->id,
                     'health_center_id' => $schedule->health_center_id,
@@ -169,7 +173,7 @@ class PatientAppointmentController extends Controller
                 ]);
             });
 
-        } catch (\RuntimeException $e) {
+              } catch (\RuntimeException $e) {
 
             return redirect()
                 ->back()
@@ -179,11 +183,20 @@ class PatientAppointmentController extends Controller
                 ]);
         }
 
+        ActivityLog::record(
+            Auth::id(),
+            'Appointment Booked',
+            'Patient booked appointment #' . $appointment->id .
+                ' at ' . $appointment->appointmentSchedule->healthCenter->name .
+                ' on ' . $appointment->appointment_date->format('F j, Y') .
+                ' at ' . $appointment->appointment_time->format('g:i A') . '.',
+            $request->ip()
+        );
+
         return redirect()
             ->route('patient.dashboard')
             ->with('success', 'Appointment booked successfully.');
     }
-
     public function cancel(Appointment $appointment)
     {
         $patient = auth()->user()->patient;
@@ -211,6 +224,13 @@ class PatientAppointmentController extends Controller
         $appointment->update([
             'status' => 'cancelled',
         ]);
+
+ActivityLog::record(
+    Auth::id(),
+    'Appointment Cancelled',
+    'Patient cancelled appointment #' . $appointment->id . '.',
+    request()->ip()
+);
 
         return redirect()
             ->route('patient.appointments.index')

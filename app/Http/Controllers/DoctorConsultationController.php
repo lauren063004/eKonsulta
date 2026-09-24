@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Appointment;
 use App\Models\Consultation;
 use Illuminate\Http\Request;
@@ -132,7 +133,7 @@ public function show(Consultation $consultation)
             'notes' => ['nullable', 'string', 'max:5000'],
         ]);
 
-        Consultation::create([
+    $consultation = Consultation::create([
             'appointment_id' => $appointment->id,
             'patient_id' => $appointment->patient_id,
             'doctor_id' => $doctor->id,
@@ -145,11 +146,19 @@ public function show(Consultation $consultation)
         ]);
 
         // Mark the appointment as completed.
-        $appointment->update([
-            'status' => 'completed',
-        ]);
+       $appointment->update([
+    'status' => 'completed',
+]);
 
-        return redirect()
+ActivityLog::record(
+    Auth::id(),
+    'Consultation Created',
+    'Doctor created consultation #' . $consultation->id .
+        ' for appointment #' . $appointment->id . '.',
+    $request->ip()
+);
+
+return redirect()
             ->route('doctor.appointments.index')
             ->with('success', 'Consultation recorded successfully.');
     }

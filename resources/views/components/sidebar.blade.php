@@ -160,7 +160,13 @@
                 <span>👥</span>
                 <span>Patients</span>
             </a>
-
+<a
+    href="{{ route('staff.appointment-schedules.index') }}"
+    class="nav-link {{ request()->routeIs('staff.appointment-schedules.*') ? 'active' : '' }}"
+>
+    <span>📅</span>
+    <span>Appointment Schedules</span>
+</a>
             <a
                 href="{{ route('staff.consultations.index') }}"
                 class="nav-link {{ request()->routeIs('staff.consultations.*') ? 'active' : '' }}"

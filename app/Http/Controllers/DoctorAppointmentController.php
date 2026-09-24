@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Appointment;
 use Illuminate\View\View;
 
@@ -55,11 +56,18 @@ class DoctorAppointmentController extends Controller
                 ->with('error', 'Only pending appointments can be approved.');
         }
 
-        $appointment->update([
-            'status' => 'approved',
-        ]);
+     $appointment->update([
+    'status' => 'approved',
+]);
 
-        return redirect()
+ActivityLog::record(
+    auth()->id(),
+    'Appointment Approved',
+    'Doctor approved appointment #' . $appointment->id . '.',
+    request()->ip()
+);
+
+return redirect()
             ->route('doctor.appointments.index')
             ->with('success', 'Appointment approved successfully.');
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Appointment;
 use App\Models\Medicine;
 use App\Models\Prescription;
@@ -119,13 +120,16 @@ public function index(): View
                 ]);
         }
 
-        DB::transaction(function () use (
-            $validated,
-            $consultation,
-            $appointment,
-            $doctor,
-            $medicine
-        ) {
+      $prescription = null;
+
+DB::transaction(function () use (
+    $validated,
+    $consultation,
+    $appointment,
+    $doctor,
+    $medicine,
+    &$prescription
+) {
             $prescription = Prescription::create([
                 'consultation_id' => $consultation->id,
                 'patient_id' => $appointment->patient_id,
@@ -135,6 +139,8 @@ public function index(): View
                 'instructions' => $validated['instructions'] ?? null,
                 'status' => 'active',
             ]);
+
+        
 
             $prescription->items()->create([
                 'medicine_id' => $medicine->id,
@@ -147,6 +153,14 @@ public function index(): View
 
             $medicine->decrement('stock_quantity', $validated['quantity']);
         });
+
+                ActivityLog::record(
+                    auth()->id(),
+                    'Prescription Created',
+                    'Doctor created prescription ' . $prescription->prescription_number .
+                        ' for patient #' . $appointment->patient_id . '.',
+                    $request->ip()
+                );
 
         return redirect()
             ->route('doctor.appointments.index')

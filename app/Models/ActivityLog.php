@@ -20,4 +20,18 @@ class ActivityLog extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function record(
+        int $userId,
+        string $action,
+        string $description,
+        ?string $ipAddress = null
+    ): self {
+        return self::create([
+            'user_id' => $userId,
+            'action' => $action,
+            'description' => $description,
+            'ip_address' => $ipAddress,
+        ]);
+    }
 }
