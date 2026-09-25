@@ -23,6 +23,7 @@ use App\Http\Controllers\StaffProfileController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\StaffPrescriptionController;
 use App\Http\Controllers\StaffAppointmentScheduleController;
+use App\Http\Controllers\AdminActivityLogController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -93,6 +94,10 @@ Route::get('/health-centers/{healthCenter}', [AdminHealthCenterController::class
 
 Route::patch('/health-centers/{healthCenter}/toggle-status', [AdminHealthCenterController::class, 'toggleStatus'])
     ->name('health-centers.toggle-status');
+
+    Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])
+    ->name('activity-logs.index');
+
     });
 
 

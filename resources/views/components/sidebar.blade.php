@@ -238,10 +238,13 @@
                 <span>Reports</span>
             </a>
 
-            <a href="#" class="nav-link">
-                <span>📋</span>
-                <span>Activity Logs</span>
-            </a>
+          <a
+    href="{{ route('admin.activity-logs.index') }}"
+    class="nav-link {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}"
+>
+    <span>📋</span>
+    <span>Activity Logs</span>
+</a>
 
         @endif
 
