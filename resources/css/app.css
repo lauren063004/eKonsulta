@@ -3786,9 +3786,115 @@ button {
     }
 }
 
-    /* ========================================
-   ADMIN HEALTH CENTER DETAILS
+   /* ========================================
+   ADMIN HEALTH CENTER FORMS
 ======================================== */
+
+.admin-health-center-form-page {
+    padding-bottom: 30px;
+}
+
+.admin-health-center-form {
+    margin-top: 20px;
+}
+
+.admin-health-center-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.admin-health-center-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.admin-health-center-form-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.admin-health-center-form-field label {
+    color: #172033;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.admin-health-center-form-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid #DCE6F0;
+    border-radius: 9px;
+    background: #FFFFFF;
+    color: #172033;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-health-center-form-field input::placeholder {
+    color: #A0A8B3;
+}
+
+.admin-health-center-form-field input:focus {
+    border-color: #0757B5;
+    box-shadow: 0 0 0 3px rgba(7, 87, 181, 0.08);
+}
+
+.admin-health-center-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #EDF0F3;
+}
+
+.form-error-box {
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    border: 1px solid #F0CACA;
+    border-radius: 9px;
+    background: #FFF6F6;
+    color: #A33A3A;
+    font-size: 12px;
+}
+
+.form-error-box strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.form-error-box ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+@media (max-width: 700px) {
+
+    .admin-health-center-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-health-center-form-field.full-width {
+        grid-column: auto;
+    }
+
+    .admin-health-center-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .admin-health-center-form-actions a,
+    .admin-health-center-form-actions button {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+}
 
 .admin-health-center-details-page {
     display: flex;

@@ -228,10 +228,13 @@
                 <span>Health Centers</span>
             </a>
 
-            <a href="#" class="nav-link">
-                <span>🩺</span>
-                <span>Doctors</span>
-            </a>
+            <a
+    href="{{ route('admin.doctors.index') }}"
+    class="nav-link {{ request()->routeIs('admin.doctors.*') ? 'active' : '' }}"
+>
+    <span>🩺</span>
+    <span>Doctors</span>
+</a>
 
             <a href="#" class="nav-link">
                 <span>📊</span>

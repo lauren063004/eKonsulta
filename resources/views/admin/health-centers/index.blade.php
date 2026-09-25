@@ -8,18 +8,32 @@
 
 <div class="dashboard-card admin-health-centers-page">
 
-    <div class="card-header">
+ <div class="card-header">
 
-        <div>
-            <h3>Health Centers</h3>
-            <p>Manage registered health centers and their information</p>
-        </div>
+    <div>
+        <h3>Health Centers</h3>
+        <p>Manage registered health centers and their information</p>
+    </div>
 
-        <a href="{{ route('admin.dashboard') }}">
+    <div class="admin-health-center-header-actions">
+
+        <a
+            href="{{ route('admin.dashboard') }}"
+            class="secondary-button"
+        >
             Back to Dashboard
         </a>
 
+        <a
+            href="{{ route('admin.health-centers.create') }}"
+            class="primary-button"
+        >
+            Add Health Center
+        </a>
+
     </div>
+
+</div>
 
     @if($healthCenters->count())
 
@@ -101,20 +115,32 @@
                     </div>
 
 
-                 <div class="admin-health-center-footer">
+      <div class="admin-health-center-footer">
 
-    <a
-        href="{{ route('admin.health-centers.show', $healthCenter) }}"
-        class="primary-button"
-    >
-        View Details
-    </a>
+    <div class="admin-health-center-footer-actions">
+
+        <a
+            href="{{ route('admin.health-centers.show', $healthCenter) }}"
+            class="primary-button"
+        >
+            View Details
+        </a>
+
+        <a
+            href="{{ route('admin.health-centers.edit', $healthCenter) }}"
+            class="secondary-button"
+        >
+            Edit
+        </a>
+
+    </div>
 
     <form
         method="POST"
         action="{{ route('admin.health-centers.toggle-status', $healthCenter) }}"
         class="admin-health-center-status-form"
     >
+
         @csrf
         @method('PATCH')
 
@@ -124,11 +150,10 @@
         >
             {{ $healthCenter->status === 'active' ? 'Deactivate' : 'Activate' }}
         </button>
+
     </form>
 
 </div>
-
-                </div>
 
             @endforeach
 

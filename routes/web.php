@@ -24,6 +24,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\StaffPrescriptionController;
 use App\Http\Controllers\StaffAppointmentScheduleController;
 use App\Http\Controllers\AdminActivityLogController;
+use App\Http\Controllers\AdminDoctorController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -88,12 +89,44 @@ Route::get('/users/{user}', [AdminUserController::class, 'show'])
 Route::get('/health-centers', [AdminHealthCenterController::class, 'index'])
     ->name('health-centers.index');
 
+Route::get('/health-centers/create', [AdminHealthCenterController::class, 'create'])
+    ->name('health-centers.create');
+
+Route::post('/health-centers', [AdminHealthCenterController::class, 'store'])
+    ->name('health-centers.store');
+
 Route::get('/health-centers/{healthCenter}', [AdminHealthCenterController::class, 'show'])
     ->name('health-centers.show');
 
+Route::get('/health-centers/{healthCenter}/edit', [AdminHealthCenterController::class, 'edit'])
+    ->name('health-centers.edit');
+
+Route::put('/health-centers/{healthCenter}', [AdminHealthCenterController::class, 'update'])
+    ->name('health-centers.update');
 
 Route::patch('/health-centers/{healthCenter}/toggle-status', [AdminHealthCenterController::class, 'toggleStatus'])
     ->name('health-centers.toggle-status');
+
+    Route::get('/doctors', [AdminDoctorController::class, 'index'])
+    ->name('doctors.index');
+
+Route::get('/doctors/create', [AdminDoctorController::class, 'create'])
+    ->name('doctors.create');
+
+Route::post('/doctors', [AdminDoctorController::class, 'store'])
+    ->name('doctors.store');
+
+Route::get('/doctors/{doctor}', [AdminDoctorController::class, 'show'])
+    ->name('doctors.show');
+
+Route::get('/doctors/{doctor}/edit', [AdminDoctorController::class, 'edit'])
+    ->name('doctors.edit');
+
+Route::put('/doctors/{doctor}', [AdminDoctorController::class, 'update'])
+    ->name('doctors.update');
+
+Route::patch('/doctors/{doctor}/toggle-status', [AdminDoctorController::class, 'toggleStatus'])
+    ->name('doctors.toggle-status');
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])
     ->name('activity-logs.index');
