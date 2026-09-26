@@ -25,6 +25,9 @@ use App\Http\Controllers\StaffPrescriptionController;
 use App\Http\Controllers\StaffAppointmentScheduleController;
 use App\Http\Controllers\AdminActivityLogController;
 use App\Http\Controllers\AdminDoctorController;
+use App\Http\Controllers\AdminStaffController;
+use App\Http\Controllers\AdminReportController;
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -130,6 +133,30 @@ Route::patch('/doctors/{doctor}/toggle-status', [AdminDoctorController::class, '
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])
     ->name('activity-logs.index');
+
+    Route::get('/reports', [AdminReportController::class, 'index'])
+    ->name('reports.index');
+
+    Route::get('/staff', [AdminStaffController::class, 'index'])
+    ->name('staff.index');
+
+Route::get('/staff/create', [AdminStaffController::class, 'create'])
+    ->name('staff.create');
+
+Route::post('/staff', [AdminStaffController::class, 'store'])
+    ->name('staff.store');
+
+Route::get('/staff/{staff}', [AdminStaffController::class, 'show'])
+    ->name('staff.show');
+
+Route::get('/staff/{staff}/edit', [AdminStaffController::class, 'edit'])
+    ->name('staff.edit');
+
+Route::put('/staff/{staff}', [AdminStaffController::class, 'update'])
+    ->name('staff.update');
+
+Route::patch('/staff/{staff}/toggle-status', [AdminStaffController::class, 'toggleStatus'])
+    ->name('staff.toggle-status');
 
     });
 

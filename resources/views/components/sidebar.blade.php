@@ -236,10 +236,21 @@
     <span>Doctors</span>
 </a>
 
-            <a href="#" class="nav-link">
-                <span>📊</span>
-                <span>Reports</span>
-            </a>
+<a
+    href="{{ route('admin.staff.index') }}"
+    class="nav-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}"
+>
+    <span>👤</span>
+    <span>Staff</span>
+</a>
+
+          <a
+    href="{{ route('admin.reports.index') }}"
+    class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
+>
+    <span>📊</span>
+    <span>Reports</span>
+</a>
 
           <a
     href="{{ route('admin.activity-logs.index') }}"
