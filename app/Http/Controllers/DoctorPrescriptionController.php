@@ -13,26 +13,27 @@ use Illuminate\View\View;
 class DoctorPrescriptionController extends Controller
 {
     /**
- * Display prescriptions created by the logged-in doctor.
- */
-public function index(): View
-{
-    $doctor = auth()->user()->doctor;
+     * Display prescriptions created by the logged-in doctor.
+     */
+    public function index(): View
+    {
+        $doctor = auth()->user()->doctor;
 
-    if (!$doctor) {
-        abort(403, 'Doctor record not found.');
+        if (!$doctor) {
+            abort(403, 'Doctor record not found.');
+        }
+
+        $prescriptions = Prescription::where('doctor_id', $doctor->id)
+            ->with([
+                'patient.user',
+                'items.medicine',
+            ])
+            ->latest('prescription_date')
+            ->get();
+
+        return view('doctor.prescriptions.index', compact('prescriptions'));
     }
 
-    $prescriptions = Prescription::where('doctor_id', $doctor->id)
-        ->with([
-            'patient.user',
-            'items.medicine',
-        ])
-        ->latest('prescription_date')
-        ->get();
-
-    return view('doctor.prescriptions.index', compact('prescriptions'));
-}
     /**
      * Show the prescription form for a completed consultation.
      */
@@ -60,8 +61,18 @@ public function index(): View
             abort(404, 'Consultation record not found.');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Medicines
+        |--------------------------------------------------------------------------
+        |
+        | Medicines are displayed as available prescription choices.
+        | The system does not automatically track or manage physical
+        | medicine inventory.
+        |
+        */
+
         $medicines = Medicine::where('status', 'active')
-            ->where('stock_quantity', '>', 0)
             ->orderBy('name')
             ->get();
 
@@ -108,28 +119,30 @@ public function index(): View
             'item_instructions' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Medicine
+        |--------------------------------------------------------------------------
+        |
+        | The selected medicine must exist and be active.
+        | Physical medicine stock is not checked or modified here.
+        |
+        */
+
         $medicine = Medicine::where('id', $validated['medicine_id'])
             ->where('status', 'active')
             ->firstOrFail();
 
-        if ($validated['quantity'] > $medicine->stock_quantity) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'quantity' => 'Not enough stock available for this medicine.'
-                ]);
-        }
+        $prescription = null;
 
-      $prescription = null;
-
-DB::transaction(function () use (
-    $validated,
-    $consultation,
-    $appointment,
-    $doctor,
-    $medicine,
-    &$prescription
-) {
+        DB::transaction(function () use (
+            $validated,
+            $consultation,
+            $appointment,
+            $doctor,
+            $medicine,
+            &$prescription
+        ) {
             $prescription = Prescription::create([
                 'consultation_id' => $consultation->id,
                 'patient_id' => $appointment->patient_id,
@@ -140,8 +153,6 @@ DB::transaction(function () use (
                 'status' => 'active',
             ]);
 
-        
-
             $prescription->items()->create([
                 'medicine_id' => $medicine->id,
                 'dosage' => $validated['dosage'],
@@ -150,17 +161,15 @@ DB::transaction(function () use (
                 'quantity' => $validated['quantity'],
                 'instructions' => $validated['item_instructions'] ?? null,
             ]);
-
-            $medicine->decrement('stock_quantity', $validated['quantity']);
         });
 
-                ActivityLog::record(
-                    auth()->id(),
-                    'Prescription Created',
-                    'Doctor created prescription ' . $prescription->prescription_number .
-                        ' for patient #' . $appointment->patient_id . '.',
-                    $request->ip()
-                );
+        ActivityLog::record(
+            auth()->id(),
+            'Prescription Created',
+            'Doctor created prescription ' . $prescription->prescription_number .
+                ' for patient #' . $appointment->patient_id . '.',
+            $request->ip()
+        );
 
         return redirect()
             ->route('doctor.appointments.index')

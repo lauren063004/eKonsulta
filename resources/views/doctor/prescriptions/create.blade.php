@@ -114,72 +114,75 @@
     </div>
 
 
-    {{-- Medicine --}}
 
-    <div class="form-group">
-
-        <label for="medicine_id">
-            Medicine
-        </label>
-
-        <select
-            id="medicine_id"
-            name="medicine_id"
-            required
-        >
-
-            <option value="">
-                -- Select Medicine --
-            </option>
-
-            @foreach($medicines as $medicine)
-
-                <option
-                    value="{{ $medicine->id }}"
-                    {{ old('medicine_id') == $medicine->id ? 'selected' : '' }}
-                >
-                    {{ $medicine->name }}
-                    - {{ $medicine->strength }}
-                    ({{ $medicine->stock_quantity }} {{ $medicine->unit }} available)
-                </option>
-
-            @endforeach
-
-        </select>
-
-        @error('medicine_id')
-            <small class="text-danger">
-                {{ $message }}
-            </small>
-        @enderror
-
-    </div>
 
 
     {{-- Dosage --}}
 
-    <div class="form-group">
+  {{-- Medicine --}}
 
-        <label for="dosage">
-            Dosage
-        </label>
+<div class="form-group">
 
-        <input
-            type="text"
-            id="dosage"
-            name="dosage"
-            value="{{ old('dosage') }}"
-            placeholder="Example: 1 tablet"
-            required
-        >
+    <label for="medicine_id">
+        Medicine
+    </label>
 
-        @error('dosage')
-            <small class="text-danger">
-                {{ $message }}
-            </small>
-        @enderror
+    <select
+        id="medicine_id"
+        name="medicine_id"
+        required
+    >
 
-    </div>
+        <option value="">
+            -- Select Medicine --
+        </option>
+
+        @foreach($medicines as $medicine)
+
+            <option
+                value="{{ $medicine->id }}"
+                {{ old('medicine_id') == $medicine->id ? 'selected' : '' }}
+            >
+                {{ $medicine->name }}
+                - {{ $medicine->strength }}
+            </option>
+
+        @endforeach
+
+    </select>
+
+    @error('medicine_id')
+        <small class="text-danger">
+            {{ $message }}
+        </small>
+    @enderror
+
+</div>
+
+{{-- Dosage --}}
+
+<div class="form-group">
+
+    <label for="dosage">
+        Dosage
+    </label>
+
+    <input
+        type="text"
+        id="dosage"
+        name="dosage"
+        value="{{ old('dosage') }}"
+        placeholder="Example: 500mg"
+        required
+    >
+
+    @error('dosage')
+        <small class="text-danger">
+            {{ $message }}
+        </small>
+    @enderror
+
+</div>
 
 
     {{-- Frequency --}}
@@ -300,9 +303,9 @@
         >{{ old('instructions') }}</textarea>
 
         @error('instructions')
-            <small class="text-danger">
-                {{ $message }}
-            </small>
+          <small class="text-danger">
+    {{ $message }}
+</small>
         @enderror
 
     </div>
