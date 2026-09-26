@@ -6,141 +6,235 @@
 
 @section('content')
 
-    <section class="welcome-banner">
+<section class="welcome-banner">
 
-        <div>
-            <span class="welcome-label">
-                e-Konsulta Administration
-            </span>
+    <div>
+        <span class="welcome-label">
+            e-Konsulta Administration
+        </span>
 
-            <h1>
-                Good day, {{ auth()->user()->name }}!
-            </h1>
+        <h1>
+            Good day, {{ auth()->user()->name }}!
+        </h1>
 
-            <p>
-                Monitor the city health system and manage
-                users, health centers, and system activities.
-            </p>
-        </div>
+        <p>
+            Monitor the city health system and manage
+            users, health centers, and system activities.
+        </p>
+    </div>
 
-        <div class="welcome-icon">
-            &#9881;
-        </div>
+    <div class="welcome-icon">
+        &#9881;
+    </div>
 
-    </section>
+</section>
 
 
-    <section class="stats-grid">
+<section class="stats-grid">
 
     <x-stat-card
-    icon="&#128101;"
-    label="Total Patients"
-    value="{{ $totalPatients }}"
-/>
+        icon="&#128101;"
+        label="Total Users"
+        value="{{ $totalUsers }}"
+    />
 
-<x-stat-card
-    icon="&#129658;"
-    label="Doctors"
-    value="{{ $totalDoctors }}"
-/>
+    <x-stat-card
+        icon="&#128101;"
+        label="Patients"
+        value="{{ $totalPatients }}"
+    />
 
-<x-stat-card
-    icon="&#127973;"
-    label="Health Centers"
-    value="{{ $totalHealthCenters }}"
-/>
+    <x-stat-card
+        icon="&#129658;"
+        label="Doctors"
+        value="{{ $totalDoctors }}"
+    />
 
-<x-stat-card
-    icon="&#128197;"
-    label="Appointments"
-    value="{{ $totalAppointments }}"
-/>
+    <x-stat-card
+        icon="&#128100;"
+        label="Staff"
+        value="{{ $totalStaff }}"
+    />
 
-    </section>
+    <x-stat-card
+        icon="&#127973;"
+        label="Health Centers"
+        value="{{ $totalHealthCenters }}"
+    />
+
+    <x-stat-card
+        icon="&#128197;"
+        label="Appointments"
+        value="{{ $totalAppointments }}"
+    />
+
+    <x-stat-card
+        icon="&#129658;"
+        label="Consultations"
+        value="{{ $totalConsultations }}"
+    />
+
+    <x-stat-card
+        icon="&#128138;"
+        label="Prescriptions"
+        value="{{ $totalPrescriptions }}"
+    />
+
+</section>
 
 
-    <div class="dashboard-grid">
+<div class="dashboard-grid">
 
-        <section class="dashboard-card">
+    {{-- Recent Activity --}}
+    <section class="dashboard-card">
 
-            <div class="card-header">
+        <div class="card-header">
 
-                <div>
-                    <h3>System Overview</h3>
-                    <p>e-Konsulta activity</p>
-                </div>
+            <div>
+                <h3>Recent Activity</h3>
+                <p>Latest actions performed in the system</p>
+            </div>
 
-                <a href="#">
-                    Reports
-                </a>
+            <a href="{{ route('admin.activity-logs.index') }}">
+                View All
+            </a>
+
+        </div>
+
+        @if($recentActivityLogs->count())
+
+            <div class="activity-list">
+
+                @foreach($recentActivityLogs as $log)
+
+                    <div class="activity-item">
+
+                        <div class="activity-icon">
+                            &#128221;
+                        </div>
+
+                        <div class="activity-information">
+
+                            <strong>
+                                {{ $log->action }}
+                            </strong>
+
+                            <p>
+                                {{ $log->description }}
+                            </p>
+
+                            <small>
+                                {{ $log->user?->name ?? 'Unknown User' }}
+                                ·
+                                {{ $log->created_at->format('M d, Y h:i A') }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                @endforeach
 
             </div>
+
+        @else
 
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    &#128202;
+                    &#128221;
                 </div>
 
-                <h4>Dashboard analytics</h4>
+                <h4>No recent activity</h4>
 
                 <p>
-                    System statistics and reports will appear here
-                    once transactions are recorded.
+                    System activity will appear here.
                 </p>
 
             </div>
 
-        </section>
+        @endif
+
+    </section>
 
 
-        <section class="dashboard-card">
+    {{-- Administration --}}
+    <section class="dashboard-card">
 
-            <div class="card-header">
+        <div class="card-header">
 
-                <div>
-                    <h3>Administration</h3>
-                    <p>System management</p>
-                </div>
-
+            <div>
+                <h3>Administration</h3>
+                <p>System management</p>
             </div>
 
-            <div class="quick-actions">
+        </div>
 
-                <a
-                    href="{{ route('admin.users.index') }}"
-                    class="quick-action"
-                >
-                    <span>&#128101;</span>
-                    <strong>User Management</strong>
-                    <small>Manage system users</small>
-                </a>
+        <div class="quick-actions">
 
-                <a
-                    href="{{ route('admin.health-centers.index') }}"
-                    class="quick-action"
-                >
-                    <span>&#127973;</span>
-                    <strong>Health Centers</strong>
-                    <small>Manage health centers</small>
-                </a>
+            <a
+                href="{{ route('admin.users.index') }}"
+                class="quick-action"
+            >
+                <span>&#128101;</span>
+                <strong>User Management</strong>
+                <small>Manage system users</small>
+            </a>
 
-                <a href="#" class="quick-action">
-                    <span>&#128202;</span>
-                    <strong>Reports</strong>
-                    <small>View system reports</small>
-                </a>
 
-                <a href="#" class="quick-action">
-                    <span>&#128203;</span>
-                    <strong>Activity Logs</strong>
-                    <small>Monitor system activity</small>
-                </a>
+            <a
+                href="{{ route('admin.health-centers.index') }}"
+                class="quick-action"
+            >
+                <span>&#127973;</span>
+                <strong>Health Centers</strong>
+                <small>Manage health centers</small>
+            </a>
 
-            </div>
 
-        </section>
+            <a
+                href="{{ route('admin.doctors.index') }}"
+                class="quick-action"
+            >
+                <span>&#129658;</span>
+                <strong>Doctors</strong>
+                <small>Manage doctors</small>
+            </a>
 
-    </div>
+
+            <a
+                href="{{ route('admin.staff.index') }}"
+                class="quick-action"
+            >
+                <span>&#128100;</span>
+                <strong>Staff</strong>
+                <small>Manage staff members</small>
+            </a>
+
+
+            <a
+                href="{{ route('admin.reports.index') }}"
+                class="quick-action"
+            >
+                <span>&#128202;</span>
+                <strong>Reports</strong>
+                <small>View system reports</small>
+            </a>
+
+
+            <a
+                href="{{ route('admin.activity-logs.index') }}"
+                class="quick-action"
+            >
+                <span>&#128203;</span>
+                <strong>Activity Logs</strong>
+                <small>Monitor system activity</small>
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
 
 @endsection
