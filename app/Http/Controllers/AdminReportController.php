@@ -17,13 +17,13 @@ class AdminReportController extends Controller
     public function index(): View
     {
         $totalUsers = User::count();
-        $patients = Patient::count();
-        $doctors = Doctor::count();
-        $staff = Staff::count();
-        $healthCenters = HealthCenter::count();
-        $appointments = Appointment::count();
-        $consultations = Consultation::count();
-        $prescriptions = Prescription::count();
+        $totalPatients = Patient::count();
+        $totalDoctors = Doctor::count();
+        $totalStaff = Staff::count();
+        $totalHealthCenters = HealthCenter::count();
+        $totalAppointments = Appointment::count();
+        $totalConsultations = Consultation::count();
+        $totalPrescriptions = Prescription::count();
 
         $activeUsers = User::where('status', 'active')->count();
         $inactiveUsers = User::where('status', 'inactive')->count();
@@ -38,13 +38,13 @@ class AdminReportController extends Controller
 
         return view('admin.reports.index', compact(
             'totalUsers',
-            'patients',
-            'doctors',
-            'staff',
-            'healthCenters',
-            'appointments',
-            'consultations',
-            'prescriptions',
+            'totalPatients',
+            'totalDoctors',
+            'totalStaff',
+            'totalHealthCenters',
+            'totalAppointments',
+            'totalConsultations',
+            'totalPrescriptions',
             'activeUsers',
             'inactiveUsers',
             'activeHealthCenters',

@@ -111,52 +111,6 @@
                             </a>
 
 
-                            {{-- APPROVE / CANCEL --}}
-
-                            @if($appointment->status === 'pending')
-
-                                <div style="margin-top: 10px;">
-
-                                    <form
-                                        action="{{ route('staff.appointments.approve', $appointment) }}"
-                                        method="POST"
-                                        style="display: inline;"
-                                    >
-
-                                        @csrf
-                                        @method('PATCH')
-
-                                        <button
-                                            type="submit"
-                                            class="primary-button"
-                                        >
-                                            Approve
-                                        </button>
-
-                                    </form>
-
-
-                                    <form
-                                        action="{{ route('staff.appointments.cancel', $appointment) }}"
-                                        method="POST"
-                                        style="display: inline;"
-                                    >
-
-                                        @csrf
-                                        @method('PATCH')
-
-                                        <button
-                                            type="submit"
-                                            class="primary-button"
-                                        >
-                                            Cancel
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            @endif
 
                         </div>
 

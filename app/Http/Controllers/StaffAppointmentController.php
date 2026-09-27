@@ -3,29 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class StaffAppointmentController extends Controller
 {
     /**
-     * Display all appointments for staff.
+     * Display appointments for the staff member's assigned
+     * health center.
      */
     public function index(): View
     {
+        $staff = auth()->user()->staff;
+
+        if (!$staff) {
+            abort(403, 'Staff record not found.');
+        }
+
         $appointments = Appointment::with([
             'patient.user',
             'doctor.user',
             'healthCenter',
             'consultation',
         ])
+            ->where(
+                'health_center_id',
+                $staff->health_center_id
+            )
             ->orderByDesc('appointment_date')
             ->orderBy('appointment_time')
             ->get();
 
-        return view('staff.appointments.index', compact(
-            'appointments'
-        ));
+        return view(
+            'staff.appointments.index',
+            compact('appointments')
+        );
     }
 
     /**
@@ -33,6 +44,23 @@ class StaffAppointmentController extends Controller
      */
     public function show(Appointment $appointment): View
     {
+        $staff = auth()->user()->staff;
+
+        if (!$staff) {
+            abort(403, 'Staff record not found.');
+        }
+
+        // Prevent staff from viewing another health center's appointment.
+        if (
+            $appointment->health_center_id
+            !== $staff->health_center_id
+        ) {
+            abort(
+                403,
+                'You are not authorized to view this appointment.'
+            );
+        }
+
         $appointment->load([
             'patient.user',
             'doctor.user',
@@ -41,48 +69,9 @@ class StaffAppointmentController extends Controller
             'consultation.prescriptions.items.medicine',
         ]);
 
-        return view('staff.appointments.show', compact(
-            'appointment'
-        ));
-    }
-
-    /**
-     * Approve a pending appointment.
-     */
-    public function approve(Appointment $appointment): RedirectResponse
-    {
-        if ($appointment->status !== 'pending') {
-            return redirect()
-                ->route('staff.appointments.index')
-                ->with('error', 'Only pending appointments can be approved.');
-        }
-
-        $appointment->update([
-            'status' => 'approved',
-        ]);
-
-        return redirect()
-            ->route('staff.appointments.index')
-            ->with('success', 'Appointment approved successfully.');
-    }
-
-    /**
-     * Cancel a pending appointment.
-     */
-    public function cancel(Appointment $appointment): RedirectResponse
-    {
-        if ($appointment->status !== 'pending') {
-            return redirect()
-                ->route('staff.appointments.index')
-                ->with('error', 'Only pending appointments can be cancelled.');
-        }
-
-        $appointment->update([
-            'status' => 'cancelled',
-        ]);
-
-        return redirect()
-            ->route('staff.appointments.index')
-            ->with('success', 'Appointment cancelled successfully.');
+        return view(
+            'staff.appointments.show',
+            compact('appointment')
+        );
     }
 }

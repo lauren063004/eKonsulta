@@ -246,11 +246,6 @@ Route::get('/appointments', [StaffAppointmentController::class, 'index'])
 Route::get('/appointments/{appointment}', [StaffAppointmentController::class, 'show'])
     ->name('appointments.show');
 
-Route::patch('/appointments/{appointment}/approve', [StaffAppointmentController::class, 'approve'])
-    ->name('appointments.approve');
-
-Route::patch('/appointments/{appointment}/cancel', [StaffAppointmentController::class, 'cancel'])
-    ->name('appointments.cancel');
 Route::get('/consultations', [StaffConsultationController::class, 'index'])
     ->name('consultations.index');
 
@@ -272,7 +267,7 @@ Route::patch('/prescriptions/{prescription}/release', [StaffPrescriptionControll
     Route::get('/appointment-schedules', [StaffAppointmentScheduleController::class, 'index'])
     ->name('appointment-schedules.index');
 
-Route::get('/appointment-schedules/create', [StaffAppointmentScheduleController::class, 'create'])
+Route::get('/appointment-schedules/create', [StaffAppointmentScheduleController::class, 'create']) ///create ui
     ->name('appointment-schedules.create');
 
 Route::post('/appointment-schedules', [StaffAppointmentScheduleController::class, 'store'])

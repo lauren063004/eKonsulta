@@ -140,9 +140,9 @@
 
                             </div>
 
-      @elseif($appointment->status === 'completed')
+   @elseif($appointment->status === 'completed')
 
-    @if(!$appointment->consultation->prescriptions->count())
+    @if($appointment->consultation && !$appointment->consultation->prescriptions->count())
 
         <div class="doctor-appointment-actions">
 

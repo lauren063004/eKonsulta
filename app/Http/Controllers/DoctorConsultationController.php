@@ -125,6 +125,15 @@ public function show(Consultation $consultation)
                 );
         }
 
+        if ($appointment->consultation) {
+    return redirect()
+        ->route('doctor.appointments.index')
+        ->with(
+            'error',
+            'A consultation has already been recorded for this appointment.'
+        );
+}
+
         $validated = $request->validate([
             'chief_complaint' => ['required', 'string', 'max:2000'],
             'symptoms' => ['nullable', 'string', 'max:5000'],
@@ -132,6 +141,8 @@ public function show(Consultation $consultation)
             'treatment_plan' => ['nullable', 'string', 'max:5000'],
             'notes' => ['nullable', 'string', 'max:5000'],
         ]);
+
+        
 
     $consultation = Consultation::create([
             'appointment_id' => $appointment->id,

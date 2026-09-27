@@ -34,34 +34,34 @@ class PatientAppointmentController extends Controller
         return view('patient.appointments.index', compact('appointments'));
     }
 
-    public function create()
-    {
-        $schedules = AppointmentSchedule::with('healthCenter')
-            ->withCount([
-                'appointments as active_appointments_count' => function ($query) {
-                    $query->whereIn('status', ['pending', 'approved']);
-                },
-            ])
-            ->whereDate('schedule_date', '>=', today())
-            ->whereHas('healthCenter', function ($query) {
-                $query->where('status', 'active');
-            })
-            ->orderBy('schedule_date')
-            ->orderBy('appointment_time')
-            ->get()
-            ->filter(function ($schedule) {
-                return $schedule->active_appointments_count < $schedule->capacity;
-            });
+public function create()
+{
+    $schedules = AppointmentSchedule::with('healthCenter')
+        ->withCount([
+            'appointments as active_appointments_count' => function ($query) {
+                $query->whereIn('status', ['pending', 'approved']);
+            },
+        ])
+        ->whereDate('schedule_date', '>=', today())
+        ->whereHas('healthCenter', function ($query) {
+            $query->where('status', 'active');
+        })
+        ->orderBy('schedule_date')
+        ->orderBy('appointment_time')
+        ->get()
+        ->filter(function ($schedule) {
+            return $schedule->active_appointments_count < $schedule->capacity;
+        });
 
-        $doctors = Doctor::with('user')
-            ->orderBy('id')
-            ->get();
+    $doctors = Doctor::with('user')
+        ->orderBy('id')
+        ->get();
 
-        return view('patient.appointments.create', compact(
-            'schedules',
-            'doctors'
-        ));
-    }
+    return view('patient.appointments.create', compact(
+        'schedules',
+        'doctors'
+    ));
+}
 
     public function store(Request $request)
     {
