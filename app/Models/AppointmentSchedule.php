@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AppointmentSchedule extends Model 
+class AppointmentSchedule extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'health_center_id',
+        'service_id',
         'schedule_date',
         'appointment_time',
         'capacity',
@@ -28,6 +29,11 @@ class AppointmentSchedule extends Model
     public function healthCenter()
     {
         return $this->belongsTo(HealthCenter::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 
     public function appointments()

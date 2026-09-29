@@ -14,7 +14,7 @@
             <h3>Book an Appointment</h3>
 
             <p>
-                Select an available consultation schedule and doctor.
+                Select a service, consultation schedule, and doctor.
             </p>
         </div>
 
@@ -43,7 +43,27 @@
     @endif
 
 
-    @if ($schedules->count())
+    {{-- Assigned Health Center --}}
+    <div class="form-group">
+
+        <label>
+            Health Center
+        </label>
+
+        <input
+            type="text"
+            value="{{ $healthCenter->name }} — {{ $healthCenter->barangay }}"
+            readonly
+        >
+
+        <small>
+            Your health center is based on your registered barangay.
+        </small>
+
+    </div>
+
+
+    @if ($schedules->count() && $services->count())
 
         <form
             method="POST"
@@ -51,6 +71,45 @@
         >
 
             @csrf
+
+
+            {{-- Service --}}
+            <div class="form-group">
+
+                <label for="service_id">
+                    Type of Service
+                </label>
+
+                <select
+                    id="service_id"
+                    name="service_id"
+                    required
+                >
+
+                    <option value="">
+                        Select a service
+                    </option>
+
+                    @foreach ($services as $service)
+
+                        <option
+                            value="{{ $service->id }}"
+                            {{ old('service_id') == $service->id ? 'selected' : '' }}
+                        >
+
+                            {{ $service->name }}
+
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+                <small>
+                    Only services currently offered by your health center are shown.
+                </small>
+
+            </div>
 
 
             {{-- Appointment Schedule --}}
@@ -74,14 +133,18 @@
 
                         @php
                             $booked = $schedule->active_appointments_count;
-                            $available = max($schedule->capacity - $booked, 0);
+                            $available = max(
+                                $schedule->capacity - $booked,
+                                0
+                            );
                         @endphp
 
-                        <option
-                            value="{{ $schedule->id }}"
-                            data-health-center-id="{{ $schedule->health_center_id }}"
-                            {{ old('appointment_schedule_id') == $schedule->id ? 'selected' : '' }}
-                        >
+                 <option
+    value="{{ $schedule->id }}"
+    data-health-center-id="{{ $schedule->health_center_id }}"
+    data-service-id="{{ $schedule->service_id }}"
+    {{ old('appointment_schedule_id') == $schedule->id ? 'selected' : '' }}
+>
 
                             {{ $schedule->healthCenter->name }}
                             —
@@ -89,7 +152,9 @@
                             —
                             {{ $schedule->appointment_time->format('h:i A') }}
                             —
-                            {{ $available }} slot{{ $available == 1 ? '' : 's' }} available
+                            {{ $available }}
+                            slot{{ $available == 1 ? '' : 's' }}
+                            available
 
                         </option>
 
@@ -118,23 +183,24 @@
                         Select a schedule first
                     </option>
 
-                    @foreach ($doctors as $doctor)
+                 @foreach ($doctors as $doctor)
 
-                        <option
-                            value="{{ $doctor->id }}"
-                            data-health-center-id="{{ $doctor->health_center_id }}"
-                            {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}
-                        >
+    <option
+        value="{{ $doctor->id }}"
+        data-health-center-id="{{ $doctor->health_center_id }}"
+        data-service-ids="{{ $doctor->services->pluck('id')->implode(',') }}"
+        {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}
+    >
 
-                            {{ $doctor->user->name ?? 'Doctor' }}
+        {{ $doctor->user->name ?? 'Doctor' }}
 
-                            @if ($doctor->specialization)
-                                — {{ $doctor->specialization }}
-                            @endif
+        @if ($doctor->specialization)
+            — {{ $doctor->specialization }}
+        @endif
 
-                        </option>
+    </option>
 
-                    @endforeach
+@endforeach
 
                 </select>
 
@@ -207,12 +273,35 @@
                     type="submit"
                     class="primary-button"
                 >
-                    📅 Book Appointment
+                    Book Appointment
                 </button>
 
             </div>
 
         </form>
+
+    @elseif (!$services->count())
+
+        <div class="alert alert-danger">
+
+            <strong>No services are currently available.</strong>
+
+            <p>
+                Your assigned health center has not published any available services.
+            </p>
+
+        </div>
+
+        <div class="form-actions">
+
+            <a
+                href="{{ route('patient.dashboard') }}"
+                class="secondary-button"
+            >
+                Back to Dashboard
+            </a>
+
+        </div>
 
     @else
 
@@ -221,7 +310,7 @@
             <strong>No appointment schedules are currently available.</strong>
 
             <p>
-                Please check again later when the health center publishes new consultation schedules.
+                Please check again later when your health center publishes new consultation schedules.
             </p>
 
         </div>
@@ -245,72 +334,176 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const scheduleSelect = document.getElementById('appointment_schedule_id');
-    const doctorSelect = document.getElementById('doctor_id');
-    const scheduleInfo = document.getElementById('schedule-info');
-    const scheduleDetails = document.getElementById('schedule-details');
+    const serviceSelect =
+        document.getElementById('service_id');
 
-    if (!scheduleSelect || !doctorSelect) {
+    const scheduleSelect =
+        document.getElementById('appointment_schedule_id');
+
+    const doctorSelect =
+        document.getElementById('doctor_id');
+
+    const scheduleInfo =
+        document.getElementById('schedule-info');
+
+    const scheduleDetails =
+        document.getElementById('schedule-details');
+
+    if (
+        !serviceSelect ||
+        !scheduleSelect ||
+        !doctorSelect
+    ) {
         return;
     }
 
-    const doctorOptions = Array.from(
-        doctorSelect.querySelectorAll('option[data-health-center-id]')
+    const scheduleOptions = Array.from(
+        scheduleSelect.querySelectorAll(
+            'option[data-service-id]'
+        )
     );
 
-    function updateDoctors() {
+    const doctorOptions = Array.from(
+        doctorSelect.querySelectorAll(
+            'option[data-service-ids]'
+        )
+    );
 
-        const selectedOption =
-            scheduleSelect.options[scheduleSelect.selectedIndex];
+    function updateSchedules() {
 
-        const healthCenterId =
-            selectedOption?.dataset.healthCenterId || '';
+        const serviceId =
+            serviceSelect.value;
 
-        doctorSelect.disabled = !healthCenterId;
+        scheduleSelect.value = '';
 
         doctorSelect.value = '';
+        doctorSelect.disabled = true;
 
-        doctorOptions.forEach(function (option) {
+        scheduleOptions.forEach(function (option) {
+
+            const optionServiceId =
+                option.dataset.serviceId;
 
             option.hidden =
-                option.dataset.healthCenterId !== healthCenterId;
+                !serviceId ||
+                optionServiceId !== serviceId;
 
         });
 
-        if (!healthCenterId) {
+        const placeholder =
+            scheduleSelect.querySelector(
+                'option[value=""]'
+            );
 
-            doctorSelect.value = '';
+        if (placeholder) {
+
+            placeholder.textContent =
+                serviceId
+                    ? 'Select an available schedule'
+                    : 'Select a service first';
+
+        }
+
+        scheduleInfo.style.display =
+            'none';
+
+        updateDoctors();
+
+    }
+
+    function updateDoctors() {
+
+        const serviceId =
+            serviceSelect.value;
+
+        const selectedSchedule =
+            scheduleSelect.options[
+                scheduleSelect.selectedIndex
+            ];
+
+        const healthCenterId =
+            selectedSchedule?.dataset.healthCenterId || '';
+
+        doctorSelect.value = '';
+
+        if (!serviceId || !healthCenterId) {
+
+            doctorSelect.disabled = true;
 
             const placeholder =
-                doctorSelect.querySelector('option[value=""]');
+                doctorSelect.querySelector(
+                    'option[value=""]'
+                );
 
             if (placeholder) {
                 placeholder.textContent =
-                    'Select a schedule first';
+                    !serviceId
+                        ? 'Select a service first'
+                        : 'Select a schedule first';
             }
 
-            scheduleInfo.style.display = 'none';
+            scheduleInfo.style.display =
+                'none';
 
             return;
         }
 
+        doctorSelect.disabled = false;
+
+        doctorOptions.forEach(function (option) {
+
+            const doctorHealthCenterId =
+                option.dataset.healthCenterId;
+
+            const serviceIds =
+                option.dataset.serviceIds
+                    ? option.dataset.serviceIds.split(',')
+                    : [];
+
+            const matchesHealthCenter =
+                doctorHealthCenterId ===
+                healthCenterId;
+
+            const matchesService =
+                serviceIds.includes(serviceId);
+
+            option.hidden =
+                !(
+                    matchesHealthCenter &&
+                    matchesService
+                );
+
+        });
+
         const placeholder =
-            doctorSelect.querySelector('option[value=""]');
+            doctorSelect.querySelector(
+                'option[value=""]'
+            );
 
         if (placeholder) {
             placeholder.textContent =
                 'Select a doctor';
         }
 
-        scheduleInfo.style.display = 'block';
+        scheduleInfo.style.display =
+            'block';
 
         scheduleDetails.textContent =
-            selectedOption.textContent.trim();
+            selectedSchedule.textContent.trim();
     }
 
-    scheduleSelect.addEventListener('change', updateDoctors);
+    serviceSelect.addEventListener(
+        'change',
+        updateSchedules
+    );
 
-    updateDoctors();
+    scheduleSelect.addEventListener(
+        'change',
+        updateDoctors
+    );
+
+    updateSchedules();
+
 });
 </script>
 

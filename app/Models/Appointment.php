@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\AppointmentSchedule;
 
 class Appointment extends Model
 {
@@ -14,16 +13,15 @@ class Appointment extends Model
         'patient_id',
         'doctor_id',
         'health_center_id',
+        'service_id',
+        'appointment_schedule_id',
         'appointment_date',
         'appointment_time',
         'reason',
         'status',
         'notes',
-        'appointment_schedule_id',
     ];
 
-
-    
     protected function casts(): array
     {
         return [
@@ -47,12 +45,18 @@ class Appointment extends Model
         return $this->belongsTo(HealthCenter::class);
     }
 
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function appointmentSchedule()
+    {
+        return $this->belongsTo(AppointmentSchedule::class);
+    }
+
     public function consultation()
     {
         return $this->hasOne(Consultation::class);
     }
-    public function appointmentSchedule()
-{
-    return $this->belongsTo(AppointmentSchedule::class);
-}
 }

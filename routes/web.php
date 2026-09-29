@@ -27,12 +27,14 @@ use App\Http\Controllers\AdminActivityLogController;
 use App\Http\Controllers\AdminDoctorController;
 use App\Http\Controllers\AdminStaffController;
 use App\Http\Controllers\AdminReportController;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -52,7 +54,15 @@ Route::get('/register', [AuthController::class, 'showRegister'])
 Route::post('/register', [AuthController::class, 'register'])
     ->name('register.store');
 
+Route::get('/register/verify', [AuthController::class, 'showVerifyOtp'])
+    ->name('register.verify');
 
+Route::post('/register/verify', [AuthController::class, 'verifyOtp'])
+    ->name('register.verify.submit');
+
+Route::post('/register/resend-otp', [AuthController::class, 'resendOtp'])
+    ->name('register.resend-otp');
+    
 /*
 |--------------------------------------------------------------------------
 | Logout
@@ -267,10 +277,10 @@ Route::patch('/prescriptions/{prescription}/release', [StaffPrescriptionControll
     Route::get('/appointment-schedules', [StaffAppointmentScheduleController::class, 'index'])
     ->name('appointment-schedules.index');
 
-Route::get('/appointment-schedules/create', [StaffAppointmentScheduleController::class, 'create']) ///create ui
+Route::get('/appointment-schedules/create', [StaffAppointmentScheduleController::class, 'create']) 
     ->name('appointment-schedules.create');
 
-Route::post('/appointment-schedules', [StaffAppointmentScheduleController::class, 'store'])
+Route::post('/appointment-schedules',[StaffAppointmentScheduleController::class, 'store']) ///
     ->name('appointment-schedules.store');
 
 Route::delete('/appointment-schedules/{appointmentSchedule}', [StaffAppointmentScheduleController::class, 'destroy'])

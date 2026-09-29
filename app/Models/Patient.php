@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\HealthCenter;
 
 class Patient extends Model
 {
@@ -11,6 +12,7 @@ class Patient extends Model
 
     protected $fillable = [
         'user_id',
+        'health_center_id',
         'patient_number',
         'date_of_birth',
         'sex',
@@ -19,6 +21,11 @@ class Patient extends Model
         'emergency_contact_name',
         'emergency_contact_number',
     ];
+
+    public function healthCenter()
+{
+    return $this->belongsTo(HealthCenter::class);
+}
 
     protected function casts(): array
     {

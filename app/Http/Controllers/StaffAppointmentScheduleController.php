@@ -9,41 +9,53 @@ use Illuminate\View\View;
 
 class StaffAppointmentScheduleController extends Controller
 {
-    /**
-     * Display appointment schedules for the logged-in staff member's
-     * assigned health center.
-     */
- public function index(): View
-{
-    $staff = auth()->user()->staff;
+    /*
+    |--------------------------------------------------------------------------
+    | List Appointment Schedules
+    |--------------------------------------------------------------------------
+    */
 
-    if (!$staff) {
-        abort(403, 'Staff record not found.');
+    public function index(): View
+    {
+        $staff = auth()->user()->staff;
+
+        if (!$staff) {
+            abort(403, 'Staff record not found.');
+        }
+
+        $schedules = AppointmentSchedule::with([
+            'healthCenter',
+            'service',
+        ])
+            ->withCount([
+                'appointments as active_appointments_count' => function ($query) {
+                    $query->whereIn('status', [
+                        'pending',
+                        'approved',
+                    ]);
+                },
+            ])
+            ->where(
+                'health_center_id',
+                $staff->health_center_id
+            )
+            ->orderBy('schedule_date')
+            ->orderBy('appointment_time')
+            ->get();
+
+        return view(
+            'staff.appointment-schedules.index',
+            compact('schedules')
+        );
     }
 
-    $schedules = AppointmentSchedule::with('healthCenter')
-        ->withCount([
-            'appointments as active_appointments_count' => function ($query) {
-                $query->whereIn('status', [
-                    'pending',
-                    'approved',
-                ]);
-            },
-        ])
-        ->where('health_center_id', $staff->health_center_id)
-        ->orderBy('schedule_date')
-        ->orderBy('appointment_time')
-        ->get();
 
-    return view(
-        'staff.appointment-schedules.index',
-        compact('schedules')
-    );
-}
+    /*
+    |--------------------------------------------------------------------------
+    | Show Create Schedule Form
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Show create schedule form.
-     */
     public function create(): View
     {
         $staff = auth()->user()->staff;
@@ -52,17 +64,45 @@ class StaffAppointmentScheduleController extends Controller
             abort(403, 'Staff record not found.');
         }
 
-        $staff->load('healthCenter');
+        $staff->load([
+            'healthCenter',
+        ]);
+
+        if (!$staff->healthCenter) {
+            abort(
+                403,
+                'You are not assigned to a health center.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Services Available At Staff's Health Center
+        |--------------------------------------------------------------------------
+        */
+
+        $services = $staff->healthCenter
+            ->services()
+            ->where('services.status', true)
+            ->orderBy('services.name')
+            ->get();
 
         return view(
             'staff.appointment-schedules.create',
-            compact('staff')
+            compact(
+                'staff',
+                'services'
+            )
         );
     }
 
-    /**
-     * Store a new appointment schedule.
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Generate Appointment Schedules
+    |--------------------------------------------------------------------------
+    */
+
     public function store(Request $request): RedirectResponse
     {
         $staff = auth()->user()->staff;
@@ -70,6 +110,12 @@ class StaffAppointmentScheduleController extends Controller
         if (!$staff) {
             abort(403, 'Staff record not found.');
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Staff Health Center
+        |--------------------------------------------------------------------------
+        */
 
         if (!$staff->healthCenter) {
             return redirect()
@@ -89,16 +135,40 @@ class StaffAppointmentScheduleController extends Controller
                 );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Form
+        |--------------------------------------------------------------------------
+        */
+
         $validated = $request->validate([
+            'service_id' => [
+                'required',
+                'integer',
+                'exists:services,id',
+            ],
+
             'schedule_date' => [
                 'required',
                 'date',
                 'after_or_equal:today',
             ],
 
-            'appointment_time' => [
+            'start_time' => [
                 'required',
                 'date_format:H:i',
+            ],
+
+            'end_time' => [
+                'required',
+                'date_format:H:i',
+            ],
+
+            'interval' => [
+                'required',
+                'integer',
+                'in:30,60',
             ],
 
             'capacity' => [
@@ -107,59 +177,276 @@ class StaffAppointmentScheduleController extends Controller
                 'min:1',
                 'max:100',
             ],
+
+            'include_lunch_break' => [
+                'nullable',
+                'boolean',
+            ],
         ]);
 
-        $exists = AppointmentSchedule::where(
-                'health_center_id',
-                $staff->health_center_id
-            )
-            ->whereDate(
-                'schedule_date',
-                $validated['schedule_date']
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Service Belongs To Staff's Health Center
+        |--------------------------------------------------------------------------
+        */
+
+        $serviceExists = $staff->healthCenter
+            ->services()
+            ->where(
+                'services.id',
+                $validated['service_id']
             )
             ->where(
-                'appointment_time',
-                $validated['appointment_time']
+                'services.status',
+                true
             )
             ->exists();
 
-        if ($exists) {
+        if (!$serviceExists) {
             return back()
                 ->withInput()
                 ->withErrors([
-                    'appointment_time' =>
-                        'A schedule already exists for your health center, date, and time.',
+                    'service_id' =>
+                        'The selected service is not available at your health center.',
                 ]);
         }
 
-        AppointmentSchedule::create([
-            'health_center_id' => $staff->health_center_id,
-            'schedule_date' => $validated['schedule_date'],
-            'appointment_time' => $validated['appointment_time'],
-            'capacity' => $validated['capacity'],
-        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Time Range
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $validated['start_time'] >=
+            $validated['end_time']
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'end_time' =>
+                        'The end time must be later than the start time.',
+                ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate Time Slots
+        |--------------------------------------------------------------------------
+        */
+
+        $start = strtotime(
+            $validated['start_time']
+        );
+
+        $end = strtotime(
+            $validated['end_time']
+        );
+
+        $intervalSeconds =
+            ((int) $validated['interval']) * 60;
+
+
+        $created = 0;
+        $skipped = 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Optional Lunch Break
+        |--------------------------------------------------------------------------
+        */
+
+        $includeLunch =
+            $request->boolean('include_lunch_break');
+
+
+        while ($start < $end) {
+
+            $currentTime =
+                date('H:i', $start);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Skip Lunch Hour
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $includeLunch &&
+                $currentTime >= '12:00' &&
+                $currentTime < '13:00'
+            ) {
+                $start += $intervalSeconds;
+                continue;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Prevent Slot From Extending Beyond End Time
+            |--------------------------------------------------------------------------
+            */
+
+            $slotEnd =
+                $start + $intervalSeconds;
+
+            if ($slotEnd > $end) {
+                break;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Check Existing Schedule
+            |--------------------------------------------------------------------------
+            |
+            | IMPORTANT:
+            | Service is included in the duplicate check.
+            |
+            | This means:
+            |
+            | General Health - 9:00 AM
+            |
+            | and
+            |
+            | Dental - 9:00 AM
+            |
+            | can both exist.
+            |
+            */
+
+            $exists = AppointmentSchedule::where(
+                'health_center_id',
+                $staff->health_center_id
+            )
+                ->where(
+                    'service_id',
+                    $validated['service_id']
+                )
+                ->whereDate(
+                    'schedule_date',
+                    $validated['schedule_date']
+                )
+                ->where(
+                    'appointment_time',
+                    $currentTime . ':00'
+                )
+                ->exists();
+
+
+            if ($exists) {
+
+                $skipped++;
+
+            } else {
+
+                AppointmentSchedule::create([
+                    'health_center_id' =>
+                        $staff->health_center_id,
+
+                    'service_id' =>
+                        $validated['service_id'],
+
+                    'schedule_date' =>
+                        $validated['schedule_date'],
+
+                    'appointment_time' =>
+                        $currentTime . ':00',
+
+                    'capacity' =>
+                        $validated['capacity'],
+                ]);
+
+                $created++;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Move To Next Time Slot
+            |--------------------------------------------------------------------------
+            */
+
+            $start += $intervalSeconds;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Result Message
+        |--------------------------------------------------------------------------
+        */
+
+        if ($created === 0) {
+
+            return redirect()
+                ->route(
+                    'staff.appointment-schedules.index'
+                )
+                ->with(
+                    'error',
+                    'No new schedules were created. The selected service and time slots already exist.'
+                );
+        }
+
+
+        $message =
+            $created .
+            ' appointment schedule' .
+            ($created === 1 ? '' : 's') .
+            ' created successfully.';
+
+
+        if ($skipped > 0) {
+
+            $message .=
+                ' ' .
+                $skipped .
+                ' existing slot' .
+                ($skipped === 1 ? '' : 's') .
+                ' skipped.';
+        }
+
 
         return redirect()
-            ->route('staff.appointment-schedules.index')
+            ->route(
+                'staff.appointment-schedules.index'
+            )
             ->with(
                 'success',
-                'Appointment schedule created successfully.'
+                $message
             );
     }
 
-    /**
-     * Delete an appointment schedule.
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Delete Appointment Schedule
+    |--------------------------------------------------------------------------
+    */
+
     public function destroy(
         AppointmentSchedule $appointmentSchedule
     ): RedirectResponse {
+
         $staff = auth()->user()->staff;
 
         if (!$staff) {
             abort(403, 'Staff record not found.');
         }
 
-        // Prevent staff from deleting another health center's schedule.
+
+        /*
+        |--------------------------------------------------------------------------
+        | Security Check
+        |--------------------------------------------------------------------------
+        */
+
         if (
             $appointmentSchedule->health_center_id
             !== $staff->health_center_id
@@ -170,23 +457,43 @@ class StaffAppointmentScheduleController extends Controller
             );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Don't Delete Schedule With Active Appointments
+        |--------------------------------------------------------------------------
+        */
+
         if (
-            $appointmentSchedule->appointments()
-                ->whereIn('status', ['pending', 'approved'])
+            $appointmentSchedule
+                ->appointments()
+                ->whereIn(
+                    'status',
+                    [
+                        'pending',
+                        'approved',
+                    ]
+                )
                 ->exists()
         ) {
             return redirect()
-                ->route('staff.appointment-schedules.index')
+                ->route(
+                    'staff.appointment-schedules.index'
+                )
                 ->with(
                     'error',
                     'This schedule cannot be deleted because it already has appointments.'
                 );
         }
 
+
         $appointmentSchedule->delete();
 
+
         return redirect()
-            ->route('staff.appointment-schedules.index')
+            ->route(
+                'staff.appointment-schedules.index'
+            )
             ->with(
                 'success',
                 'Appointment schedule deleted successfully.'

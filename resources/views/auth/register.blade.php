@@ -11,127 +11,287 @@
 
 <body>
 
-    <h1>e-Konsulta</h1>
+<main class="ek-auth">
 
-    <h2>Patient Registration</h2>
+    @include('partials.auth-brand')
 
-    @if ($errors->any())
-        <div>
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
-        </div>
-    @endif
+    <section class="ek-auth-panel">
 
-    <form method="POST" action="{{ route('register.store') }}">
-        @csrf
+        <div class="ek-card ek-card--wide">
 
-        <div>
-            <label>Full Name</label>
-            <input
-                type="text"
-                name="name"
-                value="{{ old('name') }}"
-                required
+            <h2>Patient Registration</h2>
+            <p class="ek-card-intro">Create your account to book appointments and view your health records.</p>
+
+            @if ($errors->any())
+                <div class="ek-alert" role="alert">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('register.store') }}" class="ek-grid">
+                @csrf
+
+                <h3 class="ek-section-title">Account details</h3>
+
+                <div class="ek-field ek-field--full">
+                    <label for="name">Full Name</label>
+                    <input
+                        id="name"
+                        class="ek-input"
+                        type="text"
+                        name="name"
+                        value="{{ old('name') }}"
+                        autocomplete="name"
+                        required
+                    >
+                </div>
+
+                <div class="ek-field ek-field--full">
+                    <label for="email">Email</label>
+                    <input
+                        id="email"
+                        class="ek-input"
+                        type="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="ek-field">
+                    <label for="password">Password</label>
+                    <div class="ek-password">
+                        <input
+                            id="password"
+                            class="ek-input"
+                            type="password"
+                            name="password"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            class="ek-toggle"
+                            data-toggle-password="password"
+                            aria-controls="password"
+                            aria-pressed="false"
+                        >Show</button>
+                    </div>
+                </div>
+
+                <div class="ek-field">
+                    <label for="password_confirmation">Confirm Password</label>
+                    <div class="ek-password">
+                        <input
+                            id="password_confirmation"
+                            class="ek-input"
+                            type="password"
+                            name="password_confirmation"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            class="ek-toggle"
+                            data-toggle-password="password_confirmation"
+                            aria-controls="password_confirmation"
+                            aria-pressed="false"
+                        >Show</button>
+                    </div>
+                </div>
+
+                <h3 class="ek-section-title">Personal information</h3>
+
+                <div class="ek-field">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input
+                        id="date_of_birth"
+                        class="ek-input"
+                        type="date"
+                        name="date_of_birth"
+                        value="{{ old('date_of_birth') }}"
+                        autocomplete="bday"
+                        required
+                    >
+                </div>
+
+                <div class="ek-field">
+                    <label for="sex">Sex</label>
+                    <select id="sex" class="ek-input" name="sex" required>
+                        <option value="">Select</option>
+                        <option value="Male" {{ old('sex') === 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ old('sex') === 'Female' ? 'selected' : '' }}>Female</option>
+                        <option value="Other" {{ old('sex') === 'Other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                </div>
+
+                <div class="ek-field ek-field--full">
+                    <label for="contact_number">Contact Number</label>
+                    <input
+                        id="contact_number"
+                        class="ek-input"
+                        type="tel"
+                        name="contact_number"
+                        value="{{ old('contact_number') }}"
+                        autocomplete="tel"
+                        required
+                    >
+                </div>
+
+                <h3 class="ek-section-title">Address and health center</h3>
+
+        <div class="ek-field">
+    <label for="barangay">Barangay</label>
+
+    <select
+        id="barangay"
+        name="barangay"
+        class="ek-input"
+        required
+    >
+        <option value="" disabled {{ old('barangay') ? '' : 'selected' }}>
+            Select your Barangay
+        </option>
+
+        @foreach($healthCenters->unique('barangay') as $healthCenter)
+            <option
+                value="{{ $healthCenter->barangay }}"
+                {{ old('barangay') === $healthCenter->barangay ? 'selected' : '' }}
             >
-        </div>
+                {{ $healthCenter->barangay }}
+            </option>
+        @endforeach
+    </select>
+</div>
 
-        <div>
-            <label>Email</label>
-            <input
-                type="email"
-                name="email"
-                value="{{ old('email') }}"
-                required
+                <div class="ek-field ek-field--full">
+                    <label for="address">Address</label>
+
+                    <textarea
+                        id="address"
+                        class="ek-input"
+                        name="address"
+                        required
+                    >{{ old('address') }}</textarea>
+                </div>
+
+      <div class="ek-field">
+    <label for="health_center_id">Health Center</label>
+
+    <select
+        id="health_center_id"
+        name="health_center_id"
+        class="ek-input"
+        required
+    >
+        <option value="" disabled selected>
+            Select your health center
+        </option>
+
+        @foreach($healthCenters as $healthCenter)
+            <option
+                value="{{ $healthCenter->id }}"
+                data-barangay="{{ $healthCenter->barangay }}"
+                {{ old('health_center_id') == $healthCenter->id ? 'selected' : '' }}
             >
+                {{ $healthCenter->barangay }} / {{ $healthCenter->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+                <h3 class="ek-section-title">Emergency contact</h3>
+
+                <div class="ek-field">
+                    <label for="emergency_contact_name">Emergency Contact Name</label>
+                  <input
+    id="emergency_contact_name"
+    class="ek-input"
+    type="text"
+    name="emergency_contact_name"
+    value="{{ old('emergency_contact_name') }}"
+    required
+>
+                </div>
+
+                <div class="ek-field">
+                    <label for="emergency_contact_number">Emergency Contact Number</label>
+                    <input
+                        id="emergency_contact_number"
+                        class="ek-input"
+                        type="tel"
+                        name="emergency_contact_number"
+                        value="{{ old('emergency_contact_number') }}"
+                        required
+                    >
+                </div>
+
+                <div class="ek-field ek-field--full">
+                    <button type="submit" class="ek-btn">
+                        Register
+                    </button>
+                </div>
+            </form>
+
+            <p class="ek-foot">
+                Already have an account?
+                <a href="{{ route('login') }}" class="ek-link">Login</a>
+            </p>
+
         </div>
 
-        <div>
-            <label>Password</label>
-            <input
-                type="password"
-                name="password"
-                required
-            >
-        </div>
+    </section>
 
-        <div>
-            <label>Confirm Password</label>
-            <input
-                type="password"
-                name="password_confirmation"
-                required
-            >
-        </div>
+</main>
 
-        <div>
-            <label>Date of Birth</label>
-            <input
-                type="date"
-                name="date_of_birth"
-                value="{{ old('date_of_birth') }}"
-                required
-            >
-        </div>
+<script>
+    document.querySelectorAll('[data-toggle-password]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var input = document.getElementById(button.dataset.togglePassword);
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            button.textContent = show ? 'Hide' : 'Show';
+            button.setAttribute('aria-pressed', show ? 'true' : 'false');
+        });
+    });
 
-        <div>
-            <label>Sex</label>
+    const barangaySelect = document.getElementById('barangay');
+const healthCenterSelect = document.getElementById('health_center_id');
 
-            <select name="sex" required>
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
+function filterHealthCenters() {
+    const selectedBarangay = barangaySelect.value;
 
-        <div>
-            <label>Contact Number</label>
-            <input
-                type="text"
-                name="contact_number"
-                value="{{ old('contact_number') }}"
-                required
-            >
-        </div>
+    Array.from(healthCenterSelect.options).forEach(function (option) {
 
-        <div>
-            <label>Address</label>
-            <textarea
-                name="address"
-                required
-            >{{ old('address') }}</textarea>
-        </div>
+        if (!option.value) {
+            return;
+        }
 
-        <div>
-            <label>Emergency Contact Name</label>
-            <input
-                type="text"
-                name="emergency_contact_name"
-                value="{{ old('emergency_contact_name') }}"
-                required
-            >
-        </div>
+        const optionBarangay = option.dataset.barangay;
 
-        <div>
-            <label>Emergency Contact Number</label>
-            <input
-                type="text"
-                name="emergency_contact_number"
-                value="{{ old('emergency_contact_number') }}"
-                required
-            >
-        </div>
+        option.hidden = optionBarangay !== selectedBarangay;
+    });
 
-        <button type="submit">
-            Register
-        </button>
-    </form>
+    const currentOption = healthCenterSelect.options[
+        healthCenterSelect.selectedIndex
+    ];
 
-    <p>
-        Already have an account?
-        <a href="{{ route('login') }}">Login</a>
-    </p>
+    if (
+        currentOption &&
+        currentOption.value &&
+        currentOption.dataset.barangay !== selectedBarangay
+    ) {
+        healthCenterSelect.value = '';
+    }
+}
+
+barangaySelect.addEventListener('change', filterHealthCenters);
+
+filterHealthCenters();
+</script>
 
 </body>
 </html>

@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\ActivityLog;
+use App\Models\HealthCenter;
+use App\Models\EmailOtp;
+use Illuminate\Support\Facades\Mail;
+
 
 
 class AuthController extends Controller
@@ -98,10 +102,17 @@ return $this->redirectByRole($user);
     |--------------------------------------------------------------------------
     */
 
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
+  public function showRegister()
+{
+    $healthCenters = HealthCenter::where('status', 'active')
+        ->orderBy('barangay')
+        ->get();
+
+    return view(
+        'auth.register',
+        compact('healthCenters')
+    );
+}
 
 
     /*
@@ -110,96 +121,384 @@ return $this->redirectByRole($user);
     |--------------------------------------------------------------------------
     */
 
-    public function register(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+public function register(Request $request)
+{
+    $validated = $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+        ],
 
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users,email',
-            ],
+        'email' => [
+            'required',
+            'email',
+            'max:255',
+            'unique:users,email',
+            'ends_with:@gmail.com',
+        ],
 
-            'password' => [
-                'required',
-                'confirmed',
-                Password::defaults(),
-            ],
+        'password' => [
+            'required',
+            'confirmed',
+            Password::defaults(),
+        ],
 
-            'date_of_birth' => [
-                'required',
-                'date',
-            ],
+        'date_of_birth' => [
+            'required',
+            'date',
+        ],
 
-            'sex' => [
-                'required',
-                'string',
-                'max:20',
-            ],
+        'sex' => [
+            'required',
+            'string',
+            'max:20',
+        ],
 
-            'contact_number' => [
-                'required',
-                'string',
-                'max:30',
-            ],
 
-            'address' => [
-                'required',
-                'string',
-            ],
 
-            'emergency_contact_name' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+        'contact_number' => [
+            'required',
+            'string',
+            'max:30',
+        ],
 
-            'emergency_contact_number' => [
-                'required',
-                'string',
-                'max:30',
-            ],
+        'address' => [
+            'required',
+            'string',
+        ],
+
+'barangay' => [
+    'required',
+    'string',
+    'max:255',
+],
+
+        'health_center_id' => [
+            'required',
+            'exists:health_centers,id',
+        ],
+
+
+
+        'emergency_contact_name' => [
+            'required',
+            'string',
+            'max:255',
+        ],
+
+        'emergency_contact_number' => [
+            'required',
+            'string',
+            'max:30',
+        ],
+    ]);
+
+    // Make sure the selected health center is active.
+ $healthCenter = HealthCenter::where('id', $validated['health_center_id'])
+    ->where('status', 'active')
+    ->where('barangay', $validated['barangay'])
+    ->first();
+
+if (!$healthCenter) {
+    session()->forget('pending_registration');
+
+    return redirect()
+        ->route('register')
+        ->withErrors([
+            'health_center_id' =>
+                'The selected health center does not belong to the selected barangay or is no longer available.',
         ]);
+}
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => 'patient',
-        ]);
+    /*
+    |--------------------------------------------------------------------------
+    | Store registration information temporarily
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT:
+    | No User or Patient record is created yet.
+    | The account will only be created after the OTP is verified.
+    |
+    */
 
-        $patientNumber = 'PAT-' . date('Y') . '-' .
-            str_pad($user->id, 5, '0', STR_PAD_LEFT);
+    session([
+        'pending_registration' => $validated,
+    ]);
 
-        Patient::create([
-            'user_id' => $user->id,
-            'patient_number' => $patientNumber,
-            'date_of_birth' => $validated['date_of_birth'],
-            'sex' => $validated['sex'],
-            'contact_number' => $validated['contact_number'],
-            'address' => $validated['address'],
-            'emergency_contact_name' => $validated['emergency_contact_name'],
-            'emergency_contact_number' => $validated['emergency_contact_number'],
-        ]);
+    /*
+    |--------------------------------------------------------------------------
+    | Generate OTP
+    |--------------------------------------------------------------------------
+    */
 
-        Auth::login($user);
+    $otp = str_pad(
+        (string) random_int(0, 999999),
+        6,
+        '0',
+        STR_PAD_LEFT
+    );
 
-$request->session()->regenerate();
+    /*
+    |--------------------------------------------------------------------------
+    | Remove previous OTPs for this email
+    |--------------------------------------------------------------------------
+    */
 
-ActivityLog::record(
-    $user->id,
-    'Patient Registration',
-    'Patient account was registered successfully.',
-    $request->ip()
-);
+    EmailOtp::where('email', $validated['email'])->delete();
 
-return redirect()->route('patient.dashboard');
+    /*
+    |--------------------------------------------------------------------------
+    | Create new OTP
+    |--------------------------------------------------------------------------
+    */
+
+    EmailOtp::create([
+        'email' => $validated['email'],
+        'otp' => $otp,
+        'expires_at' => now()->addMinutes(10),
+        'attempts' => 0,
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Send OTP Email
+    |--------------------------------------------------------------------------
+    */
+
+    Mail::raw(
+        "Your e-Konsulta verification code is: {$otp}\n\n" .
+        "This code will expire in 10 minutes.\n\n" .
+        "If you did not request this registration, you may ignore this email.",
+        function ($message) use ($validated) {
+            $message
+                ->to($validated['email'])
+                ->subject('e-Konsulta Email Verification Code');
+        }
+    );
+
+    return redirect()
+        ->route('register.verify')
+        ->with('success', 'A verification code has been sent to your Gmail address.');
+}
+
+public function showVerifyOtp()
+{
+    if (!session()->has('pending_registration')) {
+        return redirect()
+            ->route('register')
+            ->withErrors([
+                'email' => 'Please complete the registration form first.',
+            ]);
     }
 
+    return view('auth.verify-otp');
+}
 
+
+public function verifyOtp(Request $request)
+{
+    $pendingRegistration = session('pending_registration');
+
+    if (!$pendingRegistration) {
+        return redirect()
+            ->route('register')
+            ->withErrors([
+                'email' => 'Your registration session has expired. Please register again.',
+            ]);
+    }
+
+    $request->validate([
+        'otp' => [
+            'required',
+            'digits:6',
+        ],
+    ]);
+
+    $email = $pendingRegistration['email'];
+
+    $emailOtp = EmailOtp::where('email', $email)
+        ->whereNull('verified_at')
+        ->latest()
+        ->first();
+
+    if (!$emailOtp) {
+        return back()
+            ->withErrors([
+                'otp' => 'No active verification code was found. Please request a new code.',
+            ]);
+    }
+
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Check expiration
+    |--------------------------------------------------------------------------
+    */
+
+    if (now()->greaterThan($emailOtp->expires_at)) {
+        return back()
+            ->withErrors([
+                'otp' => 'Your verification code has expired. Please resend a new code.',
+            ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check attempts
+    |--------------------------------------------------------------------------
+    */
+
+    if ($emailOtp->attempts >= 5) {
+        return back()
+            ->withErrors([
+                'otp' => 'Too many incorrect attempts. Please request a new code.',
+            ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check OTP
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->otp !== $emailOtp->otp) {
+
+        $emailOtp->increment('attempts');
+
+        return back()
+            ->withErrors([
+                'otp' => 'The verification code is incorrect. Please try again.',
+            ])
+            ->withInput();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mark OTP as verified
+    |--------------------------------------------------------------------------
+    */
+
+    $emailOtp->update([
+        'verified_at' => now(),
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create User + Patient
+    |--------------------------------------------------------------------------
+    */
+
+    $validated = $pendingRegistration;
+
+    $healthCenter = HealthCenter::where('id', $validated['health_center_id'])
+        ->where('status', 'active')
+        ->first();
+
+    if (!$healthCenter) {
+        session()->forget('pending_registration');
+
+        return redirect()
+            ->route('register')
+            ->withErrors([
+                'health_center_id' =>
+                    'The selected health center is no longer available.',
+            ]);
+    }
+
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'role' => 'patient',
+    ]);
+
+    $patientNumber = 'PAT-' . date('Y') . '-' .
+        str_pad($user->id, 5, '0', STR_PAD_LEFT);
+
+    Patient::create([
+        'user_id' => $user->id,
+        'health_center_id' => $healthCenter->id,
+        'patient_number' => $patientNumber,
+        'date_of_birth' => $validated['date_of_birth'],
+        'sex' => $validated['sex'],
+        'contact_number' => $validated['contact_number'],
+        'address' => $validated['address'],
+        'emergency_contact_name' => $validated['emergency_contact_name'],
+        'emergency_contact_number' => $validated['emergency_contact_number'],
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clear temporary registration information
+    |--------------------------------------------------------------------------
+    */
+
+    session()->forget('pending_registration');
+
+    Auth::login($user);
+
+    $request->session()->regenerate();
+
+    ActivityLog::record(
+        $user->id,
+        'Patient Registration',
+        'Patient account was registered successfully and assigned to ' .
+            $healthCenter->name . ' after email verification.',
+        $request->ip()
+    );
+
+    return redirect()
+        ->route('patient.dashboard')
+        ->with(
+            'success',
+            'Registration successful. Welcome to e-Konsulta!'
+        );
+}
+
+public function resendOtp(Request $request)
+{
+    $pendingRegistration = session('pending_registration');
+
+    if (!$pendingRegistration) {
+        return redirect()
+            ->route('register')
+            ->withErrors([
+                'email' => 'Your registration session has expired. Please register again.',
+            ]);
+    }
+
+    $email = $pendingRegistration['email'];
+
+    $otp = str_pad(
+        (string) random_int(0, 999999),
+        6,
+        '0',
+        STR_PAD_LEFT
+    );
+
+    EmailOtp::where('email', $email)->delete();
+
+    EmailOtp::create([
+        'email' => $email,
+        'otp' => $otp,
+        'expires_at' => now()->addMinutes(10),
+        'attempts' => 0,
+    ]);
+
+    Mail::raw(
+        "Your new e-Konsulta verification code is: {$otp}\n\n" .
+        "This code will expire in 10 minutes.",
+        function ($message) use ($email) {
+            $message
+                ->to($email)
+                ->subject('e-Konsulta New Verification Code');
+        }
+    );
+
+    return back()
+        ->with('success', 'A new verification code has been sent to your Gmail address.');
+}
     /*
     |--------------------------------------------------------------------------
     | Logout

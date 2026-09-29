@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class HealthCenter extends Model
 {
@@ -11,12 +12,21 @@ class HealthCenter extends Model
 
     protected $fillable = [
         'name',
+        'barangay',
         'address',
         'contact_number',
         'email',
         'operating_hours',
         'status',
     ];
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Service::class,
+            'health_center_service'
+        )->withTimestamps();
+    }
 
     public function doctors()
     {
@@ -36,5 +46,10 @@ class HealthCenter extends Model
     public function medicines()
     {
         return $this->hasMany(Medicine::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
     }
 }

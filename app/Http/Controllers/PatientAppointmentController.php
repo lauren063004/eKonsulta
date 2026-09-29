@@ -10,9 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-
 class PatientAppointmentController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Appointment List
+    |--------------------------------------------------------------------------
+    */
+
     public function index()
     {
         $patient = auth()->user()->patient;
@@ -24,6 +29,7 @@ class PatientAppointmentController extends Controller
         $appointments = Appointment::with([
             'doctor.user',
             'healthCenter',
+            'service',
             'appointmentSchedule',
         ])
             ->where('patient_id', $patient->id)
@@ -31,54 +37,180 @@ class PatientAppointmentController extends Controller
             ->orderByDesc('appointment_time')
             ->get();
 
-        return view('patient.appointments.index', compact('appointments'));
+        return view(
+            'patient.appointments.index',
+            compact('appointments')
+        );
     }
 
-public function create()
-{
-    $schedules = AppointmentSchedule::with('healthCenter')
-        ->withCount([
-            'appointments as active_appointments_count' => function ($query) {
-                $query->whereIn('status', ['pending', 'approved']);
-            },
+
+    /*
+    |--------------------------------------------------------------------------
+    | Show Booking Form
+    |--------------------------------------------------------------------------
+    */
+
+    public function create()
+    {
+        $patient = auth()->user()->patient;
+
+        if (!$patient) {
+            abort(403, 'Patient record not found.');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Patient's Permanent Health Center
+        |--------------------------------------------------------------------------
+        */
+
+        $healthCenterId = $patient->health_center_id;
+
+        if (!$healthCenterId) {
+            return redirect()
+                ->route('patient.dashboard')
+                ->with(
+                    'error',
+                    'You are not assigned to a health center. Please contact the health center staff.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Load Health Center
+        |--------------------------------------------------------------------------
+        */
+
+        $healthCenter = $patient->healthCenter;
+
+        if (!$healthCenter) {
+            return redirect()
+                ->route('patient.dashboard')
+                ->with(
+                    'error',
+                    'Your assigned health center could not be found.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Services Offered By Patient's Health Center
+        |--------------------------------------------------------------------------
+        */
+
+        $services = $healthCenter->services()
+            ->where('services.status', true)
+            ->orderBy('services.name')
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Available Appointment Schedules
+        |--------------------------------------------------------------------------
+        */
+
+        $schedules = AppointmentSchedule::with([
+            'healthCenter',
+            'service',
         ])
-        ->whereDate('schedule_date', '>=', today())
-        ->whereHas('healthCenter', function ($query) {
-            $query->where('status', 'active');
-        })
-        ->orderBy('schedule_date')
-        ->orderBy('appointment_time')
-        ->get()
-        ->filter(function ($schedule) {
-            return $schedule->active_appointments_count < $schedule->capacity;
-        });
+            ->withCount([
+                'appointments as active_appointments_count' => function ($query) {
+                    $query->whereIn('status', [
+                        'pending',
+                        'approved',
+                    ]);
+                },
+            ])
+            ->where('health_center_id', $healthCenterId)
+            ->whereNotNull('service_id')
+            ->whereDate(
+                'schedule_date',
+                '>=',
+                today()
+            )
+            ->whereHas('healthCenter', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->whereHas('service', function ($query) {
+                $query->where('services.status', true);
+            })
+            ->orderBy('schedule_date')
+            ->orderBy('appointment_time')
+            ->get()
+            ->filter(function ($schedule) {
+                return $schedule->active_appointments_count
+                    < $schedule->capacity;
+            });
 
-    $doctors = Doctor::with('user')
-        ->orderBy('id')
-        ->get();
+        /*
+        |--------------------------------------------------------------------------
+        | Doctors Assigned To Patient's Health Center
+        |--------------------------------------------------------------------------
+        |
+        | We load the doctors and their services.
+        | JavaScript on the booking page filters them visually.
+        |
+        */
 
-    return view('patient.appointments.create', compact(
-        'schedules',
-        'doctors'
-    ));
-}
+        $doctors = Doctor::with([
+            'user',
+            'services',
+        ])
+            ->where('health_center_id', $healthCenterId)
+            ->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->orderBy('id')
+            ->get();
+
+        return view(
+            'patient.appointments.create',
+            compact(
+                'healthCenter',
+                'services',
+                'schedules',
+                'doctors'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Store Appointment
+    |--------------------------------------------------------------------------
+    */
 
     public function store(Request $request)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Form
+        |--------------------------------------------------------------------------
+        */
+
         $validated = $request->validate([
+            'service_id' => [
+                'required',
+                'exists:services,id',
+            ],
+
             'appointment_schedule_id' => [
                 'required',
                 'exists:appointment_schedules,id',
             ],
+
             'doctor_id' => [
                 'required',
                 'exists:doctors,id',
             ],
+
             'reason' => [
                 'required',
                 'string',
                 'max:1000',
             ],
+
             'notes' => [
                 'nullable',
                 'string',
@@ -92,15 +224,63 @@ public function create()
             abort(403, 'Patient record not found.');
         }
 
-       $appointment = null;
+        if (!$patient->health_center_id) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors([
+                    'service_id' =>
+                        'You are not assigned to a health center.',
+                ]);
+        }
 
-try {
+        $appointment = null;
 
-    DB::transaction(function () use ($validated, $patient, &$appointment) {
+        try {
 
-                $schedule = AppointmentSchedule::with('healthCenter')
+            DB::transaction(function () use (
+                $validated,
+                $patient,
+                &$appointment
+            ) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Load Selected Schedule
+                |--------------------------------------------------------------------------
+                */
+
+                $schedule = AppointmentSchedule::with([
+                    'healthCenter',
+                    'service',
+                ])
                     ->lockForUpdate()
-                    ->findOrFail($validated['appointment_schedule_id']);
+                    ->findOrFail(
+                        $validated['appointment_schedule_id']
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Schedule Must Belong To Patient's Health Center
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    (int) $schedule->health_center_id !==
+                    (int) $patient->health_center_id
+                ) {
+                    throw new \RuntimeException(
+                        'The selected schedule is not available at your assigned health center.'
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Health Center Must Be Active
+                |--------------------------------------------------------------------------
+                */
 
                 if (
                     !$schedule->healthCenter ||
@@ -111,8 +291,86 @@ try {
                     );
                 }
 
-                $scheduleDate = $schedule->schedule_date->format('Y-m-d');
-                $scheduleTime = $schedule->appointment_time->format('H:i:s');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Schedule Must Have A Service
+                |--------------------------------------------------------------------------
+                */
+
+                if (!$schedule->service) {
+                    throw new \RuntimeException(
+                        'The selected schedule has no valid service assigned.'
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Schedule Service Must Be Active
+                |--------------------------------------------------------------------------
+                */
+
+                if (!$schedule->service->status) {
+                    throw new \RuntimeException(
+                        'The service assigned to this schedule is no longer available.'
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Schedule Service Must Match Selected Service
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    (int) $schedule->service_id !==
+                    (int) $validated['service_id']
+                ) {
+                    throw new \RuntimeException(
+                        'The selected schedule is not available for the selected service.'
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Service Must Be Offered By This Health Center
+                |--------------------------------------------------------------------------
+                */
+
+                $serviceExists = $schedule
+                    ->healthCenter
+                    ->services()
+                    ->where(
+                        'services.id',
+                        $validated['service_id']
+                    )
+                    ->where(
+                        'services.status',
+                        true
+                    )
+                    ->exists();
+
+                if (!$serviceExists) {
+                    throw new \RuntimeException(
+                        'The selected service is not available at your health center.'
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Schedule Must Still Be In The Future
+                |--------------------------------------------------------------------------
+                */
+
+                $scheduleDate =
+                    $schedule->schedule_date->format('Y-m-d');
+
+                $scheduleTime =
+                    $schedule->appointment_time->format('H:i:s');
 
                 if (
                     $scheduleDate < now()->toDateString()
@@ -128,30 +386,101 @@ try {
                     );
                 }
 
-                $activeAppointments = $schedule->appointments()
-                    ->whereIn('status', ['pending', 'approved'])
+
+                /*
+                |--------------------------------------------------------------------------
+                | Check Schedule Capacity
+                |--------------------------------------------------------------------------
+                */
+
+                $activeAppointments = $schedule
+                    ->appointments()
+                    ->whereIn(
+                        'status',
+                        [
+                            'pending',
+                            'approved',
+                        ]
+                    )
                     ->count();
 
-                if ($activeAppointments >= $schedule->capacity) {
+                if (
+                    $activeAppointments >=
+                    $schedule->capacity
+                ) {
                     throw new \RuntimeException(
                         'The selected appointment schedule is already full.'
                     );
                 }
 
-                $doctor = Doctor::findOrFail($validated['doctor_id']);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Load Doctor
+                |--------------------------------------------------------------------------
+                */
+
+                $doctor = Doctor::findOrFail(
+                    $validated['doctor_id']
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Doctor Must Belong To Same Health Center
+                |--------------------------------------------------------------------------
+                */
 
                 if (
                     (int) $doctor->health_center_id !==
-                    (int) $schedule->health_center_id
+                    (int) $patient->health_center_id
                 ) {
                     throw new \RuntimeException(
-                        'The selected doctor is not assigned to the selected health center.'
+                        'The selected doctor is not assigned to your health center.'
                     );
                 }
 
-                $alreadyBooked = $schedule->appointments()
-                    ->where('patient_id', $patient->id)
-                    ->whereIn('status', ['pending', 'approved'])
+
+                /*
+                |--------------------------------------------------------------------------
+                | Doctor Must Provide Selected Service
+                |--------------------------------------------------------------------------
+                */
+
+                $doctorProvidesService = $doctor
+                    ->services()
+                    ->where(
+                        'services.id',
+                        $validated['service_id']
+                    )
+                    ->exists();
+
+                if (!$doctorProvidesService) {
+                    throw new \RuntimeException(
+                        'The selected doctor does not provide the selected service.'
+                    );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Duplicate Active Appointment
+                |--------------------------------------------------------------------------
+                */
+
+                $alreadyBooked = $schedule
+                    ->appointments()
+                    ->where(
+                        'patient_id',
+                        $patient->id
+                    )
+                    ->whereIn(
+                        'status',
+                        [
+                            'pending',
+                            'approved',
+                        ]
+                    )
                     ->exists();
 
                 if ($alreadyBooked) {
@@ -160,43 +489,108 @@ try {
                     );
                 }
 
-               $appointment = Appointment::create([
-                    'patient_id' => $patient->id,
-                    'doctor_id' => $doctor->id,
-                    'health_center_id' => $schedule->health_center_id,
-                    'appointment_schedule_id' => $schedule->id,
-                    'appointment_date' => $schedule->schedule_date->format('Y-m-d'),
-                    'appointment_time' => $schedule->appointment_time->format('H:i:s'),
-                    'reason' => $validated['reason'],
-                    'status' => 'pending',
-                    'notes' => $validated['notes'] ?? null,
+
+                /*
+                |--------------------------------------------------------------------------
+                | Create Appointment
+                |--------------------------------------------------------------------------
+                */
+
+                $appointment = Appointment::create([
+                    'patient_id' =>
+                        $patient->id,
+
+                    'doctor_id' =>
+                        $doctor->id,
+
+                    'health_center_id' =>
+                        $patient->health_center_id,
+
+                    'service_id' =>
+                        $validated['service_id'],
+
+                    'appointment_schedule_id' =>
+                        $schedule->id,
+
+                    'appointment_date' =>
+                        $schedule->schedule_date->format('Y-m-d'),
+
+                    'appointment_time' =>
+                        $schedule->appointment_time->format('H:i:s'),
+
+                    'reason' =>
+                        $validated['reason'],
+
+                    'status' =>
+                        'pending',
+
+                    'notes' =>
+                        $validated['notes'] ?? null,
                 ]);
             });
 
-              } catch (\RuntimeException $e) {
+        } catch (\RuntimeException $e) {
 
             return redirect()
                 ->back()
                 ->withInput()
                 ->withErrors([
-                    'appointment_schedule_id' => $e->getMessage(),
+                    'service_id' =>
+                        $e->getMessage(),
                 ]);
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Activity Log
+        |--------------------------------------------------------------------------
+        */
+
+        $appointment->load([
+            'appointmentSchedule.healthCenter',
+            'service',
+        ]);
 
         ActivityLog::record(
             Auth::id(),
             'Appointment Booked',
-            'Patient booked appointment #' . $appointment->id .
-                ' at ' . $appointment->appointmentSchedule->healthCenter->name .
-                ' on ' . $appointment->appointment_date->format('F j, Y') .
-                ' at ' . $appointment->appointment_time->format('g:i A') . '.',
+            'Patient booked appointment #' .
+                $appointment->id .
+                ' for ' .
+                ($appointment->service->name ?? 'Unknown Service') .
+                ' at ' .
+                $appointment->appointmentSchedule->healthCenter->name .
+                ' on ' .
+                $appointment->appointment_date->format('F j, Y') .
+                ' at ' .
+                $appointment->appointment_time->format('g:i A') .
+                '.',
             $request->ip()
         );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Redirect
+        |--------------------------------------------------------------------------
+        */
+
         return redirect()
             ->route('patient.dashboard')
-            ->with('success', 'Appointment booked successfully.');
+            ->with(
+                'success',
+                'Appointment booked successfully.'
+            );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cancel Appointment
+    |--------------------------------------------------------------------------
+    */
+
     public function cancel(Appointment $appointment)
     {
         $patient = auth()->user()->patient;
@@ -205,7 +599,10 @@ try {
             abort(403, 'Patient record not found.');
         }
 
-        if ($appointment->patient_id !== $patient->id) {
+        if (
+            $appointment->patient_id !==
+            $patient->id
+        ) {
             abort(
                 403,
                 'You are not authorized to cancel this appointment.'
@@ -225,12 +622,14 @@ try {
             'status' => 'cancelled',
         ]);
 
-ActivityLog::record(
-    Auth::id(),
-    'Appointment Cancelled',
-    'Patient cancelled appointment #' . $appointment->id . '.',
-    request()->ip()
-);
+        ActivityLog::record(
+            Auth::id(),
+            'Appointment Cancelled',
+            'Patient cancelled appointment #' .
+                $appointment->id .
+                '.',
+            request()->ip()
+        );
 
         return redirect()
             ->route('patient.appointments.index')
