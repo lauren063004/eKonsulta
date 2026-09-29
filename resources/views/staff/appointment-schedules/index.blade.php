@@ -2,6 +2,8 @@
 
 @section('title', 'Appointment Schedules')
 
+@section('page-title', 'Appointment Schedules')
+
 @section('content')
 
 <div class="page-header">
@@ -16,13 +18,13 @@
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success">
+    <div class="alert alert-success" role="status">
         {{ session('success') }}
     </div>
 @endif
 
 @if(session('error'))
-    <div class="alert alert-danger">
+    <div class="alert alert-danger" role="alert">
         {{ session('error') }}
     </div>
 @endif
@@ -57,10 +59,10 @@
 
                         @foreach($schedules as $schedule)
 
-                           @php
-    $booked = (int) $schedule->active_appointments_count;
-    $available = max($schedule->capacity - $booked, 0);
-@endphp
+                            @php
+                                $booked = (int) $schedule->active_appointments_count;
+                                $available = max($schedule->capacity - $booked, 0);
+                            @endphp
 
                             <tr>
 
@@ -85,7 +87,9 @@
                                 </td>
 
                                 <td>
-                                    {{ $available }}
+                                    <span class="pill {{ $available === 0 ? 'pill--red' : 'pill--green' }}">
+                                        {{ $available }}
+                                    </span>
                                 </td>
 
                                 <td>

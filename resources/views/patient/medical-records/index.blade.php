@@ -8,295 +8,288 @@
 
 <div class="dashboard-card">
 
+    <div class="card-header">
 
-<div class="card-header">
+        <div>
+            <h3>My Medical Records</h3>
+            <p>Your consultation and treatment history</p>
+        </div>
 
-    <div>
-        <h3>My Medical Records</h3>
-        <p>Your consultation and treatment history</p>
+        <a href="{{ route('patient.dashboard') }}">
+            Back to Dashboard
+        </a>
+
     </div>
 
-    <a href="{{ route('patient.dashboard') }}">
-        Back to Dashboard
-    </a>
+    @if($consultations->count())
 
-</div>
+        <div class="medical-records-list">
 
-@if($consultations->count())
+            @foreach($consultations as $consultation)
 
-    <div class="medical-records-list">
+                <div class="appointment-preview">
 
-        @foreach($consultations as $consultation)
+                    <div class="appointment-date">
 
-            <div class="appointment-preview">
+                        <strong>
+                            {{ $consultation->consultation_date->format('M') }}
+                        </strong>
 
-                <div class="appointment-date">
+                        <span>
+                            {{ $consultation->consultation_date->format('d') }}
+                        </span>
 
-                    <strong>
-                        {{ $consultation->consultation_date->format('M') }}
-                    </strong>
+                    </div>
 
-                    <span>
-                        {{ $consultation->consultation_date->format('d') }}
-                    </span>
+                    <div class="appointment-details">
 
-                </div>
+                        <h4>
+                            {{ $consultation->consultation_date->format('l, F j, Y') }}
+                        </h4>
 
-                <div class="appointment-details">
+                        {{-- Doctor --}}
+                        @if($consultation->doctor && $consultation->doctor->user)
 
-                    <h4>
-                        {{ $consultation->consultation_date->format('l, F j, Y') }}
-                    </h4>
+                            <p>
+                                👨‍⚕️
+                                {{ $consultation->doctor->user->name }}
+                            </p>
 
-                    {{-- Doctor --}}
-                    @if($consultation->doctor && $consultation->doctor->user)
+                        @endif
 
-                        <p>
-                            👨‍⚕️
-                          {{ $consultation->doctor->user->name }}
-                        </p>
+                        {{-- Specialization --}}
+                        @if($consultation->doctor && $consultation->doctor->specialization)
 
-                    @endif
+                            <p>
+                                🩺
+                                {{ $consultation->doctor->specialization }}
+                            </p>
 
-                    {{-- Specialization --}}
-                    @if($consultation->doctor && $consultation->doctor->specialization)
+                        @endif
 
-                        <p>
-                            🩺
-                            {{ $consultation->doctor->specialization }}
-                        </p>
+                        {{-- Health Center --}}
+                        @if($consultation->appointment && $consultation->appointment->healthCenter)
 
-                    @endif
+                            <p>
+                                🏥
+                                {{ $consultation->appointment->healthCenter->name }}
+                            </p>
 
-                    {{-- Health Center --}}
-                    @if($consultation->appointment && $consultation->appointment->healthCenter)
+                        @endif
 
-                        <p>
-                            🏥
-                            {{ $consultation->appointment->healthCenter->name }}
-                        </p>
+                        {{-- Chief Complaint --}}
+                        @if($consultation->chief_complaint)
 
-                    @endif
+                            <p>
+                                <strong>Chief Complaint:</strong>
+                                {{ $consultation->chief_complaint }}
+                            </p>
 
-                    {{-- Chief Complaint --}}
-                    @if($consultation->chief_complaint)
+                        @endif
 
-                        <p>
-                            <strong>Chief Complaint:</strong>
-                            {{ $consultation->chief_complaint }}
-                        </p>
+                        {{-- Symptoms --}}
+                        @if($consultation->symptoms)
 
-                    @endif
+                            <p>
+                                <strong>Symptoms:</strong>
+                                {{ $consultation->symptoms }}
+                            </p>
 
-                    {{-- Symptoms --}}
-                    @if($consultation->symptoms)
+                        @endif
 
-                        <p>
-                            <strong>Symptoms:</strong>
-                            {{ $consultation->symptoms }}
-                        </p>
+                        {{-- Diagnosis --}}
+                        @if($consultation->diagnosis)
 
-                    @endif
+                            <p>
+                                <strong>Diagnosis:</strong>
+                                {{ $consultation->diagnosis }}
+                            </p>
 
-                    {{-- Diagnosis --}}
-                    @if($consultation->diagnosis)
+                        @endif
 
-                        <p>
-                            <strong>Diagnosis:</strong>
-                            {{ $consultation->diagnosis }}
-                        </p>
+                        {{-- Treatment Plan --}}
+                        @if($consultation->treatment_plan)
 
-                    @endif
+                            <p>
+                                <strong>Treatment Plan:</strong>
+                                {{ $consultation->treatment_plan }}
+                            </p>
 
-                    {{-- Treatment Plan --}}
-                    @if($consultation->treatment_plan)
+                        @endif
 
-                        <p>
-                            <strong>Treatment Plan:</strong>
-                            {{ $consultation->treatment_plan }}
-                        </p>
+                        {{-- Doctor's Notes --}}
+                        @if($consultation->notes)
 
-                    @endif
+                            <p>
+                                <strong>Doctor's Notes:</strong>
+                                {{ $consultation->notes }}
+                            </p>
 
-                    {{-- Doctor's Notes --}}
-                    @if($consultation->notes)
-
-                        <p>
-                            <strong>Doctor's Notes:</strong>
-                            {{ $consultation->notes }}
-                        </p>
-
-                    @endif
+                        @endif
 
 
-                    {{-- PRESCRIPTIONS --}}
-                    @if($consultation->prescriptions->count())
+                        {{-- PRESCRIPTIONS --}}
+                        @if($consultation->prescriptions->count())
 
-                        <hr>
+                            <hr>
 
-                        <h4>💊 Prescriptions</h4>
+                            <h4>💊 Prescriptions</h4>
 
-                        @foreach($consultation->prescriptions as $prescription)
+                            @foreach($consultation->prescriptions as $prescription)
 
-                            <div class="prescription-details">
+                                <div class="prescription-details">
 
-                                <p>
-                                    <strong>Prescription No:</strong>
-                                    {{ $prescription->prescription_number }}
-                                </p>
+                                    <div class="detail-grid">
 
-                                <p>
-                                    <strong>Date:</strong>
-                                    {{ $prescription->prescription_date->format('F j, Y') }}
-                                </p>
+                                        <p>
+                                            <strong>Prescription No:</strong>
+                                            {{ $prescription->prescription_number }}
+                                        </p>
 
-                                <p>
-                                    <strong>Status:</strong>
-                                    {{ ucfirst($prescription->status) }}
-                                </p>
+                                        <p>
+                                            <strong>Date:</strong>
+                                            {{ $prescription->prescription_date->format('F j, Y') }}
+                                        </p>
 
-                                {{-- General Instructions --}}
-                                @if($prescription->instructions)
+                                        <p>
+                                            <strong>Status:</strong>
+                                            {{ ucfirst($prescription->status) }}
+                                        </p>
 
-                                    <p>
-                                        <strong>General Instructions:</strong>
-                                        {{ $prescription->instructions }}
-                                    </p>
+                                    </div>
 
-                                @endif
+                                    {{-- General Instructions --}}
+                                    @if($prescription->instructions)
+
+                                        <p>
+                                            <strong>General Instructions:</strong>
+                                            {{ $prescription->instructions }}
+                                        </p>
+
+                                    @endif
 
 
-                                {{-- Medicines --}}
-                                @if($prescription->items->count())
+                                    {{-- Medicines --}}
+                                    @if($prescription->items->count())
 
-                                    <h4>Medicines</h4>
+                                        <h4 style="margin-top:12px;">Medicines</h4>
 
-                                    @foreach($prescription->items as $item)
+                                        @foreach($prescription->items as $item)
 
-                                        <div class="medicine-item">
+                                            <div class="medicine-item">
 
-                                            @if($item->medicine)
-
-                                                <p>
-                                                    💊
-                                                    <strong>
-                                                        {{ $item->medicine->name }}
-                                                    </strong>
-
-                                                    @if($item->medicine->generic_name)
-                                                        ({{ $item->medicine->generic_name }})
-                                                    @endif
-                                                </p>
-
-                                                @if($item->medicine->strength || $item->medicine->dosage_form)
+                                                @if($item->medicine)
 
                                                     <p>
-                                                        <strong>Medicine:</strong>
+                                                        💊
+                                                        <strong>
+                                                            {{ $item->medicine->name }}
+                                                        </strong>
 
-                                                        @if($item->medicine->strength)
-                                                            {{ $item->medicine->strength }}
+                                                        @if($item->medicine->generic_name)
+                                                            ({{ $item->medicine->generic_name }})
                                                         @endif
+                                                    </p>
 
-                                                        @if($item->medicine->dosage_form)
-                                                            — {{ $item->medicine->dosage_form }}
-                                                        @endif
+                                                    @if($item->medicine->strength || $item->medicine->dosage_form)
+
+                                                        <p>
+                                                            <strong>Medicine:</strong>
+
+                                                            @if($item->medicine->strength)
+                                                                {{ $item->medicine->strength }}
+                                                            @endif
+
+                                                            @if($item->medicine->dosage_form)
+                                                                — {{ $item->medicine->dosage_form }}
+                                                            @endif
+                                                        </p>
+
+                                                    @endif
+
+                                                @endif
+
+
+                                                <div class="detail-grid">
+
+                                                    @if($item->dosage)
+                                                        <p>
+                                                            <strong>Dosage:</strong>
+                                                            {{ $item->dosage }}
+                                                        </p>
+                                                    @endif
+
+                                                    @if($item->frequency)
+                                                        <p>
+                                                            <strong>Frequency:</strong>
+                                                            {{ $item->frequency }}
+                                                        </p>
+                                                    @endif
+
+                                                    @if($item->duration)
+                                                        <p>
+                                                            <strong>Duration:</strong>
+                                                            {{ $item->duration }}
+                                                        </p>
+                                                    @endif
+
+                                                    @if($item->quantity)
+                                                        <p>
+                                                            <strong>Quantity:</strong>
+                                                            {{ $item->quantity }}
+                                                        </p>
+                                                    @endif
+
+                                                </div>
+
+
+                                                @if($item->instructions)
+
+                                                    <p>
+                                                        <strong>Instructions:</strong>
+                                                        {{ $item->instructions }}
                                                     </p>
 
                                                 @endif
 
-                                            @endif
+                                            </div>
 
+                                        @endforeach
 
-                                            @if($item->dosage)
+                                    @endif
 
-                                                <p>
-                                                    <strong>Dosage:</strong>
-                                                    {{ $item->dosage }}
-                                                </p>
+                                </div>
 
-                                            @endif
+                            @endforeach
 
+                        @endif
 
-                                            @if($item->frequency)
-
-                                                <p>
-                                                    <strong>Frequency:</strong>
-                                                    {{ $item->frequency }}
-                                                </p>
-
-                                            @endif
-
-
-                                            @if($item->duration)
-
-                                                <p>
-                                                    <strong>Duration:</strong>
-                                                    {{ $item->duration }}
-                                                </p>
-
-                                            @endif
-
-
-                                            @if($item->quantity)
-
-                                                <p>
-                                                    <strong>Quantity:</strong>
-                                                    {{ $item->quantity }}
-                                                </p>
-
-                                            @endif
-
-
-                                            @if($item->instructions)
-
-                                                <p>
-                                                    <strong>Instructions:</strong>
-                                                    {{ $item->instructions }}
-                                                </p>
-
-                                            @endif
-
-                                        </div>
-
-                                    @endforeach
-
-                                @endif
-
-                            </div>
-
-                        @endforeach
-
-                    @endif
+                    </div>
 
                 </div>
 
-            </div>
+            @endforeach
 
-            <hr>
-
-        @endforeach
-
-    </div>
-
-@else
-
-    <div class="empty-state">
-
-        <div class="empty-icon">
-            📋
         </div>
 
-        <h4>No medical records yet</h4>
+    @else
 
-        <p>
-            Your consultation and treatment records will appear here
-            after you have completed a consultation.
-        </p>
+        <div class="empty-state">
 
-    </div>
+            <div class="empty-icon">
+                📋
+            </div>
 
-@endif
+            <h4>No medical records yet</h4>
 
+            <p>
+                Your consultation and treatment records will appear here
+                after you have completed a consultation.
+            </p>
+
+        </div>
+
+    @endif
 
 </div>
 

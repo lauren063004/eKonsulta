@@ -18,77 +18,121 @@
 
 <body>
 
-    <h1>e-Konsulta</h1>
+<div class="ek-auth">
 
-    <h2>Verify Your Email</h2>
+    {{-- Brand panel --}}
+    <aside class="ek-auth-brand">
 
-    <p>
-        We sent a 6-digit verification code to your Gmail address.
-    </p>
+        <div class="ek-brand-content">
 
-    <p>
-        Please enter the code below to complete your registration.
-    </p>
+            {{-- Placeholder seal. Swap for: <img class="ek-seal" src="{{ asset('images/cho-seal.png') }}" alt="Taguig City Health Office seal"> --}}
+            <svg class="ek-seal" viewBox="0 0 96 96" aria-hidden="true">
+                <circle cx="48" cy="48" r="45" fill="#fff" stroke="#0A3D8F" stroke-width="5"/>
+                <path fill="#D91E25" d="M41 24h14v17h17v14H55v17H41V55H24V41h17z"/>
+            </svg>
 
-    @if (session('success'))
-        <div>
-            <p>{{ session('success') }}</p>
+            <h1 class="ek-wordmark">
+                <span>e-<span class="ek-wordmark-red" style="display:inline;">Konsulta</span></span>
+            </h1>
+
+            <p class="ek-brand-sub">
+                City Health System — online consultation booking and
+                digital health records for Taguig residents.
+            </p>
+
+            <p class="ek-tagline">
+                <span>Mabilis. Maayos.</span>
+                <span>Malapit sa iyo.</span>
+            </p>
+
         </div>
-    @endif
 
-    @if ($errors->any())
-        <div>
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
-        </div>
-    @endif
+    </aside>
 
-    <form
-        method="POST"
-        action="{{ route('register.verify.submit') }}"
-    >
-        @csrf
 
-        <div>
-            <label for="otp">
-                Verification Code
-            </label>
+    {{-- Form panel --}}
+    <main class="ek-auth-panel ek-auth-panel--center">
 
-            <input
-                id="otp"
-                type="text"
-                name="otp"
-                inputmode="numeric"
-                maxlength="6"
-                pattern="[0-9]{6}"
-                autocomplete="one-time-code"
-                value="{{ old('otp') }}"
-                required
+        <div class="ek-card">
+
+            <h2>Verify Your Email</h2>
+
+            <p class="ek-card-intro">
+                We sent a 6-digit verification code to your Gmail address.
+                Please enter the code below to complete your registration.
+            </p>
+
+            @if (session('success'))
+                <div class="ek-alert ek-alert--success" role="status">
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="ek-alert" role="alert">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
+            <form
+                method="POST"
+                action="{{ route('register.verify.submit') }}"
+                class="ek-form"
             >
+                @csrf
+
+                <div class="ek-field">
+                    <label for="otp">
+                        Verification Code
+                    </label>
+
+                    <input
+                        id="otp"
+                        class="ek-input ek-input--otp"
+                        type="text"
+                        name="otp"
+                        inputmode="numeric"
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        autocomplete="one-time-code"
+                        placeholder="••••••"
+                        value="{{ old('otp') }}"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <button type="submit" class="ek-btn">
+                    Verify Email
+                </button>
+            </form>
+
+            <form
+                method="POST"
+                action="{{ route('register.resend-otp') }}"
+                class="ek-form"
+                style="margin-top: 12px;"
+            >
+                @csrf
+
+                <button type="submit" class="ek-btn ek-btn--ghost">
+                    Resend Code
+                </button>
+            </form>
+
+            <p class="ek-foot">
+                <a href="{{ route('register') }}" class="ek-link">
+                    ← Back to Registration
+                </a>
+            </p>
+
         </div>
 
-        <button type="submit">
-            Verify Email
-        </button>
-    </form>
+    </main>
 
-    <form
-        method="POST"
-        action="{{ route('register.resend-otp') }}"
-    >
-        @csrf
-
-        <button type="submit">
-            Resend Code
-        </button>
-    </form>
-
-    <p>
-        <a href="{{ route('register') }}">
-            Back to Registration
-        </a>
-    </p>
+</div>
 
 </body>
 </html>

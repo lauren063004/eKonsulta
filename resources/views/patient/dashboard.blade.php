@@ -24,7 +24,7 @@
             </p>
         </div>
 
-        <div class="welcome-icon">
+        <div class="welcome-icon" aria-hidden="true">
             🩺
         </div>
 
@@ -32,7 +32,7 @@
 
 
     {{-- Statistics --}}
-    <section class="stats-grid">
+    <section class="stats-grid" aria-label="Summary">
 
         <x-stat-card
             icon="📅"
@@ -78,9 +78,9 @@
                     <p>Your next scheduled visit</p>
                 </div>
 
-             <a href="{{ route('patient.appointments.index') }}">
-    View All
-</a>
+                <a href="{{ route('patient.appointments.index') }}">
+                    View All
+                </a>
 
             </div>
 
@@ -146,13 +146,13 @@
                         @if($nextAppointment->reason)
 
                             <p>
-                                Reason: {{ $nextAppointment->reason }}
+                                <strong>Reason:</strong> {{ $nextAppointment->reason }}
                             </p>
 
                         @endif
 
 
-                        <span class="appointment-status">
+                        <span class="appointment-status status-{{ strtolower($nextAppointment->status) }}">
                             {{ ucfirst($nextAppointment->status) }}
                         </span>
 
@@ -174,12 +174,12 @@
                         You currently don't have a scheduled appointment.
                     </p>
 
-                  <a
-    href="{{ route('patient.appointments.create') }}"
-    class="primary-button"
->
-    Book an Appointment
-</a>
+                    <a
+                        href="{{ route('patient.appointments.create') }}"
+                        class="primary-button"
+                    >
+                        Book an Appointment
+                    </a>
 
                 </div>
 
@@ -203,10 +203,10 @@
 
             <div class="quick-actions">
 
-               <a
-    href="{{ route('patient.appointments.create') }}"
-    class="quick-action"
->
+                <a
+                    href="{{ route('patient.appointments.create') }}"
+                    class="quick-action"
+                >
 
                     <span>📅</span>
 
@@ -221,25 +221,18 @@
                 </a>
 
 
-               <a href="{{ route('patient.medical-records.index') }}" class="quick-action">
-    <span>📋</span>
-    <strong>Medical Records</strong>
-    <small>View your health history</small>
-</a>
+                <a href="{{ route('patient.medical-records.index') }}" class="quick-action">
 
-                   <span>📋</span>
+                    <span>📋</span>
 
-<strong>
-    Medical Records
-</strong>
+                    <strong>Medical Records</strong>
 
-<small>
-    View your health history
-</small>
+                    <small>View your health history</small>
 
-</a>
+                </a>
 
-               <a href="{{ route('patient.prescriptions.index') }}" class="quick-action">
+
+                <a href="{{ route('patient.prescriptions.index') }}" class="quick-action">
 
                     <span>💊</span>
 
@@ -254,19 +247,19 @@
                 </a>
 
 
-               <a href="{{ route('patient.profile') }}" class="quick-action">
+                <a href="{{ route('patient.profile') }}" class="quick-action">
 
-    <span>👤</span>
+                    <span>👤</span>
 
-    <strong>
-        My Profile
-    </strong>
- 
-    <small>
-        Update your information
-    </small>
+                    <strong>
+                        My Profile
+                    </strong>
 
-</a>
+                    <small>
+                        Update your information
+                    </small>
+
+                </a>
 
             </div>
 
@@ -275,10 +268,67 @@
     </div>
 
 
+    {{-- Optional panels from the paper (render only if the controller supplies the data) --}}
+    @if(isset($announcements) || isset($recentPrescription))
+
+        <div class="dashboard-grid dashboard-grid--even">
+
+            @isset($recentPrescription)
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Recent Prescription</h3>
+                            <p>Your latest prescribed medicine</p>
+                        </div>
+                        <a href="{{ route('patient.prescriptions.index') }}">View All</a>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <div class="info-icon">💊</div>
+                            <div>
+                                <strong>{{ $recentPrescription->prescription_number }}</strong>
+                                <p>{{ $recentPrescription->prescription_date->format('F j, Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            @endisset
+
+            @isset($announcements)
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Announcements</h3>
+                            <p>News from your City Health Office</p>
+                        </div>
+                    </div>
+
+                    <div class="info-list">
+                        @forelse($announcements as $announcement)
+                            <div class="info-item">
+                                <div class="info-icon">📢</div>
+                                <div>
+                                    <strong>{{ $announcement->title }}</strong>
+                                    <p>{{ $announcement->body }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-muted">No announcements right now.</p>
+                        @endforelse
+                    </div>
+                </section>
+            @endisset
+
+        </div>
+
+    @endif
+
+
     {{-- Health Reminder --}}
     <section class="dashboard-card health-reminder">
 
-        <div class="reminder-icon">
+        <div class="reminder-icon" aria-hidden="true">
             ❤️
         </div>
 
@@ -291,7 +341,8 @@
             <p>
                 Keep your personal information and emergency
                 contact details updated to help our health staff
-                provide better service.
+                provide better service. Stay hydrated — drink at
+                least 8 glasses of water every day.
             </p>
 
         </div>

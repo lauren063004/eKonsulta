@@ -1,7 +1,7 @@
 <div class="stat-card">
 
-    <div class="stat-icon {{ $color ?? '' }}">
-       {!! $icon !!}
+    <div class="stat-icon {{ $color ?? '' }}" aria-hidden="true">
+        {!! $icon !!}
     </div>
 
     <div class="stat-information">

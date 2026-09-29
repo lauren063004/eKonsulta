@@ -62,7 +62,7 @@ Route::post('/register/verify', [AuthController::class, 'verifyOtp'])
 
 Route::post('/register/resend-otp', [AuthController::class, 'resendOtp'])
     ->name('register.resend-otp');
-    
+
 /*
 |--------------------------------------------------------------------------
 | Logout
@@ -73,7 +73,9 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-
+Route::get('/patient/notifications', function () {
+    return view('patient.notifications');
+})->name('patient.notifications');
 /*
 |--------------------------------------------------------------------------
 | Admin Routes

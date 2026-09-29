@@ -28,7 +28,7 @@
     {{-- Validation Errors --}}
     @if ($errors->any())
 
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" role="alert">
 
             <strong>Please correct the following:</strong>
 
@@ -43,22 +43,41 @@
     @endif
 
 
-    {{-- Assigned Health Center --}}
-    <div class="form-group">
+    <div class="reminder-box">
+        <span aria-hidden="true">🕐</span>
+        <span><strong>Reminder:</strong> Please arrive 15 minutes early before your appointment.</span>
+    </div>
 
-        <label>
-            Health Center
-        </label>
 
-        <input
-            type="text"
-            value="{{ $healthCenter->name }} — {{ $healthCenter->barangay }}"
-            readonly
-        >
+    {{-- STEP 1 — Assigned Health Center --}}
+    <div class="form-section">
 
-        <small>
-            Your health center is based on your registered barangay.
-        </small>
+        <div class="form-section-head">
+            <span class="step-number">1</span>
+            <div>
+                <h4>Health Center</h4>
+                <p>Assigned from your registered barangay</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            <div class="center-card">
+                <div class="center-icon" aria-hidden="true">🏥</div>
+
+                <input
+                    type="text"
+                    value="{{ $healthCenter->name }} — {{ $healthCenter->barangay }}"
+                    readonly
+                    aria-label="Health Center"
+                >
+            </div>
+
+            <small>
+                Your health center is based on your registered barangay.
+            </small>
+
+        </div>
 
     </div>
 
@@ -73,188 +92,226 @@
             @csrf
 
 
-            {{-- Service --}}
-            <div class="form-group">
+            {{-- STEP 2 — Service and Schedule --}}
+            <div class="form-section">
 
-                <label for="service_id">
-                    Type of Service
-                </label>
+                <div class="form-section-head">
+                    <span class="step-number">2</span>
+                    <div>
+                        <h4>Service &amp; Schedule</h4>
+                        <p>Choose the service, then an available date and time</p>
+                    </div>
+                </div>
 
-                <select
-                    id="service_id"
-                    name="service_id"
-                    required
-                >
+                {{-- Service --}}
+                <div class="form-group">
 
-                    <option value="">
-                        Select a service
-                    </option>
+                    <label for="service_id">
+                        Type of Service
+                    </label>
 
-                    @foreach ($services as $service)
+                    <select
+                        id="service_id"
+                        name="service_id"
+                        required
+                    >
 
-                        <option
-                            value="{{ $service->id }}"
-                            {{ old('service_id') == $service->id ? 'selected' : '' }}
-                        >
-
-                            {{ $service->name }}
-
+                        <option value="">
+                            Select a service
                         </option>
 
-                    @endforeach
+                        @foreach ($services as $service)
 
-                </select>
+                            <option
+                                value="{{ $service->id }}"
+                                {{ old('service_id') == $service->id ? 'selected' : '' }}
+                            >
 
-                <small>
-                    Only services currently offered by your health center are shown.
-                </small>
+                                {{ $service->name }}
 
-            </div>
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                    <small>
+                        Only services currently offered by your health center are shown.
+                    </small>
+
+                </div>
 
 
-            {{-- Appointment Schedule --}}
-            <div class="form-group">
+                {{-- Appointment Schedule --}}
+                <div class="form-group">
 
-                <label for="appointment_schedule_id">
-                    Available Schedule
-                </label>
+                    <label for="appointment_schedule_id">
+                        Available Schedule
+                    </label>
 
-                <select
-                    id="appointment_schedule_id"
-                    name="appointment_schedule_id"
-                    required
-                >
+                    <select
+                        id="appointment_schedule_id"
+                        name="appointment_schedule_id"
+                        required
+                    >
 
-                    <option value="">
-                        Select an available schedule
-                    </option>
-
-                    @foreach ($schedules as $schedule)
-
-                        @php
-                            $booked = $schedule->active_appointments_count;
-                            $available = max(
-                                $schedule->capacity - $booked,
-                                0
-                            );
-                        @endphp
-
-                 <option
-    value="{{ $schedule->id }}"
-    data-health-center-id="{{ $schedule->health_center_id }}"
-    data-service-id="{{ $schedule->service_id }}"
-    {{ old('appointment_schedule_id') == $schedule->id ? 'selected' : '' }}
->
-
-                            {{ $schedule->healthCenter->name }}
-                            —
-                            {{ $schedule->schedule_date->format('M d, Y') }}
-                            —
-                            {{ $schedule->appointment_time->format('h:i A') }}
-                            —
-                            {{ $available }}
-                            slot{{ $available == 1 ? '' : 's' }}
-                            available
-
+                        <option value="">
+                            Select an available schedule
                         </option>
 
-                    @endforeach
+                        @foreach ($schedules as $schedule)
 
-                </select>
+                            @php
+                                $booked = $schedule->active_appointments_count;
+                                $available = max(
+                                    $schedule->capacity - $booked,
+                                    0
+                                );
+                            @endphp
+
+                            <option
+                                value="{{ $schedule->id }}"
+                                data-health-center-id="{{ $schedule->health_center_id }}"
+                                data-service-id="{{ $schedule->service_id }}"
+                                {{ old('appointment_schedule_id') == $schedule->id ? 'selected' : '' }}
+                            >
+
+                                {{ $schedule->healthCenter->name }}
+                                —
+                                {{ $schedule->schedule_date->format('M d, Y') }}
+                                —
+                                {{ $schedule->appointment_time->format('h:i A') }}
+                                —
+                                {{ $available }}
+                                slot{{ $available == 1 ? '' : 's' }}
+                                available
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
 
             </div>
 
 
-            {{-- Doctor --}}
-            <div class="form-group">
+            {{-- STEP 3 — Doctor --}}
+            <div class="form-section">
 
-                <label for="doctor_id">
-                    Doctor
-                </label>
+                <div class="form-section-head">
+                    <span class="step-number">3</span>
+                    <div>
+                        <h4>Doctor</h4>
+                        <p>Doctors available for your selected service and schedule</p>
+                    </div>
+                </div>
 
-                <select
-                    id="doctor_id"
-                    name="doctor_id"
-                    required
-                    disabled
+                <div class="form-group">
+
+                    <label for="doctor_id">
+                        Doctor
+                    </label>
+
+                    <select
+                        id="doctor_id"
+                        name="doctor_id"
+                        required
+                        disabled
+                    >
+
+                        <option value="">
+                            Select a schedule first
+                        </option>
+
+                        @foreach ($doctors as $doctor)
+
+                            <option
+                                value="{{ $doctor->id }}"
+                                data-health-center-id="{{ $doctor->health_center_id }}"
+                                data-service-ids="{{ $doctor->services->pluck('id')->implode(',') }}"
+                                {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}
+                            >
+
+                                {{ $doctor->user->name ?? 'Doctor' }}
+
+                                @if ($doctor->specialization)
+                                    — {{ $doctor->specialization }}
+                                @endif
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                {{-- Selected Schedule Information --}}
+                <div
+                    id="schedule-info"
+                    class="form-group schedule-summary"
+                    style="display: none;"
                 >
 
-                    <option value="">
-                        Select a schedule first
-                    </option>
+                    <p>
+                        <strong>Selected Schedule</strong>
+                    </p>
 
-                 @foreach ($doctors as $doctor)
+                    <p id="schedule-details"></p>
 
-    <option
-        value="{{ $doctor->id }}"
-        data-health-center-id="{{ $doctor->health_center_id }}"
-        data-service-ids="{{ $doctor->services->pluck('id')->implode(',') }}"
-        {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}
-    >
-
-        {{ $doctor->user->name ?? 'Doctor' }}
-
-        @if ($doctor->specialization)
-            — {{ $doctor->specialization }}
-        @endif
-
-    </option>
-
-@endforeach
-
-                </select>
+                </div>
 
             </div>
 
 
-            {{-- Selected Schedule Information --}}
-            <div
-                id="schedule-info"
-                class="form-group"
-                style="display: none;"
-            >
+            {{-- STEP 4 — Concern --}}
+            <div class="form-section">
 
-                <p>
-                    <strong>Selected Schedule</strong>
-                </p>
+                <div class="form-section-head">
+                    <span class="step-number">4</span>
+                    <div>
+                        <h4>Your Concern</h4>
+                        <p>Help the doctor prepare for your visit</p>
+                    </div>
+                </div>
 
-                <p id="schedule-details"></p>
+                {{-- Reason --}}
+                <div class="form-group">
 
-            </div>
+                    <label for="reason">
+                        Reason for Consultation
+                    </label>
 
+                    <textarea
+                        id="reason"
+                        name="reason"
+                        rows="4"
+                        placeholder="Briefly describe the reason for your appointment..."
+                        required
+                    >{{ old('reason') }}</textarea>
 
-            {{-- Reason --}}
-            <div class="form-group">
-
-                <label for="reason">
-                    Reason for Consultation
-                </label>
-
-                <textarea
-                    id="reason"
-                    name="reason"
-                    rows="4"
-                    placeholder="Briefly describe the reason for your appointment..."
-                    required
-                >{{ old('reason') }}</textarea>
-
-            </div>
+                </div>
 
 
-            {{-- Additional Notes --}}
-            <div class="form-group">
+                {{-- Additional Notes --}}
+                <div class="form-group">
 
-                <label for="notes">
-                    Additional Notes
-                    <span>(Optional)</span>
-                </label>
+                    <label for="notes">
+                        Additional Notes
+                        <span>(Optional)</span>
+                    </label>
 
-                <textarea
-                    id="notes"
-                    name="notes"
-                    rows="3"
-                    placeholder="Any additional information for the doctor..."
-                >{{ old('notes') }}</textarea>
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        rows="3"
+                        placeholder="Any additional information for the doctor..."
+                    >{{ old('notes') }}</textarea>
+
+                </div>
 
             </div>
 
@@ -331,6 +388,7 @@
 </div>
 
 
+{{-- JavaScript below is unchanged from your original --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 

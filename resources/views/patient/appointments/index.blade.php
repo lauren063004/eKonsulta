@@ -9,13 +9,13 @@
     {{-- Flash Messages --}}
 
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success" role="status">
             {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" role="alert">
             {{ session('error') }}
         </div>
     @endif
@@ -86,23 +86,23 @@
 
                             {{-- Doctor --}}
 
-                          @if($appointment->doctor && $appointment->doctor->user)
+                            @if($appointment->doctor && $appointment->doctor->user)
 
-    <p>
-        👨‍⚕️
-        {{ $appointment->doctor->user->name }}
-    </p>
+                                <p>
+                                    👨‍⚕️
+                                    {{ $appointment->doctor->user->name }}
+                                </p>
 
-    @if($appointment->doctor->specialization)
+                                @if($appointment->doctor->specialization)
 
-        <p>
-            🩺
-            {{ $appointment->doctor->specialization }}
-        </p>
+                                    <p>
+                                        🩺
+                                        {{ $appointment->doctor->specialization }}
+                                    </p>
 
-    @endif
+                                @endif
 
-@endif
+                            @endif
 
 
                             {{-- Health Center --}}
@@ -131,7 +131,7 @@
 
                             {{-- Status --}}
 
-                            <span class="appointment-status">
+                            <span class="appointment-status status-{{ strtolower($appointment->status) }}">
                                 {{ ucfirst($appointment->status) }}
                             </span>
 
@@ -153,7 +153,7 @@
 
                                     <button
                                         type="submit"
-                                        class="secondary-button"
+                                        class="secondary-button btn-sm"
                                     >
                                         Cancel Appointment
                                     </button>
