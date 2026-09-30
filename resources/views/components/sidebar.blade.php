@@ -24,16 +24,17 @@
     <div class="sidebar-brand">
 
         <div class="brand-icon">
-            {{-- Placeholder seal. Swap for: <img src="{{ asset('images/cho-seal.png') }}" alt="Taguig City Health Office seal"> --}}
-            <svg viewBox="0 0 96 96" aria-hidden="true">
-                <circle cx="48" cy="48" r="45" fill="#fff" stroke="#0A3D8F" stroke-width="5"/>
-                <path fill="#D91E25" d="M41 24h14v17h17v14H55v17H41V55H24V41h17z"/>
-            </svg>
+            <img
+                src="{{ asset('images/cho-seal.jpg') }}"
+                alt="City Health Office of Taguig seal"
+                width="50"
+                height="50"
+            >
         </div>
 
         <div>
             <h1>e-Konsulta</h1>
-            <span>City Health System</span>
+            <span>City Health Office &bull; Taguig</span>
         </div>
 
     </div>
@@ -58,7 +59,7 @@
                 <span>Dashboard</span>
             </a>
 
-       
+
             <a
                 href="{{ route('patient.appointments.create') }}"
                 class="nav-link {{ request()->routeIs('patient.appointments.create') ? 'active' : '' }}"
@@ -307,6 +308,9 @@
 
     <div class="sidebar-bottom">
 
+        {{-- Signed-in user (uses auth()->user() already used elsewhere in your views) --}}
+       
+
         <div class="system-status">
             <span class="status-dot"></span>
             <span>System Online</span>
@@ -316,13 +320,6 @@
 
             @csrf
 
-            <button
-                type="submit"
-                class="logout-button"
-            >
-                <span>{!! $icons['logout'] !!}</span>
-                <span>Logout</span>
-            </button>
 
         </form>
 

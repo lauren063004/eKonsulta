@@ -124,11 +124,29 @@ return $this->redirectByRole($user);
 public function register(Request $request)
 {
     $validated = $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:255',
-        ],
+      'first_name' => [
+    'required',
+    'string',
+    'max:100',
+],
+
+'middle_name' => [
+    'nullable',
+    'string',
+    'max:100',
+],
+
+'last_name' => [
+    'required',
+    'string',
+    'max:100',
+],
+
+'suffix' => [
+    'nullable',
+    'string',
+    'max:30',
+],
 
         'email' => [
             'required',
@@ -406,12 +424,23 @@ public function verifyOtp(Request $request)
             ]);
     }
 
-    $user = User::create([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'password' => Hash::make($validated['password']),
-        'role' => 'patient',
-    ]);
+   $fullName = trim(implode(' ', array_filter([
+    $validated['first_name'],
+    $validated['middle_name'] ?? null,
+    $validated['last_name'],
+    $validated['suffix'] ?? null,
+])));
+
+$user = User::create([
+    'name' => $fullName,
+    'first_name' => $validated['first_name'],
+    'middle_name' => $validated['middle_name'] ?? null,
+    'last_name' => $validated['last_name'],
+    'suffix' => $validated['suffix'] ?? null,
+    'email' => $validated['email'],
+    'password' => Hash::make($validated['password']),
+    'role' => 'patient',
+]);
 
     $patientNumber = 'PAT-' . date('Y') . '-' .
         str_pad($user->id, 5, '0', STR_PAD_LEFT);

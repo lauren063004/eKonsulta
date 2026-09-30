@@ -12,7 +12,7 @@
 
         <div>
             <h3>Edit Health Center</h3>
-            <p>Update health center information</p>
+            <p>Update health center information and available services</p>
         </div>
 
         <a href="{{ route('admin.health-centers.show', $healthCenter) }}">
@@ -124,6 +124,76 @@
                 >
 
             </div>
+
+        </div>
+
+        {{-- SERVICES --}}
+
+        <div class="admin-health-center-services-section">
+
+            <div class="admin-health-center-services-heading">
+                <div>
+                    <h4>Available Services</h4>
+                    <p>
+                        Select the healthcare services offered at this health center.
+                    </p>
+                </div>
+            </div>
+
+            @if($services->isNotEmpty())
+
+                <div class="admin-health-center-services-grid">
+
+                    @foreach($services as $service)
+
+                        <label class="admin-health-center-service-option">
+
+                            <input
+                                type="checkbox"
+                                name="services[]"
+                                value="{{ $service->id }}"
+                                {{ $healthCenter->services->contains($service->id) ? 'checked' : '' }}
+                            >
+
+                            <span class="admin-health-center-service-check">
+                                ✓
+                            </span>
+
+                            <span class="admin-health-center-service-content">
+
+                                <strong>
+                                    {{ $service->name }}
+                                </strong>
+
+                                <small>
+                                    {{ $service->code }}
+                                </small>
+
+                                @if($service->description)
+                                    <span>
+                                        {{ $service->description }}
+                                    </span>
+                                @endif
+
+                            </span>
+
+                        </label>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="empty-state">
+                    <div class="empty-icon">🩺</div>
+                    <h4>No active services</h4>
+                    <p>
+                        Create an active service first from the Services page.
+                    </p>
+                </div>
+
+            @endif
 
         </div>
 

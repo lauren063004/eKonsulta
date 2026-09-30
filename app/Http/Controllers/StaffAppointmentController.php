@@ -24,6 +24,7 @@ class StaffAppointmentController extends Controller
             'doctor.user',
             'healthCenter',
             'consultation',
+            'patientIntake',
         ])
             ->where(
                 'health_center_id',
@@ -39,6 +40,7 @@ class StaffAppointmentController extends Controller
         );
     }
 
+
     /**
      * Display appointment details.
      */
@@ -50,7 +52,10 @@ class StaffAppointmentController extends Controller
             abort(403, 'Staff record not found.');
         }
 
-        // Prevent staff from viewing another health center's appointment.
+        /*
+         * Prevent staff from viewing another
+         * health center's appointment.
+         */
         if (
             $appointment->health_center_id
             !== $staff->health_center_id
@@ -67,6 +72,7 @@ class StaffAppointmentController extends Controller
             'healthCenter',
             'consultation',
             'consultation.prescriptions.items.medicine',
+            'patientIntake.staff.user',
         ]);
 
         return view(

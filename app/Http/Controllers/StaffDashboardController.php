@@ -31,6 +31,9 @@ class StaffDashboardController extends Controller
         $pendingRequests = Appointment::where('status', 'pending')
             ->count();
 
+        /*
+         * Today's appointments.
+         */
         $appointments = Appointment::with([
             'patient.user',
             'doctor.user',
@@ -40,12 +43,29 @@ class StaffDashboardController extends Controller
             ->orderBy('appointment_time')
             ->get();
 
+        /*
+         * Upcoming appointments for the dashboard.
+         *
+         * Excludes cancelled and completed appointments.
+         */
+        $upcomingAppointments = Appointment::with([
+            'patient.user',
+            'doctor.user',
+            'healthCenter',
+        ])
+            ->whereDate('appointment_date', '>=', $today)
+            ->whereNotIn('status', ['cancelled', 'completed'])
+            ->orderBy('appointment_date')
+            ->orderBy('appointment_time')
+            ->get();
+
         return view('staff.dashboard', compact(
             'registeredPatients',
             'todayAppointments',
             'todayConsultations',
             'pendingRequests',
-            'appointments'
+            'appointments',
+            'upcomingAppointments'
         ));
     }
 }

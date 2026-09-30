@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HealthCenter;
+use App\Models\Service;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -37,6 +38,7 @@ class AdminHealthCenterController extends Controller
             'appointments.patient.user',
             'appointments.doctor.user',
             'medicines',
+            'services',
         ]);
 
         return view('admin.health-centers.show', compact(
@@ -102,9 +104,15 @@ class AdminHealthCenterController extends Controller
      */
     public function edit(HealthCenter $healthCenter): View
     {
+        $services = Service::where('status', true)
+            ->orderBy('name')
+            ->get();
+
+        $healthCenter->load('services');
+
         return view(
             'admin.health-centers.edit',
-            compact('healthCenter')
+            compact('healthCenter', 'services')
         );
     }
 
@@ -141,9 +149,27 @@ class AdminHealthCenterController extends Controller
                 'string',
                 'max:255',
             ],
+            'services' => [
+                'nullable',
+                'array',
+            ],
+            'services.*' => [
+                'integer',
+                'exists:services,id',
+            ],
         ]);
 
-        $healthCenter->update($validated);
+        $healthCenter->update([
+            'name' => $validated['name'],
+            'address' => $validated['address'],
+            'contact_number' => $validated['contact_number'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'operating_hours' => $validated['operating_hours'] ?? null,
+        ]);
+
+        $healthCenter->services()->sync(
+            $validated['services'] ?? []
+        );
 
         return redirect()
             ->route(

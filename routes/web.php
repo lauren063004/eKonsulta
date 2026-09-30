@@ -28,6 +28,8 @@ use App\Http\Controllers\AdminDoctorController;
 use App\Http\Controllers\AdminStaffController;
 use App\Http\Controllers\AdminReportController;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\StaffPatientIntakeController;
+use App\Http\Controllers\AdminServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -170,6 +172,28 @@ Route::put('/staff/{staff}', [AdminStaffController::class, 'update'])
 Route::patch('/staff/{staff}/toggle-status', [AdminStaffController::class, 'toggleStatus'])
     ->name('staff.toggle-status');
 
+    // Services
+    Route::get('/services', [AdminServiceController::class, 'index'])
+        ->name('services.index');
+
+    Route::get('/services/create', [AdminServiceController::class, 'create'])
+        ->name('services.create');
+
+    Route::post('/services', [AdminServiceController::class, 'store'])
+        ->name('services.store');
+
+    Route::get('/services/{service}/edit', [AdminServiceController::class, 'edit'])
+        ->name('services.edit');
+
+    Route::put('/services/{service}', [AdminServiceController::class, 'update'])
+        ->name('services.update');
+
+    Route::patch('/services/{service}/toggle-status', [AdminServiceController::class, 'toggleStatus'])
+        ->name('services.toggle-status');
+
+    Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])
+        ->name('services.destroy');
+
     });
 
 
@@ -287,6 +311,19 @@ Route::post('/appointment-schedules',[StaffAppointmentScheduleController::class,
 
 Route::delete('/appointment-schedules/{appointmentSchedule}', [StaffAppointmentScheduleController::class, 'destroy'])
     ->name('appointment-schedules.destroy');
+
+        /*
+         * Patient Intake
+         */
+        Route::get(
+            '/appointments/{appointment}/intake',
+            [StaffPatientIntakeController::class, 'create']
+        )->name('appointments.intake.create');
+
+        Route::post(
+            '/appointments/{appointment}/intake',
+            [StaffPatientIntakeController::class, 'store']
+        )->name('appointments.intake.store');
     });
 
 

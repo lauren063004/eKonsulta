@@ -11,6 +11,7 @@ class HealthCenterSeeder extends Seeder
     {
         HealthCenter::create([
             'name' => 'Pembo Health Center',
+            'barangay' => 'Pembo',
             'address' => 'Pembo, Taguig City',
             'contact_number' => '09170000001',
             'email' => 'pembo@ekonsulta.test',
@@ -20,6 +21,7 @@ class HealthCenterSeeder extends Seeder
 
         HealthCenter::create([
             'name' => 'Pitogo Health Center',
+            'barangay' => 'Pitogo',
             'address' => 'Pitogo, Taguig City',
             'contact_number' => '09170000002',
             'email' => 'pitogo@ekonsulta.test',
@@ -29,6 +31,7 @@ class HealthCenterSeeder extends Seeder
 
         HealthCenter::create([
             'name' => 'Rizal Health Center',
+            'barangay' => 'Rizal',
             'address' => 'Rizal, Taguig City',
             'contact_number' => '09170000003',
             'email' => 'rizal@ekonsulta.test',

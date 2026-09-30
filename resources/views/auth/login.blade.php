@@ -1,89 +1,133 @@
+{{--
+    IMPORTANT: your original login.blade.php was not readable, so this uses the
+    standard Laravel auth field names (email, password, remember) and the
+    standard routes (login, register, password.request).
+    Compare with your original before replacing it. See the notes in chat.
+--}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>e-Konsulta Login</title>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | e-Konsulta</title>
+    <link rel="icon" href="{{ asset('images/cross-badge.jpg') }}">
+   @vite('resources/js/app.js')
 </head>
-
 <body>
 
-<main class="ek-auth">
+<main class="auth-page">
 
-    @include('partials.auth-brand')
+    {{-- Left: hero --}}
+    <section class="auth-hero" aria-label="About e-Konsulta">
 
-    <section class="ek-auth-panel ek-auth-panel--center">
+        <div class="auth-hero-brand">
+            <img
+                src="{{ asset('images/cho-seal.jpg') }}"
+                alt="City Health Office of Taguig seal"
+            >
+            <div>
+                <strong>e-Konsulta</strong>
+                <span>City Health Office &bull; City of Taguig</span>
+            </div>
+        </div>
 
-        <div class="ek-card">
+        <h2>Quality healthcare, <em>closer</em> to every family.</h2>
 
-            <h2>Welcome Back!</h2>
-            <p class="ek-card-intro">Login to your account to continue.</p>
+        <p>
+            Book consultations at your barangay health center, view your
+            prescriptions, and keep your medical records in one secure place.
+        </p>
 
-            @if ($errors->any())
-                <div class="ek-alert" role="alert">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
+    </section>
+
+
+    {{-- Right: form --}}
+    <section class="auth-panel">
+
+        <div class="auth-card">
+
+            <img
+                class="auth-card-logo"
+                src="{{ asset('images/cho-seal.jpg') }}"
+                alt="City Health Office of Taguig seal"
+            >
+
+            <h1>Welcome back</h1>
+            <p>Sign in to your e-Konsulta account.</p>
+
+            @if (session('status'))
+                <div class="alert alert-success" role="status">
+                    {{ session('status') }}
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login.store') }}" class="ek-form">
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    <strong>We couldn't sign you in:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('login') }}">
+
                 @csrf
 
-                <div class="ek-field">
-                    <label for="email">Email</label>
+                <div class="auth-field">
+                    <label for="email">Email address</label>
                     <input
                         id="email"
-                        class="ek-input"
                         type="email"
                         name="email"
                         value="{{ old('email') }}"
-                        placeholder="Enter your email"
-                        autocomplete="email"
+                        placeholder="you@example.com"
+                        autocomplete="username"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
                         required
                     >
                 </div>
 
-                <div class="ek-field">
-                    <label for="password">Password</label>
-                    <div class="ek-password">
-                        <input
-                            id="password"
-                            class="ek-input"
-                            type="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            autocomplete="current-password"
-                            required
-                        >
-                        <button
-                            type="button"
-                            class="ek-toggle"
-                            data-toggle-password="password"
-                            aria-controls="password"
-                            aria-pressed="false"
-                        >Show</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="ek-check">
-                        <input type="checkbox" name="remember">
-                        Remember me
+                <div class="auth-row">
+                    <label class="auth-check">
+                        <input type="checkbox" name="remember" value="1">
+                        <span>Remember me</span>
                     </label>
+
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}">Forgot password?</a>
+                    @endif
                 </div>
 
-                <button type="submit" class="ek-btn">
-                    Login
+                <button type="submit" class="primary-button">
+                    Sign In
                 </button>
+
             </form>
 
-            <p class="ek-foot">
-                Don't have an account?
-                <a href="{{ route('register') }}" class="ek-link">Register as Patient</a>
+            @if (Route::has('register'))
+                <p class="auth-switch">
+                    New patient?
+                    <a href="{{ route('register') }}">Create an account</a>
+                </p>
+            @endif
+
+            <p class="auth-foot">
+                &copy; {{ date('Y') }} City Health Office of Taguig. All rights reserved.
             </p>
 
         </div>
@@ -91,18 +135,6 @@
     </section>
 
 </main>
-
-<script>
-    document.querySelectorAll('[data-toggle-password]').forEach(function (button) {
-        button.addEventListener('click', function () {
-            var input = document.getElementById(button.dataset.togglePassword);
-            var show = input.type === 'password';
-            input.type = show ? 'text' : 'password';
-            button.textContent = show ? 'Hide' : 'Show';
-            button.setAttribute('aria-pressed', show ? 'true' : 'false');
-        });
-    });
-</script>
 
 </body>
 </html>

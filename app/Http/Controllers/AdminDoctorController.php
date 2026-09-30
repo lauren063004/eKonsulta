@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\HealthCenter;
+use App\Models\Service;
 use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
@@ -38,6 +39,7 @@ class AdminDoctorController extends Controller
         $doctor->load([
             'user',
             'healthCenter',
+            'services',
             'appointments.patient.user',
             'consultations.patient.user',
             'prescriptions',
@@ -143,7 +145,22 @@ class AdminDoctorController extends Controller
      */
     public function edit(Doctor $doctor): View
     {
-        $doctor->load('user');
+        $doctor->load([
+            'user',
+            'services',
+            'healthCenter.services',
+        ]);
+
+        /*
+         * Only show active services offered by the doctor's
+         * assigned health center.
+         */
+        $services = $doctor->healthCenter
+            ? $doctor->healthCenter->services()
+                ->where('services.status', true)
+                ->orderBy('services.name')
+                ->get()
+            : collect();
 
         $healthCenters = HealthCenter::where('status', 'active')
             ->orderBy('name')
@@ -151,12 +168,16 @@ class AdminDoctorController extends Controller
 
         return view(
             'admin.doctors.edit',
-            compact('doctor', 'healthCenters')
+            compact(
+                'doctor',
+                'healthCenters',
+                'services'
+            )
         );
     }
 
     /**
-     * Update doctor information.
+     * Update doctor information and service assignments.
      */
     public function update(
         Request $request,
@@ -197,6 +218,16 @@ class AdminDoctorController extends Controller
                 'string',
                 'max:30',
             ],
+
+            'services' => [
+                'nullable',
+                'array',
+            ],
+
+            'services.*' => [
+                'integer',
+                'exists:services,id',
+            ],
         ]);
 
         DB::transaction(function () use (
@@ -214,6 +245,27 @@ class AdminDoctorController extends Controller
                 'specialization' => $validated['specialization'] ?? null,
                 'contact_number' => $validated['contact_number'] ?? null,
             ]);
+
+            /*
+             * Only services offered by the doctor's selected
+             * health center can be assigned.
+             */
+            $allowedServiceIds = HealthCenter::find(
+                $validated['health_center_id']
+            )
+                ->services()
+                ->where('services.status', true)
+                ->pluck('services.id')
+                ->toArray();
+
+            $selectedServiceIds = array_values(
+                array_intersect(
+                    $validated['services'] ?? [],
+                    $allowedServiceIds
+                )
+            );
+
+            $doctor->services()->sync($selectedServiceIds);
         });
 
         ActivityLog::record(

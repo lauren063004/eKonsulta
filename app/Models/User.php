@@ -12,6 +12,10 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'suffix',
         'email',
         'password',
         'role',
@@ -54,24 +58,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(ActivityLog::class);
     }
+
     public function isAdmin(): bool
-{
-    return $this->role === 'admin';
-}
+    {
+        return $this->role === 'admin';
+    }
 
-public function isDoctor(): bool
-{
-    return $this->role === 'doctor';
-}
+    public function isDoctor(): bool
+    {
+        return $this->role === 'doctor';
+    }
 
-public function isStaff(): bool
-{
-    return $this->role === 'staff';
-}
+    public function isStaff(): bool
+    {
+        return $this->role === 'staff';
+    }
 
-public function isPatient(): bool
-{
-    return $this->role === 'patient';
-}
-
+    public function isPatient(): bool
+    {
+        return $this->role === 'patient';
+    }
 }

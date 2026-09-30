@@ -20,6 +20,7 @@ return new class extends Migration
     {
         Schema::table('services', function (Blueprint $table) {
             $table->dropUnique(['code']);
+
             $table->dropColumn([
                 'name',
                 'code',

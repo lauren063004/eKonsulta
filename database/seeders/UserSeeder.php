@@ -20,9 +20,9 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $pembo = HealthCenter::where('name', 'Pembo Health Center')->first();
-        $pitogo = HealthCenter::where('name', 'Pitogo Health Center')->first();
-        $rizal = HealthCenter::where('name', 'Rizal Health Center')->first();
+        $pembo = HealthCenter::where('name', 'Pembo Health Center')->firstOrFail();
+        $pitogo = HealthCenter::where('name', 'Pitogo Health Center')->firstOrFail();
+        $rizal = HealthCenter::where('name', 'Rizal Health Center')->firstOrFail();
 
 
         /*
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $admin = User::create([
+        User::create([
             'name' => 'System Administrator',
             'email' => 'admin@ekonsulta.test',
             'password' => Hash::make('password'),
@@ -54,6 +54,7 @@ class UserSeeder extends Seeder
 
         Patient::create([
             'user_id' => $patientUser->id,
+            'health_center_id' => $pembo->id,
             'patient_number' => 'PAT-2026-00001',
             'date_of_birth' => '2000-05-15',
             'sex' => 'Male',

@@ -10,37 +10,20 @@ return new class extends Migration
     {
         /*
         |--------------------------------------------------------------------------
-        | service_id was already added before the previous migration failed.
+        | Add service_id to appointment_schedules
         |--------------------------------------------------------------------------
-        |
-        | We do NOT add service_id again.
-        |
-        */
-
-        /*
-        |--------------------------------------------------------------------------
-        | Add an index for health_center_id
-        |--------------------------------------------------------------------------
-        |
-        | The old schedule_slot_unique index was also being used by the
-        | health_center_id foreign key because health_center_id was the
-        | first column of that composite index.
-        |
-        | Therefore, we must create a separate index before removing
-        | schedule_slot_unique.
-        |
         */
 
         Schema::table('appointment_schedules', function (Blueprint $table) {
-            $table->index(
-                'health_center_id',
-                'appointment_schedules_health_center_id_index'
-            );
+            $table->foreignId('service_id')
+                ->after('health_center_id')
+                ->constrained('services')
+                ->restrictOnDelete();
         });
 
         /*
         |--------------------------------------------------------------------------
-        | Replace Old Unique Constraint
+        | Replace the old schedule uniqueness rule
         |--------------------------------------------------------------------------
         */
 
@@ -63,7 +46,7 @@ return new class extends Migration
     {
         /*
         |--------------------------------------------------------------------------
-        | Restore Original Unique Constraint
+        | Restore original schedule uniqueness rule
         |--------------------------------------------------------------------------
         */
 
@@ -82,27 +65,12 @@ return new class extends Migration
 
         /*
         |--------------------------------------------------------------------------
-        | Remove Separate health_center_id Index
-        |--------------------------------------------------------------------------
-        */
-
-        Schema::table('appointment_schedules', function (Blueprint $table) {
-            $table->dropIndex(
-                'appointment_schedules_health_center_id_index'
-            );
-        });
-
-        /*
-        |--------------------------------------------------------------------------
         | Remove service_id
         |--------------------------------------------------------------------------
         */
 
         Schema::table('appointment_schedules', function (Blueprint $table) {
-            $table->dropForeign([
-                'service_id',
-            ]);
-
+            $table->dropForeign(['service_id']);
             $table->dropColumn('service_id');
         });
     }

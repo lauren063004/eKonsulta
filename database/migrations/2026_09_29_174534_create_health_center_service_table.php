@@ -8,23 +8,28 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->string('name')->after('id');
-            $table->string('code')->unique()->after('name');
-            $table->text('description')->nullable()->after('code');
-            $table->boolean('status')->default(true)->after('description');
+        Schema::create('health_center_service', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('health_center_id')
+                ->constrained('health_centers')
+                ->cascadeOnDelete();
+
+            $table->foreignId('service_id')
+                ->constrained('services')
+                ->cascadeOnDelete();
+
+            $table->timestamps();
+
+            $table->unique([
+                'health_center_id',
+                'service_id',
+            ]);
         });
     }
 
     public function down(): void
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->dropColumn([
-                'name',
-                'code',
-                'description',
-                'status',
-            ]);
-        });
+        Schema::dropIfExists('health_center_service');
     }
 };

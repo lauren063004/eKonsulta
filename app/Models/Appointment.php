@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Appointment extends Model
 {
@@ -59,4 +60,12 @@ class Appointment extends Model
     {
         return $this->hasOne(Consultation::class);
     }
+
+    /**
+ * Patient intake for this appointment.
+ */
+public function patientIntake(): HasOne
+{
+    return $this->hasOne(PatientIntake::class);
+}
 }
