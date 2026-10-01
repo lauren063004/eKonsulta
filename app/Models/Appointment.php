@@ -62,10 +62,10 @@ class Appointment extends Model
     }
 
     /**
- * Patient intake for this appointment.
- */
-public function patientIntake(): HasOne
-{
-    return $this->hasOne(PatientIntake::class);
-}
+     * Patient intake for this appointment.
+     */
+    public function patientIntake(): HasOne
+    {
+        return $this->hasOne(PatientIntake::class);
+    }
 }

@@ -43,11 +43,6 @@ class HealthCenter extends Model
         return $this->hasMany(Appointment::class);
     }
 
-    public function medicines()
-    {
-        return $this->hasMany(Medicine::class);
-    }
-
     public function patients()
     {
         return $this->hasMany(Patient::class);

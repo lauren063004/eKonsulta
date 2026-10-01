@@ -66,6 +66,23 @@
 
             <div class="admin-health-center-form-field">
 
+                <label for="barangay">
+                    Barangay
+                </label>
+
+                <input
+                    type="text"
+                    id="barangay"
+                    name="barangay"
+                    value="{{ old('barangay', $healthCenter->barangay) }}"
+                    placeholder="e.g. Pembo"
+                    required
+                >
+
+            </div>
+
+            <div class="admin-health-center-form-field">
+
                 <label for="address">
                     Address
                 </label>
@@ -132,12 +149,17 @@
         <div class="admin-health-center-services-section">
 
             <div class="admin-health-center-services-heading">
+
                 <div>
+
                     <h4>Available Services</h4>
+
                     <p>
                         Select the healthcare services offered at this health center.
                     </p>
+
                 </div>
+
             </div>
 
             @if($services->isNotEmpty())
@@ -170,9 +192,11 @@
                                 </small>
 
                                 @if($service->description)
+
                                     <span>
                                         {{ $service->description }}
                                     </span>
+
                                 @endif
 
                             </span>
@@ -186,11 +210,15 @@
             @else
 
                 <div class="empty-state">
+
                     <div class="empty-icon">🩺</div>
+
                     <h4>No active services</h4>
+
                     <p>
                         Create an active service first from the Services page.
                     </p>
+
                 </div>
 
             @endif

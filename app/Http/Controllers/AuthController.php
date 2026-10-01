@@ -102,16 +102,23 @@ return $this->redirectByRole($user);
     |--------------------------------------------------------------------------
     */
 
-  public function showRegister()
+public function showRegister()
 {
     $healthCenters = HealthCenter::where('status', 'active')
         ->orderBy('barangay')
+        ->orderBy('name')
         ->get();
 
-    return view(
-        'auth.register',
-        compact('healthCenters')
-    );
+    $barangays = $healthCenters
+        ->pluck('barangay')
+        ->filter()
+        ->unique()
+        ->values();
+
+    return view('auth.register', compact(
+        'healthCenters',
+        'barangays'
+    ));
 }
 
 

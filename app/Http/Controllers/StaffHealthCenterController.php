@@ -27,18 +27,20 @@ class StaffHealthCenterController extends Controller
     /**
      * Display a health center's details.
      */
-    public function show(HealthCenter $healthCenter): View
-    {
-        $healthCenter->load([
-            'doctors.user',
-            'staff.user',
-            'appointments.patient.user',
-            'appointments.doctor.user',
-            'medicines',
-        ]);
+/**
+ * Display a health center's details.
+ */
+public function show(HealthCenter $healthCenter): View
+{
+    $healthCenter->load([
+        'doctors.user',
+        'staff.user',
+        'appointments.patient.user',
+        'appointments.doctor.user',
+    ]);
 
-        return view('staff.health-centers.show', compact(
-            'healthCenter'
-        ));
-    }
+    return view('staff.health-centers.show', compact(
+        'healthCenter'
+    ));
+}
 }

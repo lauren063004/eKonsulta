@@ -11,6 +11,7 @@ class AppointmentSchedule extends Model
 
     protected $fillable = [
         'health_center_id',
+        'doctor_id',
         'service_id',
         'schedule_date',
         'appointment_time',
@@ -29,6 +30,11 @@ class AppointmentSchedule extends Model
     public function healthCenter()
     {
         return $this->belongsTo(HealthCenter::class);
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
     }
 
     public function service()

@@ -1,4 +1,3 @@
-```blade
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -582,6 +581,7 @@
         {{-- =====================================================
              LEFT: BRANDING
              ===================================================== --}}
+
         <section class="register-brand">
 
             <div class="register-brand-top">
@@ -593,11 +593,13 @@
                 >
 
                 <div class="register-brand-name">
+
                     <strong>e-Konsulta</strong>
 
                     <span>
                         City Health Office &bull; City of Taguig
                     </span>
+
                 </div>
 
             </div>
@@ -622,6 +624,7 @@
         {{-- =====================================================
              RIGHT: FORM
              ===================================================== --}}
+
         <section class="register-panel">
 
             <div class="register-card">
@@ -637,7 +640,10 @@
                 </div>
 
 
-                {{-- Validation --}}
+                {{-- =================================================
+                     VALIDATION ERRORS
+                     ================================================= --}}
+
                 @if ($errors->any())
 
                     <div class="register-alert register-alert-danger">
@@ -647,9 +653,13 @@
                         </strong>
 
                         <ul>
+
                             @foreach ($errors->all() as $error)
+
                                 <li>{{ $error }}</li>
+
                             @endforeach
+
                         </ul>
 
                     </div>
@@ -657,11 +667,16 @@
                 @endif
 
 
-                {{-- Success --}}
+                {{-- =================================================
+                     SUCCESS MESSAGE
+                     ================================================= --}}
+
                 @if (session('success'))
 
                     <div class="register-alert register-alert-success">
+
                         {{ session('success') }}
+
                     </div>
 
                 @endif
@@ -676,7 +691,9 @@
                     @csrf
 
 
-                    {{-- NAME --}}
+                    {{-- =================================================
+                         NAME
+                         ================================================= --}}
 
                     <div class="register-grid">
 
@@ -783,6 +800,7 @@
                                 name="sex"
                                 required
                             >
+
                                 <option value="">
                                     Select sex
                                 </option>
@@ -800,6 +818,7 @@
                                 >
                                     Female
                                 </option>
+
                             </select>
 
                         </div>
@@ -807,7 +826,9 @@
                     </div>
 
 
-                    {{-- CONTACT --}}
+                    {{-- =================================================
+                         CONTACT / LOCATION
+                         ================================================= --}}
 
                     <div class="register-grid">
 
@@ -830,6 +851,10 @@
                         </div>
 
 
+                        {{-- =================================================
+                             BARANGAY
+                             ================================================= --}}
+
                         <div class="register-field">
 
                             <label for="barangay">
@@ -846,12 +871,25 @@
                                     Select barangay
                                 </option>
 
-                                {{-- KEEP YOUR EXISTING BARANGAY OPTIONS HERE --}}
+                                @foreach ($barangays as $barangay)
+
+                                    <option
+                                        value="{{ $barangay }}"
+                                        @selected(old('barangay') === $barangay)
+                                    >
+                                        {{ $barangay }}
+                                    </option>
+
+                                @endforeach
 
                             </select>
 
                         </div>
 
+
+                        {{-- =================================================
+                             HEALTH CENTER
+                             ================================================= --}}
 
                         <div class="register-field">
 
@@ -869,7 +907,17 @@
                                     Select health center
                                 </option>
 
-                                {{-- KEEP YOUR EXISTING HEALTH CENTER OPTIONS HERE --}}
+                                @foreach ($healthCenters as $healthCenter)
+
+                                    <option
+                                        value="{{ $healthCenter->id }}"
+                                        data-barangay="{{ $healthCenter->barangay }}"
+                                        @selected(old('health_center_id') == $healthCenter->id)
+                                    >
+                                        {{ $healthCenter->name }}
+                                    </option>
+
+                                @endforeach
 
                             </select>
 
@@ -896,7 +944,9 @@
                     </div>
 
 
-                    {{-- EMERGENCY CONTACT --}}
+                    {{-- =================================================
+                         EMERGENCY CONTACT
+                         ================================================= --}}
 
                     <div class="register-grid">
 
@@ -938,7 +988,9 @@
                     </div>
 
 
-                    {{-- ACCOUNT --}}
+                    {{-- =================================================
+                         ACCOUNT
+                         ================================================= --}}
 
                     <div class="register-grid">
 
@@ -960,6 +1012,10 @@
 
                         </div>
 
+
+                        {{-- =================================================
+                             PASSWORD
+                             ================================================= --}}
 
                         <div class="register-field">
 
@@ -990,6 +1046,10 @@
 
                         </div>
 
+
+                        {{-- =================================================
+                             CONFIRM PASSWORD
+                             ================================================= --}}
 
                         <div class="register-field">
 
@@ -1023,6 +1083,10 @@
                     </div>
 
 
+                    {{-- =================================================
+                         SUBMIT
+                         ================================================= --}}
+
                     <button
                         type="submit"
                         class="register-button"
@@ -1032,6 +1096,10 @@
 
                 </form>
 
+
+                {{-- =================================================
+                     LOGIN LINK
+                     ================================================= --}}
 
                 <p class="register-switch">
 
@@ -1045,9 +1113,11 @@
 
 
                 <p class="register-foot">
+
                     &copy; {{ date('Y') }}
                     City Health Office of Taguig.
                     All rights reserved.
+
                 </p>
 
             </div>
@@ -1098,9 +1168,102 @@ document.addEventListener('DOMContentLoaded', function () {
 
         });
 
+
+    /* =========================================================
+       Barangay → Health Center filtering
+       ========================================================= */
+
+    const barangaySelect =
+        document.getElementById('barangay');
+
+    const healthCenterSelect =
+        document.getElementById('health_center_id');
+
+
+    if (barangaySelect && healthCenterSelect) {
+
+        function filterHealthCenters() {
+
+            const selectedBarangay =
+                barangaySelect.value;
+
+
+            Array.from(
+                healthCenterSelect.options
+            ).forEach(function (option) {
+
+                /*
+                 * Always keep the placeholder visible.
+                 */
+                if (!option.value) {
+
+                    option.hidden = false;
+
+                    return;
+                }
+
+
+                const optionBarangay =
+                    option.dataset.barangay;
+
+
+                /*
+                 * Show only health centers belonging
+                 * to the selected barangay.
+                 */
+                option.hidden =
+                    selectedBarangay !== '' &&
+                    optionBarangay !== selectedBarangay;
+
+            });
+
+
+            /*
+             * If the currently selected health center
+             * does not belong to the selected barangay,
+             * clear it.
+             */
+            const selectedOption =
+                healthCenterSelect.options[
+                    healthCenterSelect.selectedIndex
+                ];
+
+
+            if (
+                selectedOption &&
+                selectedOption.value &&
+                selectedOption.dataset.barangay !== selectedBarangay
+            ) {
+
+                healthCenterSelect.value = '';
+
+            }
+
+        }
+
+
+        /*
+         * Run whenever the user changes Barangay.
+         */
+        barangaySelect.addEventListener(
+            'change',
+            filterHealthCenters
+        );
+
+
+        /*
+         * Run once when the page loads.
+         *
+         * This also preserves old() values after
+         * a validation error.
+         */
+        filterHealthCenters();
+
+    }
+
 });
 </script>
 
+
 </body>
 </html>
-```

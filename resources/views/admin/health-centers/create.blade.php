@@ -66,6 +66,23 @@
 
             <div class="admin-health-center-form-field">
 
+                <label for="barangay">
+                    Barangay
+                </label>
+
+                <input
+                    type="text"
+                    id="barangay"
+                    name="barangay"
+                    value="{{ old('barangay') }}"
+                    placeholder="e.g. Pembo"
+                    required
+                >
+
+            </div>
+
+            <div class="admin-health-center-form-field">
+
                 <label for="address">
                     Address
                 </label>

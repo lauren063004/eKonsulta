@@ -32,14 +32,13 @@ class AdminHealthCenterController extends Controller
      */
     public function show(HealthCenter $healthCenter): View
     {
-        $healthCenter->load([
-            'doctors.user',
-            'staff.user',
-            'appointments.patient.user',
-            'appointments.doctor.user',
-            'medicines',
-            'services',
-        ]);
+    $healthCenter->load([
+    'doctors.user',
+    'staff.user',
+    'appointments.patient.user',
+    'appointments.doctor.user',
+    'services',
+]);
 
         return view('admin.health-centers.show', compact(
             'healthCenter'
@@ -61,6 +60,11 @@ class AdminHealthCenterController extends Controller
     {
         $validated = $request->validate([
             'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'barangay' => [
                 'required',
                 'string',
                 'max:255',
@@ -129,6 +133,11 @@ class AdminHealthCenterController extends Controller
                 'string',
                 'max:255',
             ],
+            'barangay' => [
+                'required',
+                'string',
+                'max:255',
+            ],
             'address' => [
                 'required',
                 'string',
@@ -161,6 +170,7 @@ class AdminHealthCenterController extends Controller
 
         $healthCenter->update([
             'name' => $validated['name'],
+            'barangay' => $validated['barangay'],
             'address' => $validated['address'],
             'contact_number' => $validated['contact_number'] ?? null,
             'email' => $validated['email'] ?? null,

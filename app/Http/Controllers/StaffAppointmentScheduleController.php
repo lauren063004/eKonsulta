@@ -26,6 +26,7 @@ class StaffAppointmentScheduleController extends Controller
         $schedules = AppointmentSchedule::with([
             'healthCenter',
             'service',
+            'doctor.user',
         ])
             ->withCount([
                 'appointments as active_appointments_count' => function ($query) {
@@ -75,6 +76,7 @@ class StaffAppointmentScheduleController extends Controller
             );
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | Services Available At Staff's Health Center
@@ -84,14 +86,63 @@ class StaffAppointmentScheduleController extends Controller
         $services = $staff->healthCenter
             ->services()
             ->where('services.status', true)
+            ->with([
+                'doctors' => function ($query) use ($staff) {
+                    $query
+                        ->where(
+                            'doctors.health_center_id',
+                            $staff->health_center_id
+                        )
+                      ->whereHas('user', function ($userQuery) {
+    $userQuery->where('status', 'active');
+})
+                        ->with('user')
+                        ->orderBy('doctors.id');
+                },
+            ])
             ->orderBy('services.name')
             ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prepare Service → Doctor Data For Blade
+        |--------------------------------------------------------------------------
+        */
+
+        $servicesData = $services
+            ->mapWithKeys(function ($service) {
+
+                return [
+                    $service->id => $service->doctors
+                        ->map(function ($doctor) {
+
+                            return [
+                                'id' => $doctor->id,
+                                'name' => $doctor->user->name ?? 'Doctor',
+                            ];
+
+                        })
+                        ->values()
+                        ->toArray(),
+                ];
+
+            })
+            ->toArray();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Return Create Schedule View
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'staff.appointment-schedules.create',
             compact(
                 'staff',
-                'services'
+                'services',
+                'servicesData'
             )
         );
     }
@@ -111,6 +162,7 @@ class StaffAppointmentScheduleController extends Controller
             abort(403, 'Staff record not found.');
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | Verify Staff Health Center
@@ -118,6 +170,7 @@ class StaffAppointmentScheduleController extends Controller
         */
 
         if (!$staff->healthCenter) {
+
             return redirect()
                 ->route('staff.appointment-schedules.index')
                 ->with(
@@ -127,6 +180,7 @@ class StaffAppointmentScheduleController extends Controller
         }
 
         if ($staff->healthCenter->status !== 'active') {
+
             return redirect()
                 ->route('staff.appointment-schedules.index')
                 ->with(
@@ -143,10 +197,17 @@ class StaffAppointmentScheduleController extends Controller
         */
 
         $validated = $request->validate([
+
             'service_id' => [
                 'required',
                 'integer',
                 'exists:services,id',
+            ],
+
+            'doctor_id' => [
+                'required',
+                'integer',
+                'exists:doctors,id',
             ],
 
             'schedule_date' => [
@@ -182,6 +243,7 @@ class StaffAppointmentScheduleController extends Controller
                 'nullable',
                 'boolean',
             ],
+
         ]);
 
 
@@ -204,11 +266,69 @@ class StaffAppointmentScheduleController extends Controller
             ->exists();
 
         if (!$serviceExists) {
+
             return back()
                 ->withInput()
                 ->withErrors([
                     'service_id' =>
                         'The selected service is not available at your health center.',
+                ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Doctor Belongs To Staff's Health Center
+        |--------------------------------------------------------------------------
+        */
+
+        $doctor = $staff->healthCenter
+            ->doctors()
+            ->where(
+                'doctors.id',
+                $validated['doctor_id']
+            )
+            ->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->first();
+
+        if (!$doctor) {
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'doctor_id' =>
+                        'The selected doctor is not available at your health center.',
+                ]);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Doctor Provides Selected Service
+        |--------------------------------------------------------------------------
+        */
+
+        $doctorProvidesService = $doctor
+            ->services()
+            ->where(
+                'services.id',
+                $validated['service_id']
+            )
+            ->where(
+                'services.status',
+                true
+            )
+            ->exists();
+
+        if (!$doctorProvidesService) {
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'doctor_id' =>
+                        'The selected doctor does not provide the selected service.',
                 ]);
         }
 
@@ -223,6 +343,7 @@ class StaffAppointmentScheduleController extends Controller
             $validated['start_time'] >=
             $validated['end_time']
         ) {
+
             return back()
                 ->withInput()
                 ->withErrors([
@@ -248,7 +369,6 @@ class StaffAppointmentScheduleController extends Controller
 
         $intervalSeconds =
             ((int) $validated['interval']) * 60;
-
 
         $created = 0;
         $skipped = 0;
@@ -281,7 +401,9 @@ class StaffAppointmentScheduleController extends Controller
                 $currentTime >= '12:00' &&
                 $currentTime < '13:00'
             ) {
+
                 $start += $intervalSeconds;
+
                 continue;
             }
 
@@ -304,20 +426,6 @@ class StaffAppointmentScheduleController extends Controller
             |--------------------------------------------------------------------------
             | Check Existing Schedule
             |--------------------------------------------------------------------------
-            |
-            | IMPORTANT:
-            | Service is included in the duplicate check.
-            |
-            | This means:
-            |
-            | General Health - 9:00 AM
-            |
-            | and
-            |
-            | Dental - 9:00 AM
-            |
-            | can both exist.
-            |
             */
 
             $exists = AppointmentSchedule::where(
@@ -327,6 +435,10 @@ class StaffAppointmentScheduleController extends Controller
                 ->where(
                     'service_id',
                     $validated['service_id']
+                )
+                ->where(
+                    'doctor_id',
+                    $validated['doctor_id']
                 )
                 ->whereDate(
                     'schedule_date',
@@ -346,11 +458,15 @@ class StaffAppointmentScheduleController extends Controller
             } else {
 
                 AppointmentSchedule::create([
+
                     'health_center_id' =>
                         $staff->health_center_id,
 
                     'service_id' =>
                         $validated['service_id'],
+
+                    'doctor_id' =>
+                        $validated['doctor_id'],
 
                     'schedule_date' =>
                         $validated['schedule_date'],
@@ -360,6 +476,7 @@ class StaffAppointmentScheduleController extends Controller
 
                     'capacity' =>
                         $validated['capacity'],
+
                 ]);
 
                 $created++;
@@ -390,7 +507,7 @@ class StaffAppointmentScheduleController extends Controller
                 )
                 ->with(
                     'error',
-                    'No new schedules were created. The selected service and time slots already exist.'
+                    'No new schedules were created. The selected doctor, service, and time slots already exist.'
                 );
         }
 
@@ -451,6 +568,7 @@ class StaffAppointmentScheduleController extends Controller
             $appointmentSchedule->health_center_id
             !== $staff->health_center_id
         ) {
+
             abort(
                 403,
                 'You are not authorized to manage this schedule.'
@@ -476,6 +594,7 @@ class StaffAppointmentScheduleController extends Controller
                 )
                 ->exists()
         ) {
+
             return redirect()
                 ->route(
                     'staff.appointment-schedules.index'

@@ -266,6 +266,14 @@
             </a>
 
             <a
+    href="{{ route('admin.services.index') }}"
+    class="nav-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}"
+>
+    <span>{!! $icons['steth'] !!}</span>
+    <span>Services</span>
+</a>
+
+            <a
                 href="{{ route('admin.doctors.index') }}"
                 class="nav-link {{ request()->routeIs('admin.doctors.*') ? 'active' : '' }}"
             >
