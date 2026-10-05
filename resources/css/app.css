@@ -1443,4 +1443,15 @@ input[type="checkbox"], input[type="radio"] { width: 18px; height: 18px; accent-
         grid-template-columns: 1fr;
     }
 }
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        margin: 0;
+        background: white;
+    }
+}
 }

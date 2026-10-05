@@ -8,166 +8,204 @@
 
 <div class="dashboard-card doctor-prescriptions-page">
 
-    <div class="card-header">
-        <div>
-            <h3>My Prescriptions</h3>
-            <p>Prescriptions issued to your patients</p>
-        </div>
-
-        <a href="{{ route('doctor.dashboard') }}">
-            Back to Dashboard
-        </a>
+```
+<div class="card-header">
+    <div>
+        <h3>My Prescriptions</h3>
+        <p>Prescriptions issued to your patients</p>
     </div>
 
-    @if($prescriptions->count())
+    <a href="{{ route('doctor.dashboard') }}">
+        Back to Dashboard
+    </a>
+</div>
 
-        <div class="doctor-prescription-list">
+@if($prescriptions->count())
 
-            @foreach($prescriptions as $prescription)
+    <div class="doctor-prescription-list">
 
-                <div class="doctor-prescription-card">
+        @foreach($prescriptions as $prescription)
 
-                    <div class="doctor-prescription-header">
+            <div class="doctor-prescription-card">
 
-                        <div class="doctor-prescription-date">
+                <div class="doctor-prescription-header">
 
-                            <div class="doctor-prescription-icon">
-                                &#128138;
-                            </div>
+                    <div class="doctor-prescription-date">
 
-                            <div>
-                                <span class="doctor-prescription-label">
-                                    PRESCRIPTION
-                                </span>
-
-                                <h4>
-                                    {{ $prescription->patient->user->name ?? 'Patient' }}
-                                </h4>
-
-                                <p>
-                                    {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('F d, Y') }}
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <span class="appointment-status">
-                            {{ ucfirst($prescription->status) }}
-                        </span>
-
-                    </div>
-
-                    <div class="doctor-prescription-information">
-
-                        <div>
-                            <span>Prescription No.</span>
-                            <strong>
-                                {{ $prescription->prescription_number }}
-                            </strong>
+                        <div class="doctor-prescription-icon">
+                            &#128138;
                         </div>
 
                         <div>
-                            <span>Date Issued</span>
-                            <strong>
-                                {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('F d, Y') }}
-                            </strong>
-                        </div>
+                            <span class="doctor-prescription-label">
+                                PRESCRIPTION
+                            </span>
 
-                    </div>
-
-                    @if($prescription->items->count())
-
-                        <div class="doctor-prescription-medicines">
-
-                            <div class="doctor-prescription-section-title">
-                                <span>MEDICATIONS</span>
-                                <strong>Prescribed Medicines</strong>
-                            </div>
-
-                            <div class="doctor-prescription-items">
-
-                                @foreach($prescription->items as $item)
-
-                                    <div class="doctor-prescription-item">
-
-                                        <div class="doctor-prescription-medicine-name">
-                                            <strong>
-                                                {{ $item->medicine->name ?? 'Medicine' }}
-                                            </strong>
-                                        </div>
-
-                                        <div class="doctor-prescription-medicine-details">
-
-                                            <span>
-                                                <strong>Dosage:</strong>
-                                                {{ $item->dosage }}
-                                            </span>
-
-                                            <span>
-                                                <strong>Frequency:</strong>
-                                                {{ $item->frequency }}
-                                            </span>
-
-                                            <span>
-                                                <strong>Duration:</strong>
-                                                {{ $item->duration }}
-                                            </span>
-
-                                            <span>
-                                                <strong>Quantity:</strong>
-                                                {{ $item->quantity }}
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                @endforeach
-
-                            </div>
-
-                        </div>
-
-                    @endif
-
-                    @if($prescription->instructions)
-
-                        <div class="doctor-prescription-instructions">
-
-                            <span>INSTRUCTIONS</span>
+                            <h4>
+                                {{ $prescription->patient->user->name ?? 'Patient' }}
+                            </h4>
 
                             <p>
-                                {{ $prescription->instructions }}
+                                {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('F d, Y') }}
                             </p>
-
                         </div>
 
-                    @endif
+                    </div>
+
+                    <span class="appointment-status">
+                        {{ ucfirst($prescription->status) }}
+                    </span>
 
                 </div>
 
-            @endforeach
+                <div class="doctor-prescription-information">
 
-        </div>
+                    <div>
+                        <span>Prescription No.</span>
+                        <strong>
+                            {{ $prescription->prescription_number }}
+                        </strong>
+                    </div>
 
-    @else
+                    <div>
+                        <span>Date Issued</span>
+                        <strong>
+                            {{ \Carbon\Carbon::parse($prescription->prescription_date)->format('F d, Y') }}
+                        </strong>
+                    </div>
 
-        <div class="empty-state">
+                </div>
 
-            <div class="empty-icon">
-                &#128138;
+                @if($prescription->items->count())
+
+                    <div class="doctor-prescription-medicines">
+
+                        <div class="doctor-prescription-section-title">
+                            <span>MEDICATIONS</span>
+                            <strong>Prescribed Medicines</strong>
+                        </div>
+
+                        <div class="doctor-prescription-items">
+
+                            @foreach($prescription->items as $item)
+
+                                <div class="doctor-prescription-item">
+
+                                    <div class="doctor-prescription-medicine-name">
+                                        <strong>
+                                            {{ $item->medicine->name ?? 'Medicine' }}
+                                        </strong>
+                                    </div>
+
+                                    <div class="doctor-prescription-medicine-details">
+
+                                        <span>
+                                            <strong>Dosage:</strong>
+                                            {{ $item->dosage }}
+                                        </span>
+
+                                        <span>
+                                            <strong>Frequency:</strong>
+                                            {{ $item->frequency }}
+                                        </span>
+
+                                        <span>
+                                            <strong>Duration:</strong>
+                                            {{ $item->duration }}
+                                        </span>
+
+                                        <span>
+                                            <strong>Quantity:</strong>
+                                            {{ $item->quantity }}
+                                        </span>
+
+                                    </div>
+
+                                    @if($item->instructions)
+                                        <div class="doctor-prescription-item-instructions">
+                                            <strong>Instructions:</strong>
+                                            {{ $item->instructions }}
+                                        </div>
+                                    @endif
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+                @if($prescription->instructions)
+
+                    <div class="doctor-prescription-instructions">
+
+                        <span>INSTRUCTIONS</span>
+
+                        <p>
+                            {{ $prescription->instructions }}
+                        </p>
+
+                    </div>
+
+                @endif
+
+                {{-- PRESCRIPTION ACTIONS --}}
+
+                <div class="doctor-prescription-actions">
+
+                    <a
+                        href="{{ route('doctor.prescriptions.show', $prescription) }}"
+                        class="btn btn-primary"
+                    >
+                        View Prescription
+                    </a>
+
+                    <a
+                        href="{{ route('doctor.prescriptions.download', $prescription) }}"
+                        class="btn btn-secondary"
+                    >
+                        Download PDF
+                    </a>
+
+                    <a
+                        href="{{ route('doctor.prescriptions.print', $prescription) }}"
+                        class="btn btn-secondary"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        Print
+                    </a>
+
+                </div>
+
             </div>
 
-            <h4>No prescriptions yet</h4>
+        @endforeach
 
-            <p>
-                Prescriptions you create for your patients
-                will appear here.
-            </p>
+    </div>
 
+@else
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            &#128138;
         </div>
 
-    @endif
+        <h4>No prescriptions yet</h4>
+
+        <p>
+            Prescriptions you create for your patients
+            will appear here.
+        </p>
+
+    </div>
+
+@endif
+
 
 </div>
 

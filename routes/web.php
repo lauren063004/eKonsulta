@@ -236,6 +236,15 @@ Route::get('/patients', [DoctorPatientController::class, 'index'])
 
     Route::get('/prescriptions', [DoctorPrescriptionController::class, 'index'])
     ->name('prescriptions.index');
+
+    Route::get('/prescriptions/{prescription}', [DoctorPrescriptionController::class, 'show'])
+    ->name('prescriptions.show');
+
+Route::get('/prescriptions/{prescription}/download', [DoctorPrescriptionController::class, 'download'])
+    ->name('prescriptions.download');
+
+Route::get('/prescriptions/{prescription}/print', [DoctorPrescriptionController::class, 'print'])
+    ->name('prescriptions.print');
         /*
         |--------------------------------------------------------------------------
         | Doctor Appointments

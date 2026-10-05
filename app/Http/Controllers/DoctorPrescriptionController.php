@@ -9,6 +9,7 @@ use App\Models\Prescription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DoctorPrescriptionController extends Controller
 {
@@ -33,6 +34,88 @@ class DoctorPrescriptionController extends Controller
 
         return view('doctor.prescriptions.index', compact('prescriptions'));
     }
+
+/**
+ * Display a single prescription.
+ */
+public function show(Prescription $prescription): View
+{
+    $doctor = auth()->user()->doctor;
+
+    if (!$doctor) {
+        abort(403, 'Doctor record not found.');
+    }
+
+    if ($prescription->doctor_id !== $doctor->id) {
+        abort(403, 'You are not authorized to view this prescription.');
+    }
+
+    $prescription->load([
+        'patient.user',
+        'doctor.user',
+        'items.medicine',
+        'consultation',
+    ]);
+
+    return view('doctor.prescriptions.show', compact('prescription'));
+}
+
+/**
+ * Download prescription as PDF.
+ */
+public function download(Prescription $prescription)
+{
+    $doctor = auth()->user()->doctor;
+
+    if (!$doctor) {
+        abort(403, 'Doctor record not found.');
+    }
+
+    if ($prescription->doctor_id !== $doctor->id) {
+        abort(403, 'You are not authorized to download this prescription.');
+    }
+
+    $prescription->load([
+        'patient.user',
+        'doctor.user',
+        'items.medicine',
+        'consultation',
+    ]);
+
+    $pdf = Pdf::loadView(
+        'doctor.prescriptions.pdf',
+        compact('prescription')
+    );
+
+    $filename = $prescription->prescription_number . '.pdf';
+
+    return $pdf->download($filename);
+}
+
+/**
+ * Print-friendly prescription page.
+ */
+public function print(Prescription $prescription): View
+{
+    $doctor = auth()->user()->doctor;
+
+    if (!$doctor) {
+        abort(403, 'Doctor record not found.');
+    }
+
+    if ($prescription->doctor_id !== $doctor->id) {
+        abort(403, 'You are not authorized to print this prescription.');
+    }
+
+    $prescription->load([
+        'patient.user',
+        'doctor.user',
+        'items.medicine',
+        'consultation',
+    ]);
+
+    return view('doctor.prescriptions.print', compact('prescription'));
+}
 
     /**
      * Show the prescription form for a completed consultation.
