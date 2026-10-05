@@ -187,6 +187,14 @@
             </a>
 
             <a
+                href="{{ route('staff.appointments.index') }}"
+                class="nav-link {{ request()->routeIs('staff.appointments.*') ? 'active' : '' }}"
+            >
+                <span>{!! $icons['calendar'] !!}</span>
+                <span>Appointments</span>
+            </a>
+
+            <a
                 href="{{ route('staff.profile') }}"
                 class="nav-link {{ request()->routeIs('staff.profile') ? 'active' : '' }}"
             >

@@ -5907,3 +5907,28 @@ html body .ek-btn--ghost:hover {
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+html body .register-section-heading {
+    width: 100%;
+    margin-top: 5px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+html body .register-section-heading--first {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+html body .register-section-heading h2 {
+    margin: 0;
+    color: var(--navy-800);
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+
+html body .register-section-heading + .register-grid {
+    margin-top: -7px;
+}

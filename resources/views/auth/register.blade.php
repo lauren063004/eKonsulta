@@ -7,6 +7,9 @@
     <title>Register | e-Konsulta</title>
 
     <link rel="icon" href="{{ asset('images/cross-badge.jpg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite('resources/js/app.js')
 
@@ -27,14 +30,7 @@
         }
 
         body {
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+            font-family: var(--font, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
             color: #172033;
         }
 
@@ -646,7 +642,7 @@
 
                 @if ($errors->any())
 
-                    <div class="register-alert register-alert-danger">
+                    <div class="register-alert register-alert-danger" role="alert">
 
                         <strong>
                             Please check the following:
@@ -673,7 +669,7 @@
 
                 @if (session('success'))
 
-                    <div class="register-alert register-alert-success">
+                    <div class="register-alert register-alert-success" role="status">
 
                         {{ session('success') }}
 
@@ -694,6 +690,10 @@
                     {{-- =================================================
                          NAME
                          ================================================= --}}
+
+                    <div class="register-section-heading register-section-heading--first">
+                        <h2>Personal information</h2>
+                    </div>
 
                     <div class="register-grid">
 
@@ -830,6 +830,10 @@
                          CONTACT / LOCATION
                          ================================================= --}}
 
+                    <div class="register-section-heading">
+                        <h2>Contact and health center</h2>
+                    </div>
+
                     <div class="register-grid">
 
                         <div class="register-field">
@@ -948,6 +952,10 @@
                          EMERGENCY CONTACT
                          ================================================= --}}
 
+                    <div class="register-section-heading">
+                        <h2>Emergency contact</h2>
+                    </div>
+
                     <div class="register-grid">
 
                         <div class="register-field">
@@ -991,6 +999,10 @@
                     {{-- =================================================
                          ACCOUNT
                          ================================================= --}}
+
+                    <div class="register-section-heading">
+                        <h2>Account security</h2>
+                    </div>
 
                     <div class="register-grid">
 
