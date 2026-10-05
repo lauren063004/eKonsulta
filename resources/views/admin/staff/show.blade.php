@@ -86,7 +86,7 @@
 
     </div>
 
-    <div style="margin-top: 20px;">
+    <div class="admin-staff-detail-actions">
 
         <a
             href="{{ route('admin.staff.index') }}"
@@ -100,7 +100,7 @@
             <form
                 method="POST"
                 action="{{ route('admin.staff.toggle-status', $staff) }}"
-                style="display: inline;"
+                class="admin-staff-toggle-form"
             >
                 @csrf
                 @method('PATCH')

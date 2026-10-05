@@ -151,7 +151,7 @@
 </section>
 
 
-@if($appointment->status === 'pending')
+@if($appointment->status === 'pending' || $appointment->status === 'approved')
 
 <section class="dashboard-card">
 
@@ -159,14 +159,29 @@
 
         <div>
             <h3>Doctor Action</h3>
-            <p>Continue with this patient's consultation.</p>
+            <p>
+                {{ $appointment->status === 'pending'
+                    ? 'Review and approve this appointment before starting the consultation.'
+                    : 'Continue with the consultation for this patient.' }}
+            </p>
         </div>
 
     </div>
 
-    <a href="#" class="primary-button">
-        🩺 Start Consultation
-    </a>
+    @if($appointment->status === 'pending')
+        <form
+            action="{{ route('doctor.appointments.approve', $appointment) }}"
+            method="POST"
+        >
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="primary-button">Approve Appointment</button>
+        </form>
+    @else
+        <a href="{{ route('doctor.appointments.consultation.create', $appointment) }}" class="primary-button">
+            Start Consultation
+        </a>
+    @endif
 
 </section>
 

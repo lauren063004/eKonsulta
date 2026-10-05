@@ -373,4 +373,13 @@ Route::post('/appointments', [PatientAppointmentController::class, 'store'])
     ->name('medical-records.index');
     Route::get('/prescriptions', [PatientPrescriptionController::class, 'index'])
     ->name('prescriptions.index');
+
+    Route::get('/prescriptions/{prescription}', [PatientPrescriptionController::class, 'show'])
+    ->name('prescriptions.show');
+
+Route::get('/prescriptions/{prescription}/download', [PatientPrescriptionController::class, 'download'])
+    ->name('prescriptions.download');
+
+Route::get('/prescriptions/{prescription}/print', [PatientPrescriptionController::class, 'print'])
+    ->name('prescriptions.print');
     });

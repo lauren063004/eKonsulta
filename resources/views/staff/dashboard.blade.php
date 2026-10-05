@@ -6,6 +6,8 @@
 
 @section('content')
 
+<div class="staff-dashboard">
+
     {{-- Welcome --}}
     <section class="welcome-banner" aria-label="Welcome">
 
@@ -22,6 +24,13 @@
                 Manage appointments, patients, consultations, and
                 health-center services from one place.
             </p>
+
+            <div class="staff-welcome-actions">
+                <a href="{{ route('staff.appointment-schedules.index') }}" class="primary-button">
+                    Manage Schedules
+                </a>
+            </div>
+
         </div>
 
         <div class="welcome-icon" aria-hidden="true">
@@ -427,5 +436,7 @@
         </div>
 
     </section>
+
+</div>
 
 @endsection

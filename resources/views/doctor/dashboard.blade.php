@@ -6,6 +6,8 @@
 
 @section('content')
 
+<div class="doctor-dashboard">
+
     <section class="welcome-banner">
 
         <div>
@@ -25,6 +27,12 @@
 
         <div class="welcome-icon">
             &#129658;
+        </div>
+
+        <div class="doctor-welcome-actions">
+            <a href="{{ route('doctor.appointments.index') }}" class="primary-button">
+                View Today's Appointments
+            </a>
         </div>
 
     </section>
@@ -238,5 +246,7 @@
         </section>
 
     </div>
+
+</div>
 
 @endsection

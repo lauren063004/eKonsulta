@@ -1,7 +1,6 @@
 @php
 $authUser = auth()->user();
 
-```
 $roleLabel = 'User';
 
 if ($authUser->isPatient()) {
@@ -21,13 +20,11 @@ $initial = strtoupper(
 $unreadCount = isset($notificationCount)
     ? (int) $notificationCount
     : 0;
-```
 
 @endphp
 
 <div class="topbar-actions">
 
-```
 {{-- =========================================================
      NOTIFICATIONS
      ========================================================= --}}
@@ -303,8 +300,6 @@ $unreadCount = isset($notificationCount)
     </div>
 
 </div>
-```
-
 </div>
 
 {{-- =============================================================

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="--ek-hero-image: url('{{ asset('images/hero-bg.jpg') }}'); --ek-wave-banner: url('{{ asset('images/wave-banner.jpg') }}');">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -60,7 +60,7 @@
                     rgba(4, 38, 65, .48),
                     rgba(4, 38, 65, .12)
                 ),
-                url("/images/hero-bg.jpg");
+                var(--ek-hero-image, url("/images/hero-bg.jpg"));
 
             background-size: cover;
             background-position: center;

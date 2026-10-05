@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="--ek-hero-image: url('{{ asset('images/hero-bg.jpg') }}'); --ek-wave-banner: url('{{ asset('images/wave-banner.jpg') }}');">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,12 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 @vite('resources/js/app.js')
-    {{--
-        The new theme replaces your old layout styling.
-        If an admin/doctor page (not redesigned yet) loses its styling, add your
-        old stylesheet back ABOVE this line.
-    --}}
-
 
     @stack('styles')
 </head>
@@ -73,13 +67,14 @@
 
             <div class="topbar-actions">
 
-                {{-- Notifications --}}
-                <a href="#" class="icon-button" aria-label="Notifications">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
-                    @if(isset($notificationCount) && $notificationCount > 0)
-                        <span class="badge-count">{{ $notificationCount > 9 ? '9+' : $notificationCount }}</span>
-                    @endif
-                </a>
+                @if($authUser->isPatient() && Route::has('patient.notifications'))
+                    <a href="{{ route('patient.notifications') }}" class="icon-button" aria-label="Notifications">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
+                        @if(isset($notificationCount) && $notificationCount > 0)
+                            <span class="badge-count">{{ $notificationCount > 9 ? '9+' : $notificationCount }}</span>
+                        @endif
+                    </a>
+                @endif
 
                 {{-- User dropdown --}}
                 <div class="user-menu" id="userMenu">
@@ -141,7 +136,7 @@
 
 
         {{-- PAGE CONTENT --}}
-        <main class="app-content" id="main-content">
+        <main class="app-content{{ $authUser->isStaff() ? ' staff-app-content' : '' }}{{ $authUser->isDoctor() ? ' doctor-app-content' : '' }}{{ $authUser->isAdmin() ? ' admin-app-content' : '' }}" id="main-content">
             @yield('content')
         </main>
 
@@ -174,7 +169,6 @@
     </div>
 </div>
 
-<script src="{{ asset('js/ekonsulta-ui.js') }}" defer></script>
 @stack('scripts')
 
 </body>

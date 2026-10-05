@@ -8,7 +8,6 @@
 
 <div class="dashboard-card">
 
-```
 <div class="card-header">
 
     <div>
@@ -476,7 +475,6 @@
     </div>
 
 </form>
-```
 
 </div>
 

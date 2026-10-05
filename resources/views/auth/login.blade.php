@@ -1,11 +1,5 @@
-{{--
-    IMPORTANT: your original login.blade.php was not readable, so this uses the
-    standard Laravel auth field names (email, password, remember) and the
-    standard routes (login, register, password.request).
-    Compare with your original before replacing it. See the notes in chat.
---}}
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="--ek-hero-image: url('{{ asset('images/hero-bg.jpg') }}'); --ek-wave-banner: url('{{ asset('images/wave-banner.jpg') }}');">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

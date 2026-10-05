@@ -96,12 +96,18 @@
                 <span>Account</span>
             </div>
 
-            <a href="#" class="nav-link">
+            <a
+                href="{{ route('patient.profile') }}"
+                class="nav-link {{ request()->routeIs('patient.profile') ? 'active' : '' }}"
+            >
                 <span>{!! $icons['user'] !!}</span>
                 <span>My Profile</span>
             </a>
 
-            <a href="#" class="nav-link">
+            <a
+                href="{{ route('patient.notifications') }}"
+                class="nav-link {{ request()->routeIs('patient.notifications') ? 'active' : '' }}"
+            >
                 <span>{!! $icons['bell'] !!}</span>
                 <span>Notifications</span>
             </a>

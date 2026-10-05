@@ -8,7 +8,6 @@
 
 <div class="dashboard-card doctor-prescriptions-page">
 
-```
 <div class="card-header">
     <div>
         <h3>My Prescriptions</h3>

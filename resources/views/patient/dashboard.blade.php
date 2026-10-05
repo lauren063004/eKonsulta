@@ -6,6 +6,8 @@
 
 @section('content')
 
+<div class="patient-dashboard">
+
     {{-- Welcome --}}
     <section class="welcome-banner">
 
@@ -22,6 +24,13 @@
                 Manage your appointments, consultations,
                 prescriptions, and health records in one place.
             </p>
+
+            <div class="patient-welcome-actions">
+                <a href="{{ route('patient.appointments.create') }}" class="primary-button">
+                    Book an Appointment
+                </a>
+            </div>
+
         </div>
 
         <div class="welcome-icon" aria-hidden="true">
@@ -348,5 +357,7 @@
         </div>
 
     </section>
+
+</div>
 
 @endsection

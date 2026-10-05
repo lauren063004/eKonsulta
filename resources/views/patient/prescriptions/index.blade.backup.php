@@ -88,32 +88,6 @@
                             </span>
                         </p>
 
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin:15px 0;">
-
-    <a
-        href="{{ route('patient.prescriptions.show', $prescription) }}"
-        class="btn btn-secondary"
-    >
-        View Prescription
-    </a>
-
-    <a
-        href="{{ route('patient.prescriptions.download', $prescription) }}"
-        class="btn btn-primary"
-    >
-        Download PDF
-    </a>
-
-    <a
-        href="{{ route('patient.prescriptions.print', $prescription) }}"
-        target="_blank"
-        class="btn btn-secondary"
-    >
-        Print
-    </a>
-
-</div>
-
 
                         {{-- General Instructions --}}
 

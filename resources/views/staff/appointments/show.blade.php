@@ -6,13 +6,13 @@
 @section('content')
 <div class="dashboard-card">
 
-    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="card-header">
         <div>
             <h3>Appointment Details</h3>
             <p>Patient appointment information</p>
         </div>
         
-        <div class="header-actions" style="display: flex; gap: 10px; align-items: center;">
+        <div class="header-actions">
             <a href="{{ route('staff.appointments.index') }}" class="btn btn-secondary">
                 Back to Appointments
             </a>
@@ -108,7 +108,7 @@
         <hr>
         <h3>💊 Prescriptions</h3>
         @foreach($appointment->consultation->prescriptions as $prescription)
-            <div class="prescription-details" style="margin-bottom: 20px;">
+            <div class="prescription-details staff-appointment-prescription">
                 <h4>Prescription {{ $prescription->prescription_number }}</h4>
                 <p><strong>Date:</strong> {{ $prescription->prescription_date ? $prescription->prescription_date->format('F j, Y') : 'N/A' }}</p>
                 <p><strong>Status:</strong> {{ ucfirst($prescription->status) }}</p>
@@ -118,9 +118,9 @@
                 @endif
 
                 @if($prescription->items && $prescription->items->count())
-                    <h4 style="margin-top: 10px;">Prescribed Medicines</h4>
+                    <h4 class="staff-appointment-medicine-heading">Prescribed Medicines</h4>
                     @foreach($prescription->items as $item)
-                        <div class="medicine-item" style="margin-left: 15px; margin-bottom: 10px; padding-left: 10px; border-left: 2px solid #ccc;">
+                        <div class="medicine-item staff-appointment-medicine">
                             @if($item->medicine)
                                 <p>
                                     💊 <strong>{{ $item->medicine->name }}</strong>
@@ -166,7 +166,7 @@
         @endforeach
     @endif
 
-    <div style="margin-top: 20px;">
+    <div class="staff-appointment-footer">
         <a href="{{ route('staff.appointments.index') }}" class="btn btn-secondary">
             Back to Appointments
         </a>

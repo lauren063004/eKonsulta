@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Consultation;
 use Illuminate\View\View;
 
-
 class PatientMedicalRecordController extends Controller
 {
     /**
@@ -22,6 +21,7 @@ class PatientMedicalRecordController extends Controller
         $consultations = Consultation::with([
             'doctor.user',
             'appointment.healthCenter',
+            'appointment.patientIntake',
             'prescriptions.items.medicine',
         ])
             ->where('patient_id', $patient->id)

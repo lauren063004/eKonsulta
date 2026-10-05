@@ -51,7 +51,7 @@
                         @if($consultation->doctor && $consultation->doctor->user)
 
                             <p>
-                               
+                                👨‍⚕️
                                 {{ $consultation->doctor->user->name }}
                             </p>
 
@@ -61,7 +61,7 @@
                         @if($consultation->doctor && $consultation->doctor->specialization)
 
                             <p>
-                                ðŸ©º
+                                🩺
                                 {{ $consultation->doctor->specialization }}
                             </p>
 
@@ -71,91 +71,12 @@
                         @if($consultation->appointment && $consultation->appointment->healthCenter)
 
                             <p>
-                                ðŸ¥
+                                🏥
                                 {{ $consultation->appointment->healthCenter->name }}
                             </p>
 
                         @endif
 
-                        {{-- PATIENT INTAKE --}}
-                        @if($consultation->appointment && $consultation->appointment->patientIntake)
-
-                            <hr>
-
-                            <h4>Patient Intake</h4>
-
-                            <div class="detail-grid">
-
-                                @if($consultation->appointment->patientIntake->height !== null)
-                                    <p>
-                                        <strong>Height:</strong>
-                                        {{ number_format((float) $consultation->appointment->patientIntake->height, 2) }} cm
-                                    </p>
-                                @endif
-
-                                @if($consultation->appointment->patientIntake->weight !== null)
-                                    <p>
-                                        <strong>Weight:</strong>
-                                        {{ number_format((float) $consultation->appointment->patientIntake->weight, 2) }} kg
-                                    </p>
-                                @endif
-
-                                @php
-                                    $height = (float) $consultation->appointment->patientIntake->height;
-                                    $weight = (float) $consultation->appointment->patientIntake->weight;
-                                    $bmi = $height > 0
-                                        ? $weight / (($height / 100) ** 2)
-                                        : null;
-                                @endphp
-
-                                @if($bmi !== null)
-                                    <p>
-                                        <strong>BMI:</strong>
-                                        {{ number_format($bmi, 2) }}
-                                    </p>
-                                @endif
-
-                                <p>
-                                    <strong>Diabetes:</strong>
-                                    {{ $consultation->appointment->patientIntake->has_diabetes ? 'Yes' : 'No' }}
-                                </p>
-
-                                <p>
-                                    <strong>Hypertension:</strong>
-                                    {{ $consultation->appointment->patientIntake->has_hypertension ? 'Yes' : 'No' }}
-                                </p>
-
-                            </div>
-
-                            @if($consultation->appointment->patientIntake->allergies)
-                                <p>
-                                    <strong>Allergies:</strong>
-                                    {{ $consultation->appointment->patientIntake->allergies }}
-                                </p>
-                            @endif
-
-                            @if($consultation->appointment->patientIntake->comorbidities)
-                                <p>
-                                    <strong>Comorbidities:</strong>
-                                    {{ $consultation->appointment->patientIntake->comorbidities }}
-                                </p>
-                            @endif
-
-                            @if($consultation->appointment->patientIntake->maintenance_medications)
-                                <p>
-                                    <strong>Maintenance Medications:</strong>
-                                    {{ $consultation->appointment->patientIntake->maintenance_medications }}
-                                </p>
-                            @endif
-
-                            @if($consultation->appointment->patientIntake->other_medical_information)
-                                <p>
-                                    <strong>Other Medical Information:</strong>
-                                    {{ $consultation->appointment->patientIntake->other_medical_information }}
-                                </p>
-                            @endif
-
-                        @endif
                         {{-- Chief Complaint --}}
                         @if($consultation->chief_complaint)
 
@@ -212,7 +133,7 @@
 
                             <hr>
 
-                            <h4>ðŸ’Š Prescriptions</h4>
+                            <h4>💊 Prescriptions</h4>
 
                             @foreach($consultation->prescriptions as $prescription)
 
@@ -260,7 +181,7 @@
                                                 @if($item->medicine)
 
                                                     <p>
-                                                        ðŸ’Š
+                                                        💊
                                                         <strong>
                                                             {{ $item->medicine->name }}
                                                         </strong>
@@ -280,7 +201,7 @@
                                                             @endif
 
                                                             @if($item->medicine->dosage_form)
-                                                                â€” {{ $item->medicine->dosage_form }}
+                                                                — {{ $item->medicine->dosage_form }}
                                                             @endif
                                                         </p>
 
@@ -356,7 +277,7 @@
         <div class="empty-state">
 
             <div class="empty-icon">
-                ðŸ“‹
+                📋
             </div>
 
             <h4>No medical records yet</h4>

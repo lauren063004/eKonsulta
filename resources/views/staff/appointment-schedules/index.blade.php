@@ -13,7 +13,7 @@
     </div>
 
     <a href="{{ route('staff.appointment-schedules.create') }}" class="btn btn-primary">
-        + Create Schedule
+        Create Schedule
     </a>
 </div>
 
@@ -30,19 +30,14 @@
 @endif
 
 <div class="card">
-
     <div class="card-header">
         <h2>Available Schedules</h2>
     </div>
 
     <div class="card-body">
-
         @if($schedules->count())
-
             <div class="table-responsive">
-
                 <table class="data-table">
-
                     <thead>
                         <tr>
                             <th>Health Center</th>
@@ -56,111 +51,56 @@
                     </thead>
 
                     <tbody>
-
                         @foreach($schedules as $schedule)
-
                             @php
                                 $booked = (int) $schedule->active_appointments_count;
                                 $available = max($schedule->capacity - $booked, 0);
                             @endphp
 
                             <tr>
-
-                                <td>
-                                    {{ $schedule->healthCenter->name }}
-                                </td>
-
-                                <td>
-                                    {{ $schedule->schedule_date->format('M d, Y') }}
-                                </td>
-
-                                <td>
-                                    {{ $schedule->appointment_time->format('h:i A') }}
-                                </td>
-
-                                <td>
-                                    {{ $schedule->capacity }}
-                                </td>
-
-                                <td>
-                                    {{ $booked }}
-                                </td>
-
+                                <td>{{ $schedule->healthCenter->name }}</td>
+                                <td>{{ $schedule->schedule_date->format('M d, Y') }}</td>
+                                <td>{{ $schedule->appointment_time->format('h:i A') }}</td>
+                                <td>{{ $schedule->capacity }}</td>
+                                <td>{{ $booked }}</td>
                                 <td>
                                     <span class="pill {{ $available === 0 ? 'pill--red' : 'pill--green' }}">
                                         {{ $available }}
                                     </span>
                                 </td>
-
                                 <td>
-
                                     @if($booked === 0)
-
                                         <form
                                             method="POST"
                                             action="{{ route('staff.appointment-schedules.destroy', $schedule) }}"
                                             onsubmit="return confirm('Are you sure you want to delete this schedule?');"
                                         >
-
                                             @csrf
                                             @method('DELETE')
-
-                                            <button
-                                                type="submit"
-                                                class="btn btn-danger btn-sm"
-                                            >
+                                            <button type="submit" class="btn btn-danger btn-sm">
                                                 Delete
                                             </button>
-
                                         </form>
-
                                     @else
-
-                                        <span class="text-muted">
-                                            Has appointments
-                                        </span>
-
+                                        <span class="text-muted">Has appointments</span>
                                     @endif
-
                                 </td>
-
                             </tr>
-
                         @endforeach
-
                     </tbody>
-
                 </table>
-
             </div>
-
         @else
-
             <div class="empty-state">
-
-                <div class="empty-state-icon">
-                    📅
-                </div>
-
+                <div class="empty-state-icon" aria-hidden="true">📅</div>
                 <h3>No appointment schedules yet</h3>
-
-                <p>
-                    Create an appointment schedule so patients can book available consultation slots.
-                </p>
-
-                <a
-                    href="{{ route('staff.appointment-schedules.create') }}"
-                    class="btn btn-primary"
-                >
+                <p>Create an appointment schedule so patients can book available consultation slots.</p>
+                <a href="{{ route('staff.appointment-schedules.create') }}" class="btn btn-primary">
                     Create First Schedule
                 </a>
-
             </div>
-
         @endif
-
     </div>
-
 </div>
 
 @endsection

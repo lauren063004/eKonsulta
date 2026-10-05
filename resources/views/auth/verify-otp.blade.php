@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="--ek-hero-image: url('{{ asset('images/hero-bg.jpg') }}'); --ek-wave-banner: url('{{ asset('images/wave-banner.jpg') }}');">
 <head>
     <meta charset="UTF-8">
 
@@ -10,10 +10,9 @@
 
     <title>Verify Email - e-Konsulta</title>
 
-    @vite([
-        'resources/css/app.css',
-        'resources/js/app.js'
-    ])
+    <link rel="icon" href="{{ asset('images/cross-badge.jpg') }}">
+
+    @vite('resources/js/app.js')
 </head>
 
 <body>
@@ -25,11 +24,11 @@
 
         <div class="ek-brand-content">
 
-            {{-- Placeholder seal. Swap for: <img class="ek-seal" src="{{ asset('images/cho-seal.png') }}" alt="Taguig City Health Office seal"> --}}
-            <svg class="ek-seal" viewBox="0 0 96 96" aria-hidden="true">
-                <circle cx="48" cy="48" r="45" fill="#fff" stroke="#0A3D8F" stroke-width="5"/>
-                <path fill="#D91E25" d="M41 24h14v17h17v14H55v17H41V55H24V41h17z"/>
-            </svg>
+            <img
+                class="ek-seal"
+                src="{{ asset('images/cho-seal.jpg') }}"
+                alt="City Health Office of Taguig seal"
+            >
 
             <h1 class="ek-wordmark">
                 <span>e-<span class="ek-wordmark-red" style="display:inline;">Konsulta</span></span>
@@ -58,7 +57,7 @@
             <h2>Verify Your Email</h2>
 
             <p class="ek-card-intro">
-                We sent a 6-digit verification code to your Gmail address.
+                We sent a 6-digit verification code to your email address.
                 Please enter the code below to complete your registration.
             </p>
 

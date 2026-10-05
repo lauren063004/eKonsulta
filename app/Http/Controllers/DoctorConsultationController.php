@@ -89,10 +89,11 @@ public function show(Consultation $consultation)
                 );
         }
 
-        $appointment->load([
-            'patient.user',
-            'healthCenter',
-        ]);
+$appointment->load([
+    'patient.user',
+    'healthCenter',
+    'patientIntake.staff.user',
+]);
 
         return view('doctor.consultations.create', compact(
             'appointment'

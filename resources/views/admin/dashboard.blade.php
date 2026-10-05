@@ -6,6 +6,8 @@
 
 @section('content')
 
+<div class="admin-dashboard">
+
 <section class="welcome-banner">
 
     <div>
@@ -234,6 +236,8 @@
         </div>
 
     </section>
+
+</div>
 
 </div>
 

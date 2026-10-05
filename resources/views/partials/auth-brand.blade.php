@@ -3,13 +3,11 @@
 
     <div class="ek-brand-content">
 
-        {{-- Placeholder seal. To use the official City Health Office seal, replace the
-             <svg> with: <img class="ek-seal" src="{{ asset('images/cho-seal.png') }}" alt="Taguig City Health Office seal"> --}}
-        <svg class="ek-seal" viewBox="0 0 96 96" role="img" aria-label="City Health Office seal">
-            <circle cx="48" cy="48" r="45" fill="#fff" stroke="#0A3D8F" stroke-width="5"/>
-            <circle cx="48" cy="48" r="36" fill="none" stroke="#D91E25" stroke-width="2"/>
-            <path fill="#D91E25" d="M41 24h14v17h17v14H55v17H41V55H24V41h17z"/>
-        </svg>
+        <img
+            class="ek-seal"
+            src="{{ asset('images/cho-seal.jpg') }}"
+            alt="City Health Office of Taguig seal"
+        >
 
         <h1 class="ek-wordmark">
             <span>TAGUIG</span>
