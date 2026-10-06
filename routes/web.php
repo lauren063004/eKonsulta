@@ -39,7 +39,7 @@ use App\Http\Controllers\AdminServiceController;
 
 
 Route::get('/', function () {
-    return 'e-Konsulta Laravel is running on Vercel!';
+    return redirect()->route('login');
 });
 
 Route::get('/login', [AuthController::class, 'showLogin'])
