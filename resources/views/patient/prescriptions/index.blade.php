@@ -24,11 +24,13 @@
 
     @if($prescriptions->count())
 
-        <div class="medical-records-list">
+        <x-list-search target="patient-prescription-list" placeholder="Search prescription number, doctor, diagnosis, or medicine..." label="Search your prescriptions" />
+
+        <div class="medical-records-list" id="patient-prescription-list">
 
             @foreach($prescriptions as $prescription)
 
-                <div class="appointment-preview">
+                <div class="appointment-preview" data-search-item>
 
                     <div class="appointment-date">
 

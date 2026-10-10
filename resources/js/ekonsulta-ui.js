@@ -1,4 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-list-search-input]').forEach((input) => {
+        if (!(input instanceof HTMLInputElement)) {
+            return;
+        }
+
+        const targetId = input.dataset.listSearchTarget;
+        const list = targetId ? document.getElementById(targetId) : null;
+        const status = input.closest('.list-search')?.querySelector('[data-list-search-status]');
+
+        if (!(list instanceof HTMLElement) || !(status instanceof HTMLElement)) {
+            console.error('List search is missing its target list or status message.');
+            return;
+        }
+
+        const items = Array.from(list.querySelectorAll('[data-search-item]'));
+
+        input.addEventListener('input', () => {
+            const query = input.value.trim().toLocaleLowerCase();
+            let visibleCount = 0;
+
+            items.forEach((item) => {
+                const searchableText = item.textContent?.toLocaleLowerCase() || '';
+                const matches = searchableText.includes(query);
+                item.hidden = !matches;
+
+                if (matches) {
+                    visibleCount += 1;
+                }
+            });
+
+            list.querySelectorAll('[data-search-group]').forEach((group) => {
+                const hasVisibleItems = Array.from(
+                    group.querySelectorAll('[data-search-item]')
+                ).some((item) => !item.hidden);
+
+                group.hidden = query.length > 0 && !hasVisibleItems;
+            });
+
+            status.hidden = query.length === 0 || visibleCount > 0;
+        });
+    });
+
     const userMenu = document.getElementById('userMenu');
     const userButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');

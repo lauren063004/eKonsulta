@@ -37,11 +37,13 @@
 
     @if($healthCenters->count())
 
-        <div class="admin-health-center-list">
+        <x-list-search target="admin-health-center-list" placeholder="Search by health center, address, or contact..." label="Search health centers" />
+
+        <div class="admin-health-center-list" id="admin-health-center-list">
 
             @foreach($healthCenters as $healthCenter)
 
-                <div class="admin-health-center-card">
+                <div class="admin-health-center-card" data-search-item>
 
                     <div class="admin-health-center-header">
 

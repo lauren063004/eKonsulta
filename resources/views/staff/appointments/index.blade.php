@@ -23,11 +23,13 @@
 
     @if($appointments->count())
 
-        <div class="medical-records-list">
+        <x-list-search target="staff-appointment-list" placeholder="Search patients, doctors, dates, or status..." label="Search appointments" />
+
+        <div class="medical-records-list" id="staff-appointment-list">
 
             @foreach($appointments as $appointment)
 
-                <div class="appointment-preview">
+                <div class="appointment-preview" data-search-item>
 
                     <div class="appointment-date">
 

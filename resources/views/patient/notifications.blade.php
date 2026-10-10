@@ -28,8 +28,11 @@
                 <p>New announcements for you will appear here.</p>
             </div>
         @else
+            <x-list-search target="notification-search-list" placeholder="Search notification title, message, or date..." label="Search notifications" />
+
+            <div id="notification-search-list">
             @if($unreadNotifications->isNotEmpty())
-                <section class="notification-group">
+                <section class="notification-group" data-search-group>
                     <div class="notification-group-heading">
                         <div>
                             <h3>Unread</h3>
@@ -45,7 +48,7 @@
                                         : route($routePrefix . '.announcements.index'))
                                     : null;
                             @endphp
-                            <article class="notification-card notification-card--unread">
+                            <article class="notification-card notification-card--unread" data-search-item>
                                 <div class="notification-card-copy">
                                     <div class="notification-card-topline">
                                         <span class="notification-unread-label"><span></span>Unread</span>
@@ -83,7 +86,7 @@
             @endif
 
             @if($readNotifications->isNotEmpty())
-                <section class="notification-group notification-group--read">
+                <section class="notification-group notification-group--read" data-search-group>
                     <div class="notification-group-heading">
                         <div>
                             <h3>Earlier</h3>
@@ -99,7 +102,7 @@
                                         : route($routePrefix . '.announcements.index'))
                                     : null;
                             @endphp
-                            <article class="notification-card notification-card--read">
+                            <article class="notification-card notification-card--read" data-search-item>
                                 <div class="notification-card-copy">
                                     <div class="notification-card-topline">
                                         <time datetime="{{ $notification->created_at->toIso8601String() }}">{{ $notification->created_at->format('M j, Y · g:i A') }}</time>
@@ -123,6 +126,7 @@
                     </div>
                 </section>
             @endif
+            </div>
         @endif
     </div>
 @endsection

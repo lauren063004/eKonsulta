@@ -40,11 +40,13 @@
 
     @if($staff->count())
 
-        <div class="admin-user-list">
+        <x-list-search target="admin-staff-list" placeholder="Search by name, employee number, position, or health center..." label="Search staff members" />
+
+        <div class="admin-user-list" id="admin-staff-list">
 
             @foreach($staff as $member)
 
-                <div class="admin-user-card">
+                <div class="admin-user-card" data-search-item>
 
                     <div class="admin-user-avatar">
                         👤

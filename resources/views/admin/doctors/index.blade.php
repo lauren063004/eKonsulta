@@ -26,11 +26,13 @@
 
     @if($doctors->count())
 
-        <div class="admin-doctor-list">
+        <x-list-search target="admin-doctor-list" placeholder="Search by name, license, specialty, or health center..." label="Search doctors" />
+
+        <div class="admin-doctor-list" id="admin-doctor-list">
 
             @foreach($doctors as $doctor)
 
-                <div class="admin-doctor-card">
+                <div class="admin-doctor-card" data-search-item>
 
                     <div class="admin-doctor-avatar">
                         &#128104;&#8205;&#9877;

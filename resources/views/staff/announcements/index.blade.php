@@ -29,9 +29,11 @@
                 <a href="{{ route('staff.announcements.create') }}" class="primary-button">Create announcement</a>
             </div>
         @else
-            <div class="announcement-management-list">
+            <x-list-search target="staff-announcement-list" placeholder="Search announcement title, status, or content..." label="Search announcements" />
+
+            <div class="announcement-management-list" id="staff-announcement-list">
                 @foreach($announcements as $announcement)
-                    <article class="announcement-management-card">
+                    <article class="announcement-management-card" data-search-item>
                         <div class="announcement-management-thumb">
                             @if($announcement->image_path)
                                 <button

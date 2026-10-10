@@ -23,10 +23,12 @@
 
     @if($users->count())
 
-        <div class="admin-user-list">
+        <x-list-search target="admin-user-list" placeholder="Search by name, email, role, or status..." label="Search system users" />
+
+        <div class="admin-user-list" id="admin-user-list">
 
        @foreach($users as $user)
-    <div class="admin-user-card">
+    <div class="admin-user-card" data-search-item>
 
         <div class="admin-user-avatar">
             &#128100;

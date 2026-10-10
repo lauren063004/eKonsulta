@@ -23,11 +23,17 @@
 
     @if($patients->count())
 
-        <div class="patient-list">
+        <x-list-search
+            target="staff-patient-list"
+            placeholder="Search by patient name, number, email, or contact..."
+            label="Search registered patients"
+        />
+
+        <div class="patient-list" id="staff-patient-list">
 
             @foreach($patients as $patient)
 
-                <div class="patient-card">
+                <div class="patient-card" data-search-item>
 
                     <div class="patient-avatar">
                         &#128100;

@@ -23,11 +23,13 @@
 
     @if($consultations->count())
 
-        <div class="consultation-list">
+        <x-list-search target="staff-consultation-list" placeholder="Search patients, doctors, diagnoses, or dates..." label="Search consultations" />
+
+        <div class="consultation-list" id="staff-consultation-list">
 
             @foreach($consultations as $consultation)
 
-                <div class="consultation-list-card">
+                <div class="consultation-list-card" data-search-item>
 
                     {{-- DATE --}}
 

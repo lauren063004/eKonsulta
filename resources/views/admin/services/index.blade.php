@@ -45,11 +45,13 @@
 
     @if($services->count())
 
-        <div class="admin-service-list">
+        <x-list-search target="admin-service-list" placeholder="Search by service name, code, or description..." label="Search healthcare services" />
+
+        <div class="admin-service-list" id="admin-service-list">
 
             @foreach($services as $service)
 
-                <div class="admin-service-card">
+                <div class="admin-service-card" data-search-item>
 
                     <div class="admin-service-header">
 

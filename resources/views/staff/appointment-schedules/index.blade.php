@@ -36,6 +36,8 @@
 
     <div class="card-body">
         @if($schedules->count())
+            <x-list-search target="staff-schedule-list" placeholder="Search health center, date, or time..." label="Search appointment schedules" />
+
             <div class="table-responsive">
                 <table class="data-table">
                     <thead>
@@ -50,14 +52,14 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody id="staff-schedule-list">
                         @foreach($schedules as $schedule)
                             @php
                                 $booked = (int) $schedule->active_appointments_count;
                                 $available = max($schedule->capacity - $booked, 0);
                             @endphp
 
-                            <tr>
+                            <tr data-search-item>
                                 <td>{{ $schedule->healthCenter->name }}</td>
                                 <td>{{ $schedule->schedule_date->format('M d, Y') }}</td>
                                 <td>{{ $schedule->appointment_time->format('h:i A') }}</td>

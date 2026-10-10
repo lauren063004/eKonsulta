@@ -29,9 +29,11 @@
                 <p>New updates from your health center will appear here.</p>
             </div>
         @else
-            <div class="announcement-feed">
+            <x-list-search target="patient-announcement-list" placeholder="Search by announcement title, health center, or topic..." label="Search announcements" />
+
+            <div class="announcement-feed" id="patient-announcement-list">
                 @foreach($announcements as $announcement)
-                    <article class="announcement-card">
+                    <article class="announcement-card" data-search-item>
                         @if($announcement->image_path)
                             <button
                                 type="button"

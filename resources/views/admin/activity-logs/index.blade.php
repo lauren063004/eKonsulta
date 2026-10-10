@@ -13,6 +13,10 @@
         <h2>System Activity</h2>
     </div>
 
+    @if($activityLogs->count())
+        <x-list-search target="admin-activity-log-list" placeholder="Search user, role, action, description, or IP..." label="Search activity logs" />
+    @endif
+
     <div class="table-responsive">
         <table class="data-table">
             <thead>
@@ -26,9 +30,9 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="admin-activity-log-list">
                 @forelse ($activityLogs as $log)
-                    <tr>
+                    <tr data-search-item>
                         <td>
                             {{ $log->user?->name ?? 'Unknown User' }}
                         </td>
