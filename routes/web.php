@@ -140,8 +140,11 @@ Route::middleware(['auth', 'role:admin'])
 Route::get('/users', [AdminUserController::class, 'index'])
     ->name('users.index');
 
+    Route::get('/patients', [AdminUserController::class, 'patients'])
+        ->name('patients.index');
+
     Route::patch('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])
-    ->name('users.toggle-status');
+        ->name('users.toggle-status');
 
 Route::get('/users/{user}', [AdminUserController::class, 'show'])
     ->name('users.show');
@@ -166,6 +169,9 @@ Route::put('/health-centers/{healthCenter}', [AdminHealthCenterController::class
 
 Route::patch('/health-centers/{healthCenter}/toggle-status', [AdminHealthCenterController::class, 'toggleStatus'])
     ->name('health-centers.toggle-status');
+
+Route::delete('/health-centers/{healthCenter}', [AdminHealthCenterController::class, 'destroy'])
+    ->name('health-centers.destroy');
 
     Route::get('/doctors', [AdminDoctorController::class, 'index'])
     ->name('doctors.index');

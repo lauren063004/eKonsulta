@@ -245,6 +245,14 @@
             </a>
 
             <a
+                href="{{ route('admin.patients.index') }}"
+                class="nav-link {{ request()->routeIs('admin.patients.*') ? 'active' : '' }}"
+            >
+                <span>{!! $icons['users'] !!}</span>
+                <span>Patients</span>
+            </a>
+
+            <a
                 href="{{ route('admin.health-centers.index') }}"
                 class="nav-link {{ request()->routeIs('admin.health-centers.*') ? 'active' : '' }}"
             >

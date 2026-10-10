@@ -18,6 +18,40 @@ class AdminUserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+    public function patients(Request $request): View
+    {
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+        $search = trim($validated['search'] ?? '');
+
+        $patients = \App\Models\Patient::query()
+            ->select([
+                'id',
+                'user_id',
+                'patient_number',
+            ])
+            ->with('user:id,name,email,status,role')
+            ->whereHas('user', function ($query) {
+                $query->where('role', 'patient');
+            })
+            ->when($search !== '', function ($query) use ($search) {
+                $term = '%' . $search . '%';
+                $query->where(function ($query) use ($term) {
+                    $query->where('patient_number', 'like', $term)
+                        ->orWhereHas('user', function ($query) use ($term) {
+                            $query->where('name', 'like', $term)
+                                ->orWhere('email', 'like', $term);
+                        });
+                });
+            })
+            ->orderBy('patient_number')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('admin.patients.index', compact('patients', 'search'));
+    }
+
     /**
      * Display user details.
      */

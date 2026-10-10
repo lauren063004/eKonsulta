@@ -35,6 +35,18 @@
 
 </div>
 
+    @if ($errors->has('health_center'))
+        <div class="health-center-feedback health-center-feedback--error" role="alert">
+            {{ $errors->first('health_center') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="health-center-feedback health-center-feedback--success" role="status">
+            {{ session('success') }}
+        </div>
+    @endif
+
     @if($healthCenters->count())
 
         <x-list-search target="admin-health-center-list" placeholder="Search by health center, address, or contact..." label="Search health centers" />
@@ -152,9 +164,25 @@
         >
             {{ $healthCenter->status === 'active' ? 'Deactivate' : 'Activate' }}
         </button>
-
     </form>
 
+    <form
+        method="POST"
+        action="{{ route('admin.health-centers.destroy', $healthCenter) }}"
+        data-confirm
+        data-confirm-title="Delete this health center?"
+        data-confirm="Deletion is only allowed when no records, services, or announcements are linked. Otherwise, deactivate the center instead."
+        data-confirm-ok="Delete center"
+        data-confirm-cancel="Cancel"
+        data-confirm-icon="warning"
+    >
+        @csrf
+        @method('DELETE')
+
+        <button type="submit" class="health-center-delete-button">
+            Delete
+        </button>
+    </form>
 </div>
 
             @endforeach

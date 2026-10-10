@@ -82,6 +82,26 @@
     </div>
 
 
+    @php
+        $scheduleCalendarData = $schedules->map(function ($schedule) {
+            $available = max(
+                $schedule->capacity - $schedule->active_appointments_count,
+                0
+            );
+
+            return [
+                'id' => $schedule->id,
+                'serviceId' => (string) $schedule->service_id,
+                'healthCenterId' => (string) $schedule->health_center_id,
+                'doctorId' => $schedule->doctor_id ? (string) $schedule->doctor_id : '',
+                'date' => $schedule->schedule_date->format('Y-m-d'),
+                'time' => $schedule->appointment_time->format('H:i'),
+                'timeLabel' => $schedule->appointment_time->format('h:i A'),
+                'available' => $available,
+            ];
+        })->values();
+    @endphp
+
     @if ($schedules->count() && $services->count())
 
         <form
@@ -90,6 +110,8 @@
         >
 
             @csrf
+
+            <script type="application/json" id="appointment-schedule-data">@json($scheduleCalendarData)</script>
 
 
             {{-- STEP 2 — Service and Schedule --}}
@@ -142,56 +164,69 @@
                 </div>
 
 
-                {{-- Appointment Schedule --}}
-                <div class="form-group">
+                <div class="form-group appointment-booking-schedule">
+                    <span class="appointment-booking-schedule__label">Available date and time</span>
 
-                    <label for="appointment_schedule_id">
-                        Available Schedule
-                    </label>
-
-                    <select
-                        id="appointment_schedule_id"
-                        name="appointment_schedule_id"
-                        required
-                    >
-
-                        <option value="">
-                            Select an available schedule
-                        </option>
-
-                        @foreach ($schedules as $schedule)
-
-                            @php
-                                $booked = $schedule->active_appointments_count;
-                                $available = max(
-                                    $schedule->capacity - $booked,
-                                    0
-                                );
-                            @endphp
-
-                            <option
-                                value="{{ $schedule->id }}"
-                                data-health-center-id="{{ $schedule->health_center_id }}"
-                                data-service-id="{{ $schedule->service_id }}"
-                                {{ old('appointment_schedule_id') == $schedule->id ? 'selected' : '' }}
+                    <div id="appointment-calendar" class="appointment-calendar">
+                        <div class="appointment-calendar__header">
+                            <button
+                                type="button"
+                                id="appointment-calendar-previous"
+                                class="appointment-calendar__nav"
+                                aria-label="Show previous month"
                             >
+                                <span aria-hidden="true">&lsaquo;</span>
+                            </button>
+                            <h5 id="appointment-calendar-month" aria-live="polite"></h5>
+                            <button
+                                type="button"
+                                id="appointment-calendar-next"
+                                class="appointment-calendar__nav"
+                                aria-label="Show next month"
+                            >
+                                <span aria-hidden="true">&rsaquo;</span>
+                            </button>
+                        </div>
 
-                                {{ $schedule->healthCenter->name }}
-                                —
-                                {{ $schedule->schedule_date->format('M d, Y') }}
-                                —
-                                {{ $schedule->appointment_time->format('h:i A') }}
-                                —
-                                {{ $available }}
-                                slot{{ $available == 1 ? '' : 's' }}
-                                available
+                        <div class="appointment-calendar__weekdays" aria-hidden="true">
+                            <span>Sun</span><span>Mon</span><span>Tue</span>
+                            <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                        </div>
+                        <div
+                            id="appointment-calendar-grid"
+                            class="appointment-calendar__grid"
+                            role="group"
+                            aria-label="Available appointment dates"
+                        ></div>
+                        <p
+                            id="appointment-calendar-status"
+                            class="appointment-calendar__status"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            Choose a service to see available dates.
+                        </p>
+                    </div>
 
-                            </option>
-
-                        @endforeach
-
-                    </select>
-
+                    <fieldset
+                        id="appointment-time-slots"
+                        class="appointment-time-slots"
+                        hidden
+                    >
+                        <legend id="appointment-time-slots-title">Available times</legend>
+                        <div
+                            id="appointment-time-slots-list"
+                            class="appointment-time-slots__list"
+                        ></div>
+                    </fieldset>
+                    <p
+                        id="appointment-time-slots-empty"
+                        class="appointment-time-slots__empty"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        Select an available date to see its appointment times.
+                    </p>
                 </div>
 
             </div>
@@ -562,6 +597,389 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateSchedules();
 
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const serviceSelect = document.getElementById('service_id');
+    const doctorSelect = document.getElementById('doctor_id');
+    const calendarGrid = document.getElementById('appointment-calendar-grid');
+    const calendarMonth = document.getElementById('appointment-calendar-month');
+    const calendarStatus = document.getElementById('appointment-calendar-status');
+    const previousMonthButton = document.getElementById('appointment-calendar-previous');
+    const nextMonthButton = document.getElementById('appointment-calendar-next');
+    const timeSlots = document.getElementById('appointment-time-slots');
+    const timeSlotsTitle = document.getElementById('appointment-time-slots-title');
+    const timeSlotsList = document.getElementById('appointment-time-slots-list');
+    const timeSlotsEmpty = document.getElementById('appointment-time-slots-empty');
+    const scheduleInfo = document.getElementById('schedule-info');
+    const scheduleDetails = document.getElementById('schedule-details');
+    const scheduleDataElement = document.getElementById('appointment-schedule-data');
+
+    if (
+        !serviceSelect || !doctorSelect || !calendarGrid || !calendarMonth
+        || !calendarStatus || !previousMonthButton || !nextMonthButton
+        || !timeSlots || !timeSlotsTitle || !timeSlotsList || !timeSlotsEmpty
+        || !scheduleInfo || !scheduleDataElement
+    ) {
+        return;
+    }
+
+    const schedules = JSON.parse(scheduleDataElement.textContent || '[]');
+    const doctorOptions = Array.from(doctorSelect.querySelectorAll('option[data-service-ids]'));
+    const oldScheduleId = @json((string) old('appointment_schedule_id', ''));
+    let selectedScheduleId = oldScheduleId;
+    let selectedDate = '';
+    let selectedDoctorId = doctorSelect.value;
+    let displayedMonth = new Date();
+    displayedMonth.setDate(1);
+
+    const localDate = function (value) {
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    };
+
+    const dateKey = function (date) {
+        return date.getFullYear() + '-'
+            + String(date.getMonth() + 1).padStart(2, '0') + '-'
+            + String(date.getDate()).padStart(2, '0');
+    };
+
+    const monthKey = function (date) {
+        return date.getFullYear() * 12 + date.getMonth();
+    };
+
+    const serviceSchedules = function () {
+        return schedules.filter(function (schedule) {
+            return schedule.serviceId === serviceSelect.value && schedule.available > 0;
+        });
+    };
+
+    const availableDates = function (items) {
+        return Array.from(new Set(items.map(function (schedule) {
+            return schedule.date;
+        }))).sort();
+    };
+
+    const formattedDate = function (value, options) {
+        return new Intl.DateTimeFormat(undefined, options).format(localDate(value));
+    };
+
+    function updateDoctors(resetSelection) {
+        const serviceId = serviceSelect.value;
+        const selectedSchedule = schedules.find(function (schedule) {
+            return String(schedule.id) === selectedScheduleId
+                && schedule.date === selectedDate
+                && schedule.serviceId === serviceId;
+        });
+
+        if (resetSelection) {
+            selectedDoctorId = '';
+        }
+
+        const placeholder = doctorSelect.querySelector('option[value=""]');
+        if (!serviceId || !selectedSchedule) {
+            doctorSelect.disabled = true;
+            doctorSelect.value = '';
+            placeholder.textContent = serviceId
+                ? 'Select an appointment time first'
+                : 'Select a service first';
+            scheduleInfo.style.display = 'none';
+            return;
+        }
+
+        let hasEligibleDoctor = false;
+        doctorOptions.forEach(function (option) {
+            const serviceIds = option.dataset.serviceIds
+                ? option.dataset.serviceIds.split(',')
+                : [];
+            const matchesCenter = option.dataset.healthCenterId === selectedSchedule.healthCenterId;
+            const matchesService = serviceIds.includes(serviceId);
+            const matchesAssignedDoctor = !selectedSchedule.doctorId
+                || option.value === selectedSchedule.doctorId;
+            option.hidden = !(matchesCenter && matchesService && matchesAssignedDoctor);
+            hasEligibleDoctor = hasEligibleDoctor || !option.hidden;
+        });
+
+        placeholder.textContent = hasEligibleDoctor
+            ? 'Select a doctor'
+            : 'No doctor is available for this schedule';
+        doctorSelect.disabled = !hasEligibleDoctor;
+        doctorSelect.value = doctorOptions.some(function (option) {
+            return option.value === selectedDoctorId && !option.hidden;
+        }) ? selectedDoctorId : '';
+        selectedDoctorId = doctorSelect.value;
+
+        scheduleDetails.textContent = formattedDate(selectedSchedule.date, {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }) + ' at ' + selectedSchedule.timeLabel
+            + ' (' + selectedSchedule.available + ' '
+            + (selectedSchedule.available === 1 ? 'slot' : 'slots') + ' remaining)';
+        scheduleInfo.style.display = 'block';
+    }
+
+    function renderTimeSlots() {
+        const items = serviceSchedules()
+            .filter(function (schedule) {
+                return schedule.date === selectedDate;
+            })
+            .sort(function (first, second) {
+                return first.time.localeCompare(second.time);
+            });
+        timeSlotsList.replaceChildren();
+
+        if (!selectedDate || !items.length) {
+            timeSlots.hidden = true;
+            timeSlotsEmpty.hidden = false;
+            timeSlotsEmpty.textContent = selectedDate
+                ? 'No appointment times are available on this date.'
+                : 'Select an available date to see its appointment times.';
+            return;
+        }
+
+        timeSlots.hidden = false;
+        timeSlotsEmpty.hidden = true;
+        timeSlotsTitle.textContent = 'Available times for ' + formattedDate(selectedDate, {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        });
+
+        items.forEach(function (schedule) {
+            const label = document.createElement('label');
+            label.className = 'appointment-time-slot';
+            if (String(schedule.id) === selectedScheduleId) {
+                label.classList.add('is-selected');
+            }
+
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = 'appointment_schedule_id';
+            input.value = schedule.id;
+            input.required = true;
+            input.checked = String(schedule.id) === selectedScheduleId;
+
+            const time = document.createElement('span');
+            time.className = 'appointment-time-slot__time';
+            time.textContent = schedule.timeLabel;
+
+            const remaining = document.createElement('span');
+            remaining.className = 'appointment-time-slot__remaining';
+            remaining.textContent = schedule.available + ' '
+                + (schedule.available === 1 ? 'slot' : 'slots') + ' left';
+
+            label.append(input, time, remaining);
+            timeSlotsList.append(label);
+        });
+    }
+
+    function renderCalendar() {
+        const items = serviceSchedules();
+        const dates = availableDates(items);
+        const firstMonth = dates.length ? monthKey(localDate(dates[0])) : null;
+        const lastMonth = dates.length ? monthKey(localDate(dates[dates.length - 1])) : null;
+        let visibleMonth = monthKey(displayedMonth);
+
+        if (firstMonth !== null && visibleMonth < firstMonth) {
+            displayedMonth = localDate(dates[0]);
+            displayedMonth.setDate(1);
+            visibleMonth = monthKey(displayedMonth);
+        } else if (lastMonth !== null && visibleMonth > lastMonth) {
+            displayedMonth = localDate(dates[dates.length - 1]);
+            displayedMonth.setDate(1);
+            visibleMonth = monthKey(displayedMonth);
+        }
+
+        calendarMonth.textContent = new Intl.DateTimeFormat(undefined, {
+            month: 'long',
+            year: 'numeric',
+        }).format(displayedMonth);
+        previousMonthButton.disabled = firstMonth === null || visibleMonth <= firstMonth;
+        nextMonthButton.disabled = lastMonth === null || visibleMonth >= lastMonth;
+        calendarGrid.replaceChildren();
+
+        const firstWeekday = new Date(
+            displayedMonth.getFullYear(),
+            displayedMonth.getMonth(),
+            1
+        ).getDay();
+        const numberOfDays = new Date(
+            displayedMonth.getFullYear(),
+            displayedMonth.getMonth() + 1,
+            0
+        ).getDate();
+        const dateSet = new Set(dates);
+        const monthHasDates = dates.some(function (value) {
+            const date = localDate(value);
+            return date.getFullYear() === displayedMonth.getFullYear()
+                && date.getMonth() === displayedMonth.getMonth();
+        });
+
+        for (let index = 0; index < firstWeekday; index += 1) {
+            const spacer = document.createElement('span');
+            spacer.className = 'appointment-calendar__spacer';
+            spacer.setAttribute('aria-hidden', 'true');
+            calendarGrid.append(spacer);
+        }
+
+        for (let day = 1; day <= numberOfDays; day += 1) {
+            const date = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth(),
+                day
+            );
+            const value = dateKey(date);
+            const dayItems = items.filter(function (schedule) {
+                return schedule.date === value;
+            });
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'appointment-calendar__day';
+            button.textContent = String(day);
+
+            if (!dateSet.has(value)) {
+                button.disabled = true;
+                button.classList.add('is-disabled');
+                button.setAttribute('aria-label', formattedDate(value, {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                }) + ', no appointments available');
+            } else {
+                const remaining = dayItems.reduce(function (total, schedule) {
+                    return total + schedule.available;
+                }, 0);
+                button.dataset.date = value;
+                button.setAttribute('aria-label', formattedDate(value, {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                }) + ', ' + remaining + ' appointment '
+                    + (remaining === 1 ? 'slot' : 'slots') + ' available');
+                button.setAttribute('aria-pressed', String(value === selectedDate));
+                if (value === selectedDate) {
+                    button.classList.add('is-selected');
+                }
+                button.addEventListener('click', function () {
+                    selectedDate = value;
+                    selectedScheduleId = '';
+                    selectedDoctorId = '';
+                    renderCalendar();
+                    renderTimeSlots();
+                    updateDoctors(true);
+                });
+            }
+
+            calendarGrid.append(button);
+        }
+
+        if (!serviceSelect.value) {
+            calendarStatus.textContent = 'Choose a service to see available dates.';
+        } else if (!dates.length) {
+            calendarStatus.textContent = 'No available dates for this service. Please choose another service.';
+        } else if (!monthHasDates) {
+            calendarStatus.textContent = 'No appointments are available this month. Use the month arrows to check other dates.';
+        } else {
+            calendarStatus.textContent = 'Choose a highlighted date. Dates without appointments are unavailable.';
+        }
+    }
+
+    calendarGrid.addEventListener('keydown', function (event) {
+        const activeButton = event.target.closest('button[data-date]');
+        const dayStep = {
+            ArrowLeft: -1,
+            ArrowRight: 1,
+            ArrowUp: -7,
+            ArrowDown: 7,
+        }[event.key];
+        if (!activeButton || !dayStep) {
+            return;
+        }
+
+        event.preventDefault();
+        const dateSet = new Set(availableDates(serviceSchedules()));
+        const target = localDate(activeButton.dataset.date);
+        let targetValue = '';
+
+        for (let attempt = 0; attempt < 60; attempt += 1) {
+            target.setDate(target.getDate() + dayStep);
+            const value = dateKey(target);
+            if (dateSet.has(value)) {
+                targetValue = value;
+                break;
+            }
+        }
+
+        if (!targetValue) {
+            return;
+        }
+
+        displayedMonth = localDate(targetValue);
+        displayedMonth.setDate(1);
+        renderCalendar();
+        const targetButton = calendarGrid.querySelector('button[data-date="' + targetValue + '"]');
+        if (targetButton) {
+            targetButton.focus();
+        }
+    });
+
+    timeSlotsList.addEventListener('change', function (event) {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement) || input.name !== 'appointment_schedule_id') {
+            return;
+        }
+
+        selectedScheduleId = input.value;
+        timeSlotsList.querySelectorAll('.appointment-time-slot').forEach(function (label) {
+            label.classList.toggle(
+                'is-selected',
+                label.querySelector('input') === input
+            );
+        });
+        updateDoctors(true);
+    });
+
+    serviceSelect.addEventListener('change', function () {
+        selectedDate = '';
+        selectedScheduleId = '';
+        selectedDoctorId = '';
+        renderCalendar();
+        renderTimeSlots();
+        updateDoctors(true);
+    });
+
+    doctorSelect.addEventListener('change', function () {
+        selectedDoctorId = doctorSelect.value;
+    });
+
+    previousMonthButton.addEventListener('click', function () {
+        displayedMonth.setMonth(displayedMonth.getMonth() - 1);
+        renderCalendar();
+    });
+
+    nextMonthButton.addEventListener('click', function () {
+        displayedMonth.setMonth(displayedMonth.getMonth() + 1);
+        renderCalendar();
+    });
+
+    const previousSchedule = schedules.find(function (schedule) {
+        return String(schedule.id) === oldScheduleId;
+    });
+    if (previousSchedule && previousSchedule.serviceId === serviceSelect.value) {
+        selectedDate = previousSchedule.date;
+        displayedMonth = localDate(previousSchedule.date);
+        displayedMonth.setDate(1);
+    } else {
+        selectedScheduleId = '';
+    }
+
+    renderCalendar();
+    renderTimeSlots();
+    updateDoctors(false);
 });
 </script>
 

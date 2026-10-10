@@ -1672,6 +1672,10 @@
                                     type="button"
                                     class="password-toggle"
                                     data-target="password"
+                                    data-show-label="Show password"
+                                    data-hide-label="Hide password"
+                                    aria-label="Show password"
+                                    aria-pressed="false"
                                 >
                                     Show
                                 </button>
@@ -1721,6 +1725,10 @@
                                     type="button"
                                     class="password-toggle"
                                     data-target="password_confirmation"
+                                    data-show-label="Show password confirmation"
+                                    data-hide-label="Hide password confirmation"
+                                    aria-label="Show password confirmation"
+                                    aria-pressed="false"
                                 >
                                     Show
                                 </button>
@@ -1824,6 +1832,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     button.textContent = 'Show';
 
                 }
+
+                const isVisible = input.type === 'text';
+                button.setAttribute('aria-pressed', String(isVisible));
+                button.setAttribute(
+                    'aria-label',
+                    isVisible
+                        ? button.dataset.hideLabel
+                        : button.dataset.showLabel
+                );
 
             });
 

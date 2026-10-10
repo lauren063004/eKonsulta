@@ -27,6 +27,69 @@ class AdminHealthCenterController extends Controller
         ));
     }
 
+    public function destroy(HealthCenter $healthCenter): \Illuminate\Http\RedirectResponse
+    {
+        try {
+            $deleted = \Illuminate\Support\Facades\DB::transaction(function () use ($healthCenter): bool {
+                $center = HealthCenter::query()
+                    ->whereKey($healthCenter->getKey())
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $hasLinkedRecords = $center->patients()->exists()
+                    || $center->doctors()->exists()
+                    || $center->staff()->exists()
+                    || $center->appointments()->exists()
+                    || \App\Models\Medicine::query()
+                        ->where('health_center_id', $center->id)
+                        ->exists()
+                    || \App\Models\AppointmentSchedule::query()
+                        ->where('health_center_id', $center->id)
+                        ->exists()
+                    || $center->services()->exists()
+                    || $center->announcements()->exists();
+
+                if ($hasLinkedRecords) {
+                    return false;
+                }
+
+                $center->delete();
+
+                return true;
+            });
+        } catch (\Illuminate\Database\QueryException $exception) {
+            if (!in_array($exception->getCode(), ['23000', '23503'], true)) {
+                throw $exception;
+            }
+
+            \Illuminate\Support\Facades\Log::warning(
+                'Health center deletion was blocked by linked records.',
+                [
+                    'health_center_id' => $healthCenter->getKey(),
+                    'exception' => $exception->getMessage(),
+                ]
+            );
+
+            return redirect()
+                ->route('admin.health-centers.index')
+                ->withErrors([
+                    'health_center' => 'This health center still has linked records. Deactivate it instead of deleting it.',
+                ]);
+        }
+
+        if (!$deleted) {
+            return redirect()
+                ->route('admin.health-centers.index')
+                ->withErrors([
+                    'health_center' => 'This health center still has linked records. Deactivate it instead of deleting it.',
+                ]);
+        }
+
+        return redirect()
+            ->route('admin.health-centers.index')
+            ->with('success', 'Health center deleted successfully.');
+    }
+
     /**
      * Display health center details.
      */

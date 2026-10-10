@@ -280,6 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmationModal.hidden = true;
             document.body.classList.remove('confirmation-open');
             pendingConfirmationForm = null;
+            confirmationModal.dataset.confirmKind = 'default';
+
+            const appShell = document.querySelector('.app-shell');
+            if (appShell instanceof HTMLElement) {
+                appShell.inert = false;
+                appShell.removeAttribute('aria-hidden');
+            }
 
             if (pendingConfirmationTrigger instanceof HTMLElement) {
                 pendingConfirmationTrigger.focus();
@@ -309,10 +316,14 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmationMessage.textContent = form.dataset.confirm || 'Please confirm this action.';
             confirmationCancel.textContent = form.dataset.confirmCancel || 'Cancel';
             confirmationOk.textContent = form.dataset.confirmOk || 'Confirm';
-            confirmationIcon.textContent = form.dataset.confirmIcon === 'logout' ? '↗' : '?';
             confirmationModal.dataset.confirmKind = form.dataset.confirmIcon || 'default';
             confirmationModal.hidden = false;
             document.body.classList.add('confirmation-open');
+            const appShell = document.querySelector('.app-shell');
+            if (appShell instanceof HTMLElement) {
+                appShell.inert = true;
+                appShell.setAttribute('aria-hidden', 'true');
+            }
             confirmationCancel.focus();
         });
 
@@ -330,7 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const form = pendingConfirmationForm;
             confirmedForms.add(form);
             closeConfirmation();
-            confirmationModal.dataset.confirmKind = 'default';
             form.requestSubmit();
         });
 

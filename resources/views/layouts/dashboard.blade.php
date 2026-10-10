@@ -127,8 +127,8 @@
                             action="{{ route('logout') }}"
                             data-confirm="You will need to sign in again to access your account."
                             data-confirm-title="Log out of e-Konsulta?"
-                            data-confirm-ok="Yes, log out"
-                            data-confirm-cancel="Stay signed in"
+                            data-confirm-ok="Log out"
+                            data-confirm-cancel="Cancel"
                             data-confirm-icon="logout"
                         >
                             @csrf
@@ -170,7 +170,18 @@
         aria-labelledby="confirmTitle"
         aria-describedby="confirmMessage"
     >
-        <div class="modal-icon" id="confirmIcon" aria-hidden="true">?</div>
+        <div class="modal-icon" aria-hidden="true">
+            <svg class="confirmation-icon-default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M9.8 9a2.3 2.3 0 1 1 3.9 1.7c-1.1.9-1.7 1.3-1.7 2.8"></path>
+                <path d="M12 17h.01"></path>
+            </svg>
+            <svg class="confirmation-icon-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5"></path>
+                <path d="M15 16l5-4-5-4"></path>
+                <path d="M20 12H9"></path>
+            </svg>
+        </div>
         <h3 id="confirmTitle">Are you sure?</h3>
         <p id="confirmMessage"></p>
 

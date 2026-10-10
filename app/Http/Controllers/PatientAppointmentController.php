@@ -163,6 +163,24 @@ class PatientAppointmentController extends Controller
             ->orderBy('id')
             ->get();
 
+$schedules = $schedules->filter(function ($schedule) use ($doctors) {
+            $eligibleDoctors = $doctors->filter(function ($doctor) use ($schedule) {
+                return $doctor->services->contains(
+                    'id',
+                    (int) $schedule->service_id
+                );
+            });
+
+            if ($eligibleDoctors->isEmpty()) {
+                return false;
+            }
+
+            return !$schedule->doctor_id || $eligibleDoctors->contains(
+                'id',
+                (int) $schedule->doctor_id
+            );
+});
+
         return view(
             'patient.appointments.create',
             compact(
@@ -424,6 +442,17 @@ class PatientAppointmentController extends Controller
                     $validated['doctor_id']
                 );
 
+                $doctorIsActive = $doctor
+                    ->user()
+                    ->where('status', 'active')
+                    ->exists();
+
+                if (!$doctorIsActive) {
+                    throw new \RuntimeException(
+                        'The selected doctor is not currently available for appointments.'
+                    );
+                }
+
 
                 /*
                 |--------------------------------------------------------------------------
@@ -458,6 +487,15 @@ class PatientAppointmentController extends Controller
                 if (!$doctorProvidesService) {
                     throw new \RuntimeException(
                         'The selected doctor does not provide the selected service.'
+                    );
+                }
+
+                if (
+                    $schedule->doctor_id !== null &&
+                    (int) $doctor->id !== (int) $schedule->doctor_id
+                ) {
+                    throw new \RuntimeException(
+                        'The selected appointment schedule is assigned to a different doctor.'
                     );
                 }
 
