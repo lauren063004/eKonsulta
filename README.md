@@ -7,6 +7,12 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Password recovery
+
+Users can select **Forgot password?** on the sign-in page, enter their account email, and follow the time-limited reset link sent to that address. Reset links expire after 60 minutes, requests are throttled, and replacement passwords must contain at least eight characters with uppercase, lowercase, and numeric characters.
+
+Configure a delivery mailer in the deployment environment for password reset messages to reach users. For example, with an SMTP provider set `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SCHEME`, and `MAIL_FROM_ADDRESS` / `MAIL_FROM_NAME` to the provider's values, then clear cached configuration with `php artisan config:clear` (or rebuild the deployment configuration cache). Never commit provider credentials. The default local `MAIL_MAILER=log` writes reset messages to the application log instead of delivering email.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

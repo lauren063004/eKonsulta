@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PatientDashboardController;
 use App\Http\Controllers\PatientAppointmentController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,19 @@ Route::get('/login', [AuthController::class, 'showLogin'])
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.store');
 
+Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
+    ->middleware('throttle:6,1')
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+    ->middleware('throttle:6,1')
+    ->name('password.update');
 
 Route::get('/register', [AuthController::class, 'showRegister'])
     ->name('register');

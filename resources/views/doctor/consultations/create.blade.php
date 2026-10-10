@@ -39,12 +39,12 @@
 
                 <div class="patient-panel-head">
 
-                    <div class="appointment-date" style="width:56px; min-width:56px; height:60px;">
+                    <div class="appointment-date appointment-date--compact">
                         <strong>
                             {{ $appointment->appointment_date->format('M') }}
                         </strong>
 
-                        <span style="font-size:22px;">
+                        <span class="appointment-date-day">
                             {{ $appointment->appointment_date->format('d') }}
                         </span>
                     </div>
@@ -100,7 +100,7 @@
             {{-- Consultation Form --}}
             {{-- Staff Patient Intake --}}
             @if($appointment->patientIntake)
-                <div class="dashboard-card" style="margin-bottom: 24px;">
+                <div class="dashboard-card patient-intake-card">
                     <div class="card-header">
                         <div>
                             <h3>Staff Patient Intake</h3>
@@ -108,7 +108,7 @@
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                    <div class="patient-intake-metrics">
 
                         <div class="patient-fact">
                             <span>Height</span>
@@ -157,7 +157,7 @@
 
                     </div>
 
-                    <div style="margin-top: 20px; display: grid; gap: 16px;">
+                    <div class="patient-intake-notes">
 
                         <div class="patient-fact">
                             <span>Allergies</span>
@@ -190,7 +190,7 @@
                     </div>
 
                     @if($appointment->patientIntake->staff)
-                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                        <div class="patient-intake-completed-by">
                             <small>
                                 Intake completed by:
                                 <strong>

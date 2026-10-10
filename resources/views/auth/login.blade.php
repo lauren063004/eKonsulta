@@ -105,9 +105,7 @@
                         <span>Remember me</span>
                     </label>
 
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}">Forgot password?</a>
-                    @endif
+                    <a href="{{ route('password.request') }}">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="primary-button">

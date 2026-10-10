@@ -156,6 +156,11 @@
     --radius:   14px;
     --radius-sm:10px;
     --shadow:   0 1px 2px rgba(10,47,107,.06), 0 6px 20px rgba(10,47,107,.06);
+    --surface-muted: #f7f9fc;
+    --line-strong: #cbd7e7;
+    --focus-ring: rgba(21, 83, 184, .2);
+    --shadow-card: 0 1px 2px rgba(10, 47, 107, .035), 0 8px 24px rgba(10, 47, 107, .055);
+    --motion-fast: .16s ease;
     --sidebar-w: 280px;
     --font: "Poppins", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -2714,14 +2719,6 @@ input[type="checkbox"], input[type="radio"] { width: 18px; height: 18px; accent-
        ========================================================================== */
     html {
         scroll-behavior: smooth;
-    }
-
-    body {
-        min-width: 320px;
-    }
-
-    .app-content {
-        max-width: 1640px;
     }
 
     .app-content > .page-header {
@@ -8892,5 +8889,616 @@ button.announcement-image-preview-trigger {
     .prescription-entry-form > div:last-child > * {
         flex: 1 1 100%;
         width: 100%;
+    }
+}
+
+/* =====================================================================
+   SHARED APPLICATION UI FOUNDATION
+   ===================================================================== */
+body {
+    min-width: 320px;
+}
+
+.app-content {
+    padding: clamp(18px, 2.6vw, 32px);
+}
+
+.app-content > .dashboard-card,
+.app-content > .card,
+.app-content .dashboard-grid > .dashboard-card,
+.app-content .dashboard-grid--even > .dashboard-card {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+}
+
+.app-content .dashboard-grid,
+.app-content .dashboard-grid--even,
+.app-content .stats-grid {
+    gap: clamp(14px, 1.8vw, 22px);
+}
+
+.app-content .card-header {
+    align-items: center;
+    gap: 12px 18px;
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+}
+
+.app-content .card-header h2,
+.app-content .card-header h3,
+.app-content .card-header h4 {
+    color: var(--navy-900);
+    font-size: clamp(1.05rem, 1.25vw, 1.22rem);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.35;
+}
+
+.app-content .card-header p {
+    margin-top: 4px;
+    color: var(--ink-500);
+    font-size: .9rem;
+    line-height: 1.55;
+}
+
+.app-content .stat-card,
+.app-content .quick-action,
+.app-content .appointment-preview,
+.app-content .consultation-list-card,
+.app-content .patient-card,
+.app-content .admin-user-card,
+.app-content .admin-service-card {
+    border-color: var(--line);
+    box-shadow: 0 2px 10px rgba(10, 47, 107, .04);
+}
+
+.app-content .stat-card {
+    min-width: 0;
+    border-radius: 14px;
+}
+
+.app-content .stat-value {
+    font-variant-numeric: tabular-nums;
+}
+
+.app-content .form-section,
+.app-content .medical-section,
+.app-content .medical-record-section,
+.app-content .intake-section {
+    border-color: var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.app-content .form-section-head {
+    gap: 12px;
+}
+
+.app-content .form-section-head h4,
+.app-content .intake-section > h3 {
+    color: var(--navy-900);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.app-content .form-section-head p,
+.app-content .form-group small {
+    color: var(--ink-500);
+    line-height: 1.55;
+}
+
+.app-content :is(
+    input[type="text"],
+    input[type="search"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="tel"],
+    input[type="url"],
+    select,
+    textarea
+) {
+    border-color: var(--line-strong);
+    border-radius: 10px;
+    font-size: .93rem;
+}
+
+.app-content :is(
+    input[type="text"],
+    input[type="search"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="tel"],
+    input[type="url"],
+    select,
+    textarea
+):focus {
+    border-color: var(--navy-600);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.app-content :is(input, select, textarea)[aria-invalid="true"] {
+    border-color: var(--red-600);
+    box-shadow: 0 0 0 3px rgba(217, 30, 37, .12);
+}
+
+.app-content .list-search {
+    border-color: var(--line-strong);
+    border-radius: 11px;
+    box-shadow: 0 2px 8px rgba(10, 47, 107, .035);
+}
+
+.app-content .list-search:focus-within {
+    border-color: var(--navy-600);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.app-content .table-responsive {
+    border-color: var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    scrollbar-color: #9eb4d4 var(--surface-muted);
+}
+
+.app-content .data-table th {
+    background: var(--navy-800);
+    letter-spacing: .055em;
+}
+
+.app-content .data-table tbody tr {
+    transition: background-color var(--motion-fast);
+}
+
+.app-content .empty-state {
+    padding: clamp(28px, 4vw, 40px) 18px;
+}
+
+.app-content .empty-icon,
+.app-content .empty-state-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 12px;
+    font-size: 1.65rem;
+}
+
+.app-content .empty-state h3,
+.app-content .empty-state h4 {
+    color: var(--navy-900);
+    font-size: 1.05rem;
+}
+
+.app-content .empty-state p {
+    line-height: 1.6;
+}
+
+.consultation-create-page .appointment-date--compact {
+    width: 56px;
+    min-width: 56px;
+    height: 60px;
+}
+
+.consultation-create-page .appointment-date-day {
+    font-size: 22px;
+}
+
+.consultation-main-column > .patient-intake-card {
+    margin: 0;
+}
+
+.patient-intake-metrics,
+.patient-intake-notes {
+    display: grid;
+    gap: 14px;
+}
+
+.patient-intake-metrics {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+}
+
+.patient-intake-notes {
+    margin-top: 18px;
+}
+
+.patient-intake-completed-by {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+    .app-content {
+        padding: 16px 14px;
+    }
+
+    .app-content > .dashboard-card,
+    .app-content > .card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .app-content .card-header {
+        align-items: flex-start;
+        margin-bottom: 18px;
+        padding-bottom: 15px;
+    }
+
+    .app-content .empty-state {
+        padding: 28px 14px;
+    }
+
+    .patient-intake-metrics,
+    .patient-intake-notes {
+        gap: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-content .data-table tbody tr {
+        transition: none;
+    }
+}
+
+/* =====================================================================
+   ROLE DASHBOARDS AND SIGN-IN
+   ===================================================================== */
+.patient-dashboard .welcome-banner,
+.staff-dashboard .welcome-banner,
+.admin-dashboard .welcome-banner,
+.doctor-dashboard .welcome-banner {
+    min-height: 0;
+    align-items: center;
+    gap: 24px;
+    padding: clamp(24px, 3.4vw, 38px);
+    border: 1px solid #dce6f2;
+    border-left: 4px solid var(--red-600);
+    border-radius: 16px;
+    background: linear-gradient(120deg, #fff 0%, #f2f7fd 100%);
+    box-shadow: var(--shadow-card);
+}
+
+.patient-dashboard .welcome-banner::after,
+.staff-dashboard .welcome-banner::after,
+.admin-dashboard .welcome-banner::after,
+.doctor-dashboard .welcome-banner::after {
+    display: none;
+}
+
+.patient-dashboard .welcome-banner > div:first-child,
+.staff-dashboard .welcome-banner > div:first-child,
+.admin-dashboard .welcome-banner > div:first-child,
+.doctor-dashboard .welcome-banner > div:first-child {
+    max-width: 720px;
+}
+
+.patient-dashboard .welcome-label,
+.staff-dashboard .welcome-label,
+.admin-dashboard .welcome-label,
+.doctor-dashboard .welcome-label {
+    margin-bottom: 12px;
+    padding: 5px 11px;
+    border: 1px solid #dce6f2;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--navy-700);
+    font-size: .7rem;
+    letter-spacing: .07em;
+}
+
+.patient-dashboard .welcome-banner h1,
+.staff-dashboard .welcome-banner h1,
+.admin-dashboard .welcome-banner h1,
+.doctor-dashboard .welcome-banner h1 {
+    margin-bottom: 8px;
+    color: var(--navy-900);
+    font-size: clamp(1.45rem, 2.3vw, 1.9rem);
+    line-height: 1.25;
+}
+
+.patient-dashboard .welcome-banner p,
+.staff-dashboard .welcome-banner p,
+.admin-dashboard .welcome-banner p,
+.doctor-dashboard .welcome-banner p {
+    max-width: 600px;
+    color: var(--ink-700);
+    font-size: .94rem;
+    line-height: 1.65;
+}
+
+.patient-dashboard .welcome-icon,
+.staff-dashboard .welcome-icon,
+.admin-dashboard .welcome-icon,
+.doctor-dashboard .welcome-icon {
+    width: 64px;
+    height: 64px;
+    border: 1px solid #dce6f2;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(10, 47, 107, .05);
+    font-size: 1.8rem;
+}
+
+.doctor-welcome-actions {
+    position: static;
+    z-index: auto;
+    flex: none;
+    margin-left: auto;
+}
+
+.doctor-welcome-actions .primary-button {
+    border-color: var(--navy-700);
+    background: var(--navy-700);
+    color: #fff;
+}
+
+.doctor-welcome-actions .primary-button:hover {
+    background: var(--navy-800);
+}
+
+.app-content .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
+}
+
+.app-content .stat-card {
+    min-height: 86px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--navy-600);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(10, 47, 107, .04);
+}
+
+.app-content .stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+}
+
+.app-content .stat-label {
+    color: var(--ink-500);
+    font-size: .73rem;
+    font-weight: 600;
+    letter-spacing: .015em;
+    line-height: 1.4;
+    text-transform: none;
+}
+
+.app-content .stat-value {
+    margin-top: 2px;
+    color: var(--navy-900);
+    font-size: 1.55rem;
+    font-weight: 700;
+}
+
+.app-content .dashboard-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+}
+
+.app-content .quick-action {
+    border-radius: 12px;
+    background: #fff;
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast), background-color var(--motion-fast);
+}
+
+.app-content .quick-action:hover {
+    transform: translateY(-1px);
+    border-color: #b9cbe8;
+    background: #fbfdff;
+    box-shadow: 0 6px 16px rgba(10, 47, 107, .07);
+}
+
+.app-content .quick-action strong {
+    color: var(--navy-900);
+}
+
+.app-content .appointment-preview,
+.app-content .info-item {
+    border-radius: 12px;
+}
+
+.app-content .activity-item:last-child {
+    padding-bottom: 0;
+}
+
+.app-content .activity-information p {
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+html body .auth-page {
+    grid-template-columns: minmax(0, 1fr) minmax(400px, .82fr);
+    background-color: var(--navy-900);
+}
+
+html body .auth-page::before {
+    background: linear-gradient(115deg, rgba(7, 31, 74, .88), rgba(10, 61, 143, .62) 58%, rgba(7, 31, 74, .48));
+}
+
+html body .auth-page .auth-hero {
+    padding: clamp(32px, 6vw, 88px);
+}
+
+html body .auth-page .auth-hero h2 {
+    max-width: 540px;
+    font-size: clamp(2rem, 3.6vw, 3.2rem);
+    line-height: 1.14;
+}
+
+html body .auth-page .auth-hero p {
+    max-width: 470px;
+    font-size: .98rem;
+    line-height: 1.7;
+}
+
+html body .auth-page .auth-panel {
+    padding: clamp(20px, 3.5vw, 52px);
+}
+
+html body .auth-page .auth-card {
+    max-width: 460px;
+    padding: clamp(26px, 3vw, 38px);
+    border: 1px solid #e3eaf3;
+    border-top: 3px solid var(--red-600);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 18px 54px rgba(7, 31, 74, .22);
+    backdrop-filter: none;
+}
+
+html body .auth-page .auth-card > p:not(.auth-switch):not(.auth-foot) {
+    margin-bottom: 22px;
+    line-height: 1.6;
+}
+
+html body .auth-page .auth-field {
+    margin-bottom: 16px;
+}
+
+html body .auth-page .auth-field input {
+    min-height: 46px;
+}
+
+html body .auth-page .auth-field input:focus {
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+html body .auth-page .auth-card .primary-button {
+    min-height: 46px;
+}
+
+html body .auth-page .auth-card .alert {
+    font-size: .88rem;
+    line-height: 1.55;
+}
+
+@media (max-width: 1100px) {
+    .app-content .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 760px) {
+    html body .auth-page {
+        display: block;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-position: center;
+    }
+
+    html body .auth-page::before {
+        position: fixed;
+        inset: 0;
+    }
+
+    html body .auth-page .auth-hero {
+        display: none;
+    }
+
+    html body .auth-page .auth-panel {
+        display: grid;
+        min-height: 100vh;
+        min-height: 100dvh;
+        align-content: center;
+        padding: 20px 16px;
+    }
+
+    html body .auth-page .auth-card {
+        width: 100%;
+        max-width: 440px;
+        margin: auto;
+        padding: 26px 22px;
+    }
+
+    html body .auth-page .auth-card-logo {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 16px;
+    }
+
+    .patient-dashboard .welcome-banner,
+    .staff-dashboard .welcome-banner,
+    .admin-dashboard .welcome-banner,
+    .doctor-dashboard .welcome-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px 20px;
+    }
+
+    .patient-dashboard .welcome-banner > div:first-child,
+    .staff-dashboard .welcome-banner > div:first-child,
+    .admin-dashboard .welcome-banner > div:first-child,
+    .doctor-dashboard .welcome-banner > div:first-child {
+        width: 100%;
+    }
+
+    .patient-dashboard .welcome-icon,
+    .staff-dashboard .welcome-icon,
+    .admin-dashboard .welcome-icon,
+    .doctor-dashboard .welcome-icon {
+        display: none;
+    }
+
+    .doctor-welcome-actions {
+        width: 100%;
+        margin: 4px 0 0;
+    }
+
+    .doctor-welcome-actions .primary-button {
+        width: 100%;
+    }
+
+    .app-content .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .app-content .stat-card {
+        min-height: 74px;
+        gap: 9px;
+        padding: 12px 10px;
+    }
+
+    .app-content .stat-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .app-content .stat-label {
+        font-size: .68rem;
+    }
+
+    .app-content .stat-value {
+        font-size: 1.35rem;
+    }
+}
+
+@media (max-width: 380px) {
+    html body .auth-page .auth-card {
+        padding: 22px 18px;
+    }
+
+    .patient-dashboard .welcome-icon,
+    .staff-dashboard .welcome-icon,
+    .admin-dashboard .welcome-icon,
+    .doctor-dashboard .welcome-icon {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-content .quick-action {
+        transition: none;
     }
 }
