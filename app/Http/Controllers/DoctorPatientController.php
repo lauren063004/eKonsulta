@@ -20,7 +20,8 @@ class DoctorPatientController extends Controller
         }
 
         $patients = Patient::whereHas('appointments', function ($query) use ($doctor) {
-            $query->where('doctor_id', $doctor->id);
+            $query->where('doctor_id', $doctor->id)
+                ->whereIn('status', ['approved', 'completed']);
         })
         ->with('user')
         ->orderBy('id')
@@ -40,9 +41,10 @@ class DoctorPatientController extends Controller
             abort(403, 'Doctor record not found.');
         }
 
-        // Make sure this patient has an appointment with this doctor.
+        // Only reveal patients with appointments cleared by health center staff.
         $hasAppointment = $patient->appointments()
             ->where('doctor_id', $doctor->id)
+            ->whereIn('status', ['approved', 'completed'])
             ->exists();
 
         if (!$hasAppointment) {

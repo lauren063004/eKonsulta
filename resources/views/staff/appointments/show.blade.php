@@ -17,6 +17,22 @@
                 Back to Appointments
             </a>
 
+            @if($appointment->status === 'pending')
+                <form
+                    method="POST"
+                    action="{{ route('staff.appointments.approve', $appointment) }}"
+                    data-confirm="This appointment will be confirmed for the patient and made available to the assigned doctor."
+                    data-confirm-title="Approve appointment?"
+                    data-confirm-ok="Approve appointment"
+                >
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="btn btn-primary">
+                        Approve Appointment
+                    </button>
+                </form>
+            @endif
+
             @if(!$appointment->patientIntake)
                 <a href="{{ route('staff.appointments.intake.create', $appointment) }}" class="btn btn-primary">
                     📝 Complete Patient Intake

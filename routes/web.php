@@ -303,9 +303,6 @@ Route::get('/prescriptions/{prescription}/print', [DoctorPrescriptionController:
     Route::get('/profile', [DoctorProfileController::class, 'show'])
     ->name('profile');
 
-    Route::patch('/appointments/{appointment}/approve', [DoctorAppointmentController::class, 'approve'])
-    ->name('appointments.approve');
-
     });
 
 /*
@@ -345,6 +342,9 @@ Route::get('/appointments', [StaffAppointmentController::class, 'index'])
 
 Route::get('/appointments/{appointment}', [StaffAppointmentController::class, 'show'])
     ->name('appointments.show');
+
+Route::patch('/appointments/{appointment}/approve', [StaffAppointmentController::class, 'approve'])
+    ->name('appointments.approve');
 
 Route::get('/consultations', [StaffConsultationController::class, 'index'])
     ->name('consultations.index');

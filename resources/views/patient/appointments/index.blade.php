@@ -134,7 +134,7 @@
                             {{-- Status --}}
 
                             <span class="appointment-status status-{{ strtolower($appointment->status) }}">
-                                {{ ucfirst($appointment->status) }}
+                                {{ $appointment->status === 'approved' ? 'Confirmed' : ($appointment->status === 'pending' ? 'Awaiting staff confirmation' : ucfirst($appointment->status)) }}
                             </span>
 
 

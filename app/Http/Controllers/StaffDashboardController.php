@@ -14,21 +14,37 @@ class StaffDashboardController extends Controller
      */
     public function index(): View
     {
+        $staff = auth()->user()->staff;
+
+        if (!$staff) {
+            abort(403, 'Staff record not found.');
+        }
+
         $today = now()->toDateString();
 
-        $registeredPatients = Patient::count();
+        $registeredPatients = Patient::where(
+            'health_center_id',
+            $staff->health_center_id
+        )->count();
 
         $todayAppointments = Appointment::whereDate(
             'appointment_date',
             $today
-        )->count();
+        )
+            ->where('health_center_id', $staff->health_center_id)
+            ->count();
 
         $todayConsultations = Consultation::whereDate(
             'consultation_date',
             $today
-        )->count();
+        )
+            ->whereHas('appointment', function ($query) use ($staff) {
+                $query->where('health_center_id', $staff->health_center_id);
+            })
+            ->count();
 
-        $pendingRequests = Appointment::where('status', 'pending')
+        $pendingRequests = Appointment::where('health_center_id', $staff->health_center_id)
+            ->where('status', 'pending')
             ->count();
 
         /*
@@ -40,6 +56,7 @@ class StaffDashboardController extends Controller
             'healthCenter',
         ])
             ->whereDate('appointment_date', $today)
+            ->where('health_center_id', $staff->health_center_id)
             ->orderBy('appointment_time')
             ->get();
 
@@ -54,6 +71,7 @@ class StaffDashboardController extends Controller
             'healthCenter',
         ])
             ->whereDate('appointment_date', '>=', $today)
+            ->where('health_center_id', $staff->health_center_id)
             ->whereNotIn('status', ['cancelled', 'completed'])
             ->orderBy('appointment_date')
             ->orderBy('appointment_time')

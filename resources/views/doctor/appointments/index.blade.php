@@ -111,25 +111,7 @@
 
                         {{-- ACTIONS --}}
 
-                        @if($appointment->status === 'pending')
-
-                            <div class="doctor-appointment-actions">
-
-                                <form
-                                    action="{{ route('doctor.appointments.approve', $appointment) }}"
-                                    method="POST"
-                                >
-                                    @csrf
-                                    @method('PATCH')
-
-                                    <button type="submit" class="primary-button">
-                                        Approve Appointment
-                                    </button>
-                                </form>
-
-                            </div>
-
-                        @elseif($appointment->status === 'approved')
+                        @if($appointment->status === 'approved')
 
                             <div class="doctor-appointment-actions">
 

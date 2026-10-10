@@ -112,7 +112,22 @@
                                 View Details
                             </a>
 
-
+                            @if($appointment->status === 'pending')
+                                <form
+                                    method="POST"
+                                    action="{{ route('staff.appointments.approve', $appointment) }}"
+                                    style="display: inline-block; margin-left: 8px;"
+                                    data-confirm="This appointment will be confirmed for the patient and made available to the assigned doctor."
+                                    data-confirm-title="Approve appointment?"
+                                    data-confirm-ok="Approve appointment"
+                                >
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="primary-button">
+                                        Approve Appointment
+                                    </button>
+                                </form>
+                            @endif
 
                         </div>
 

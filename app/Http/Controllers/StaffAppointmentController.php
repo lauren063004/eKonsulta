@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\ActivityLog;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class StaffAppointmentController extends Controller
@@ -79,5 +82,51 @@ class StaffAppointmentController extends Controller
             'staff.appointments.show',
             compact('appointment')
         );
+    }
+
+    public function approve(Appointment $appointment): RedirectResponse
+    {
+        $staff = auth()->user()->staff;
+
+        if (!$staff) {
+            abort(403, 'Staff record not found.');
+        }
+
+        $approved = DB::transaction(function () use ($appointment, $staff): bool {
+            $lockedAppointment = Appointment::whereKey($appointment->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($lockedAppointment->health_center_id !== $staff->health_center_id) {
+                abort(403, 'You are not authorized to approve this appointment.');
+            }
+
+            if ($lockedAppointment->status !== 'pending') {
+                return false;
+            }
+
+            $lockedAppointment->update([
+                'status' => 'approved',
+            ]);
+
+            ActivityLog::record(
+                auth()->id(),
+                'Appointment Approved',
+                'Staff approved appointment #' . $lockedAppointment->id . '.',
+                request()->ip()
+            );
+
+            return true;
+        });
+
+        if (!$approved) {
+            return redirect()
+                ->route('staff.appointments.index')
+                ->with('error', 'Only pending appointments can be approved.');
+        }
+
+        return redirect()
+            ->route('staff.appointments.index')
+            ->with('success', 'Appointment confirmed for the patient.');
     }
 }

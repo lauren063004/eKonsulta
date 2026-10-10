@@ -33,6 +33,7 @@ class DoctorDashboardController extends Controller
             'healthCenter',
         ])
             ->where('doctor_id', $doctor->id)
+            ->whereIn('status', ['approved', 'completed'])
             ->orderBy('appointment_date')
             ->orderBy('appointment_time')
             ->get();
@@ -70,26 +71,6 @@ class DoctorDashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Appointment Statistics
-        |--------------------------------------------------------------------------
-        */
-
-        $totalAppointments = $appointments->count();
-
-        $pendingAppointments = $appointments
-            ->where('status', 'pending')
-            ->count();
-
-        $completedAppointments = $appointments
-            ->where('status', 'completed')
-            ->count();
-
-        $cancelledAppointments = $appointments
-            ->where('status', 'cancelled')
-            ->count();
-
-        /*
-        |--------------------------------------------------------------------------
         | Consultation Statistics
         |--------------------------------------------------------------------------
         */
@@ -123,10 +104,6 @@ class DoctorDashboardController extends Controller
             'appointments',
             'todayAppointments',
             'upcomingAppointments',
-            'totalAppointments',
-            'pendingAppointments',
-            'completedAppointments',
-            'cancelledAppointments',
             'consultationCount',
             'prescriptionCount',
             'patientCount'
