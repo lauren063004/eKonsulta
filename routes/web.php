@@ -61,7 +61,14 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkE
     ->middleware('throttle:6,1')
     ->name('password.email');
 
-Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+Route::get('/forgot-password/verify', [PasswordResetController::class, 'showOtpForm'])
+    ->name('password.otp');
+
+Route::post('/forgot-password/verify', [PasswordResetController::class, 'verifyOtp'])
+    ->middleware('throttle:6,1')
+    ->name('password.verify');
+
+Route::get('/reset-password', [PasswordResetController::class, 'showResetForm'])
     ->name('password.reset');
 
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])

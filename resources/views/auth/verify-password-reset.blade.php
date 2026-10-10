@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Forgot Password | e-Konsulta</title>
+    <title>Verify Reset Code | e-Konsulta</title>
     <link rel="icon" href="{{ asset('images/cross-badge.jpg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +22,8 @@
             </div>
         </div>
 
-        <h2>Secure access to your <em>healthcare</em>.</h2>
-        <p>We’ll help you safely restore access to your e-Konsulta account.</p>
+        <h2>Verify your <em>identity</em>.</h2>
+        <p>Enter the one-time code sent to the email address you provided.</p>
     </section>
 
     <section class="auth-panel">
@@ -34,8 +34,8 @@
                 alt="City Health Office of Taguig seal"
             >
 
-            <h1>Forgot your password?</h1>
-            <p>Enter the email address connected to your account. We’ll send a six-digit verification code if an account is found.</p>
+            <h1>Enter your verification code</h1>
+            <p>Enter the six-digit code from your email. It expires in 10 minutes.</p>
 
             @if (session('status'))
                 <div class="alert alert-success" role="status">
@@ -51,31 +51,34 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('password.email') }}">
+            <form method="POST" action="{{ route('password.verify') }}">
                 @csrf
 
                 <div class="auth-field">
-                    <label for="email">Email address</label>
+                    <label for="otp">Six-digit code</label>
                     <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        placeholder="you@example.com"
-                        autocomplete="email"
+                        id="otp"
+                        class="auth-otp-input"
+                        type="text"
+                        name="otp"
+                        inputmode="numeric"
+                        pattern="[0-9]{6}"
+                        maxlength="6"
+                        autocomplete="one-time-code"
+                        placeholder="000000"
+                        value="{{ old('otp') }}"
                         required
                         autofocus
                     >
                 </div>
 
                 <button type="submit" class="primary-button">
-                    Email me a verification code
+                    Verify code
                 </button>
             </form>
 
             <p class="auth-switch">
-                Remembered your password?
-                <a href="{{ route('login') }}">Back to sign in</a>
+                <a href="{{ route('password.request') }}">Request a new code</a>
             </p>
 
             <p class="auth-foot">

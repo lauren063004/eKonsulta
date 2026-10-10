@@ -9155,7 +9155,7 @@ body {
     min-height: 0;
     align-items: center;
     gap: 24px;
-    padding: clamp(24px, 3.4vw, 38px);
+    padding: clamp(24px, 3.4vw, 38px) clamp(24px, 3.4vw, 38px) 88px;
     border: 1px solid #dce6f2;
     border-left: 4px solid var(--red-600);
     border-radius: 16px;
@@ -9167,7 +9167,14 @@ body {
 .staff-dashboard .welcome-banner::after,
 .admin-dashboard .welcome-banner::after,
 .doctor-dashboard .welcome-banner::after {
-    display: none;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    height: 68px;
+    background: var(--ek-wave-banner) center bottom / 100% 250% no-repeat;
+    opacity: .9;
+    pointer-events: none;
 }
 
 .patient-dashboard .welcome-banner > div:first-child,
@@ -9225,8 +9232,8 @@ body {
 }
 
 .doctor-welcome-actions {
-    position: static;
-    z-index: auto;
+    position: relative;
+    z-index: 1;
     flex: none;
     margin-left: auto;
 }
@@ -9431,7 +9438,7 @@ html body .auth-page .auth-card .alert {
     .doctor-dashboard .welcome-banner {
         flex-direction: column;
         align-items: flex-start;
-        padding: 24px 20px;
+        padding: 24px 20px 82px;
     }
 
     .patient-dashboard .welcome-banner > div:first-child,
@@ -9499,6 +9506,74 @@ html body .auth-page .auth-card .alert {
 
 @media (prefers-reduced-motion: reduce) {
     .app-content .quick-action {
+        transition: none;
+    }
+}
+
+.auth-otp-input {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .45em;
+    text-align: center;
+}
+
+.password-requirements {
+    display: grid;
+    gap: 7px;
+    margin: -5px 0 18px;
+    padding: 0;
+    color: var(--ink-500);
+    font-size: .8rem;
+    list-style: none;
+}
+
+.password-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    line-height: 1.45;
+    transition: color var(--motion-fast);
+}
+
+.password-requirements li > span {
+    display: grid;
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    place-items: center;
+    border: 1px solid #bdc8d7;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.password-requirements li.is-met {
+    color: var(--green-600);
+}
+
+.password-requirements li.is-met > span {
+    border-color: var(--green-600);
+    background: var(--green-50);
+}
+
+.password-requirements li.is-met > span::before {
+    content: "✓";
+    font-size: .7rem;
+    font-weight: 800;
+}
+
+.password-match-status {
+    min-height: 1.25em;
+}
+
+.password-match-status.is-match {
+    color: var(--green-600);
+}
+
+.password-match-status.is-mismatch {
+    color: var(--red-700);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .password-requirements li {
         transition: none;
     }
 }

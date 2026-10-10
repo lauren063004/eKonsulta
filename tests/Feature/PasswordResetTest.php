@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\PasswordResetCodeNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
@@ -25,16 +24,28 @@ class PasswordResetTest extends TestCase
             ->assertSee(route('password.email'));
     }
 
-    public function test_reset_request_sends_a_reset_notification_for_an_existing_user(): void
+    public function test_reset_request_emails_a_six_digit_code_and_shows_code_entry(): void
     {
         Notification::fake();
         $user = User::factory()->create();
 
         $this->post(route('password.email'), ['email' => $user->email])
-            ->assertRedirect()
+            ->assertRedirect(route('password.otp'))
             ->assertSessionHas('status');
 
-        Notification::assertSentTo($user, ResetPassword::class);
+        Notification::assertSentTo($user, PasswordResetCodeNotification::class, function (
+            PasswordResetCodeNotification $notification
+        ) use ($user): bool {
+            $message = $notification->toMail($user);
+
+            return preg_match('/^\d{6}$/', $notification->code) === 1
+                && $message->actionText === null;
+        });
+
+        $this->get(route('password.otp'))
+            ->assertOk()
+            ->assertSee('Enter your verification code')
+            ->assertSee(route('password.verify'));
     }
 
     public function test_reset_request_does_not_disclose_unknown_email_addresses(): void
@@ -51,22 +62,29 @@ class PasswordResetTest extends TestCase
 
         $existingResponse->assertSessionHas('status');
         $unknownResponse->assertSessionHas('status', $existingResponse->getSession()->get('status'));
-        Notification::assertSentTo($existingUser, ResetPassword::class);
+        Notification::assertSentTo($existingUser, PasswordResetCodeNotification::class);
+        Notification::assertCount(1);
     }
 
-    public function test_user_can_reset_password_with_a_valid_token_and_password(): void
+    public function test_user_can_verify_code_and_reset_password(): void
     {
         Notification::fake();
         $user = User::factory()->create(['password' => 'OldPassword1']);
-        $token = Password::createToken($user);
+        $code = $this->requestCode($user);
 
-        $this->get(route('password.reset', ['token' => $token, 'email' => $user->email]))
+        $this->get(route('password.reset'))
+            ->assertRedirect(route('password.request'));
+
+        $this->post(route('password.verify'), ['otp' => $code])
+            ->assertRedirect(route('password.reset'));
+
+        $this->get(route('password.reset'))
             ->assertOk()
             ->assertSee('Reset your password')
-            ->assertSee($token);
+            ->assertSee('At least one uppercase letter')
+            ->assertSee('At least one number');
 
         $this->post(route('password.update'), [
-            'token' => $token,
             'email' => $user->email,
             'password' => 'NewStrongPass1',
             'password_confirmation' => 'NewStrongPass1',
@@ -76,44 +94,114 @@ class PasswordResetTest extends TestCase
 
         $this->assertTrue(password_verify('NewStrongPass1', $user->fresh()->password));
         $this->assertDatabaseMissing('password_reset_tokens', ['email' => $user->email]);
+        $this->get(route('password.reset'))->assertRedirect(route('password.request'));
     }
 
-    public function test_password_reset_enforces_password_policy_and_confirmation(): void
+    public function test_reset_rejects_reusing_the_current_password(): void
     {
-        $user = User::factory()->create();
-        $token = Password::createToken($user);
-        $payload = [
-            'token' => $token,
-            'email' => $user->email,
-            'password_confirmation' => 'weakpassword1',
-        ];
+        Notification::fake();
+        $user = User::factory()->create(['password' => 'CurrentStrong1']);
+        $code = $this->requestCode($user);
 
-        $this->from(route('password.reset', ['token' => $token, 'email' => $user->email]))
-            ->post(route('password.update'), [...$payload, 'password' => 'weakpassword1'])
+        $this->post(route('password.verify'), ['otp' => $code])
+            ->assertRedirect(route('password.reset'));
+
+        $this->from(route('password.reset'))
+            ->post(route('password.update'), [
+                'email' => $user->email,
+                'password' => 'CurrentStrong1',
+                'password_confirmation' => 'CurrentStrong1',
+            ])
+            ->assertSessionHasErrors([
+                'password' => 'Choose a new password that is different from your current password.',
+            ]);
+
+        $this->assertTrue(password_verify('CurrentStrong1', $user->fresh()->password));
+
+        $this->post(route('password.update'), [
+            'email' => $user->email,
+            'password' => 'BrandNewPass2',
+            'password_confirmation' => 'BrandNewPass2',
+        ])
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_reset_enforces_password_rules_and_confirmation(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create();
+        $code = $this->requestCode($user);
+
+        $this->post(route('password.verify'), ['otp' => $code])
+            ->assertRedirect(route('password.reset'));
+
+        $this->from(route('password.reset'))
+            ->post(route('password.update'), [
+                'email' => $user->email,
+                'password' => 'lowercase1',
+                'password_confirmation' => 'lowercase1',
+            ])
             ->assertSessionHasErrors('password');
 
-        $this->from(route('password.reset', ['token' => $token, 'email' => $user->email]))
+        $this->from(route('password.reset'))
             ->post(route('password.update'), [
-                ...$payload,
+                'email' => $user->email,
                 'password' => 'StrongPass1',
                 'password_confirmation' => 'DifferentPass2',
             ])
             ->assertSessionHasErrors('password');
     }
 
-    public function test_password_reset_rejects_an_invalid_token(): void
+    public function test_invalid_code_is_rejected_and_limited_attempts_block_verification(): void
     {
+        Notification::fake();
         $user = User::factory()->create();
+        $code = $this->requestCode($user);
 
-        $this->from(route('password.reset', ['token' => 'invalid-token', 'email' => $user->email]))
-            ->post(route('password.update'), [
-                'token' => 'invalid-token',
-                'email' => $user->email,
-                'password' => 'NewStrongPass1',
-                'password_confirmation' => 'NewStrongPass1',
-            ])
-            ->assertSessionHasErrors('email');
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $this->from(route('password.otp'))
+                ->post(route('password.verify'), ['otp' => '000000'])
+                ->assertSessionHasErrors('otp');
+        }
 
-        $this->assertTrue(password_verify('password', $user->fresh()->password));
+        $this->travel(61)->seconds();
+
+        $this->from(route('password.otp'))
+            ->post(route('password.verify'), ['otp' => $code])
+            ->assertSessionHasErrors('otp');
+
+        $this->assertDatabaseHas('password_reset_tokens', ['email' => $user->email]);
+    }
+
+    public function test_expired_code_cannot_verify(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create();
+        $code = $this->requestCode($user);
+
+        $this->travel(11)->minutes();
+
+        $this->from(route('password.otp'))
+            ->post(route('password.verify'), ['otp' => $code])
+            ->assertSessionHasErrors('otp');
+
+        $this->travelBack();
+    }
+
+    private function requestCode(User $user): string
+    {
+        $this->post(route('password.email'), ['email' => $user->email])
+            ->assertRedirect(route('password.otp'));
+
+        $code = null;
+        Notification::assertSentTo($user, PasswordResetCodeNotification::class, function (
+            PasswordResetCodeNotification $notification
+        ) use (&$code): bool {
+            $code = $notification->code;
+
+            return true;
+        });
+
+        return $code;
     }
 }

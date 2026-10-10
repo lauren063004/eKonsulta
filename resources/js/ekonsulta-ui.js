@@ -1,4 +1,53 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const passwordResetForm = document.querySelector('[data-password-reset-form]');
+
+    if (passwordResetForm instanceof HTMLFormElement) {
+        const passwordInput = passwordResetForm.querySelector('[data-password-rule-input]');
+        const confirmationInput = passwordResetForm.querySelector('[data-password-confirmation]');
+        const matchStatus = passwordResetForm.querySelector('[data-password-match-status]');
+
+        if (
+            passwordInput instanceof HTMLInputElement
+            && confirmationInput instanceof HTMLInputElement
+            && matchStatus instanceof HTMLElement
+        ) {
+            const updatePasswordFeedback = () => {
+                const password = passwordInput.value;
+                const checks = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /\d/.test(password),
+                };
+
+                Object.entries(checks).forEach(([rule, passed]) => {
+                    const item = passwordResetForm.querySelector(`[data-password-rule="${rule}"]`);
+
+                    if (item instanceof HTMLElement) {
+                        item.classList.toggle('is-met', passed);
+                    }
+                });
+
+                const passwordsMatch = confirmationInput.value.length > 0
+                    && password === confirmationInput.value;
+                const hasConfirmation = confirmationInput.value.length > 0;
+
+                matchStatus.textContent = !hasConfirmation
+                    ? 'Re-enter your new password to confirm it.'
+                    : passwordsMatch
+                        ? 'Passwords match.'
+                        : 'Passwords do not match.';
+                matchStatus.classList.toggle('is-match', passwordsMatch);
+                matchStatus.classList.toggle('is-mismatch', hasConfirmation && !passwordsMatch);
+                confirmationInput.setAttribute('aria-invalid', String(hasConfirmation && !passwordsMatch));
+            };
+
+            passwordInput.addEventListener('input', updatePasswordFeedback);
+            confirmationInput.addEventListener('input', updatePasswordFeedback);
+            updatePasswordFeedback();
+        }
+    }
+
     document.querySelectorAll('[data-list-search-input]').forEach((input) => {
         if (!(input instanceof HTMLInputElement)) {
             return;

@@ -35,7 +35,7 @@
             >
 
             <h1>Reset your password</h1>
-            <p>Use at least 8 characters, including uppercase, lowercase, and a number.</p>
+            <p>Create a new password that you haven’t used for this account before.</p>
 
             @if ($errors->any())
                 <div class="alert alert-danger" role="alert">
@@ -45,24 +45,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('password.update') }}">
+            <form method="POST" action="{{ route('password.update') }}" data-password-reset-form>
                 @csrf
-
-                <input type="hidden" name="token" value="{{ $token }}">
-
-                <div class="auth-field">
-                    <label for="email">Email address</label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value="{{ old('email', $email) }}"
-                        placeholder="you@example.com"
-                        autocomplete="email"
-                        required
-                        autofocus
-                    >
-                </div>
+                <input type="hidden" name="email" value="{{ $email }}">
 
                 <div class="auth-field">
                     <label for="password">New password</label>
@@ -71,9 +56,18 @@
                         type="password"
                         name="password"
                         autocomplete="new-password"
+                        data-password-rule-input
+                        aria-describedby="password-requirements"
                         required
                     >
                 </div>
+
+                <ul class="password-requirements" id="password-requirements" aria-label="Password requirements">
+                    <li data-password-rule="length"><span aria-hidden="true"></span>At least 8 characters</li>
+                    <li data-password-rule="uppercase"><span aria-hidden="true"></span>At least one uppercase letter</li>
+                    <li data-password-rule="lowercase"><span aria-hidden="true"></span>At least one lowercase letter</li>
+                    <li data-password-rule="number"><span aria-hidden="true"></span>At least one number</li>
+                </ul>
 
                 <div class="auth-field">
                     <label for="password_confirmation">Confirm new password</label>
@@ -82,8 +76,13 @@
                         type="password"
                         name="password_confirmation"
                         autocomplete="new-password"
+                        data-password-confirmation
+                        aria-describedby="password-match-status"
                         required
                     >
+                    <small class="password-match-status" id="password-match-status" data-password-match-status>
+                        Re-enter your new password to confirm it.
+                    </small>
                 </div>
 
                 <button type="submit" class="primary-button">
