@@ -259,15 +259,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const confirmationModal = document.getElementById('confirmModal');
+    const confirmationIcon = document.getElementById('confirmIcon');
     const confirmationTitle = document.getElementById('confirmTitle');
     const confirmationMessage = document.getElementById('confirmMessage');
     const confirmationCancel = document.getElementById('confirmCancel');
     const confirmationOk = document.getElementById('confirmOk');
     let pendingConfirmationForm = null;
+    let pendingConfirmationTrigger = null;
     const confirmedForms = new WeakSet();
 
     if (
         confirmationModal instanceof HTMLElement
+        && confirmationIcon instanceof HTMLElement
         && confirmationTitle instanceof HTMLElement
         && confirmationMessage instanceof HTMLElement
         && confirmationCancel instanceof HTMLButtonElement
@@ -277,6 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmationModal.hidden = true;
             document.body.classList.remove('confirmation-open');
             pendingConfirmationForm = null;
+
+            if (pendingConfirmationTrigger instanceof HTMLElement) {
+                pendingConfirmationTrigger.focus();
+                pendingConfirmationTrigger = null;
+            }
         };
 
         document.addEventListener('submit', (event) => {
@@ -292,10 +300,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             event.preventDefault();
             pendingConfirmationForm = form;
+            pendingConfirmationTrigger = event.submitter instanceof HTMLElement
+                ? event.submitter
+                : document.activeElement instanceof HTMLElement
+                    ? document.activeElement
+                    : null;
             confirmationTitle.textContent = form.dataset.confirmTitle || 'Are you sure?';
             confirmationMessage.textContent = form.dataset.confirm || 'Please confirm this action.';
             confirmationCancel.textContent = form.dataset.confirmCancel || 'Cancel';
             confirmationOk.textContent = form.dataset.confirmOk || 'Confirm';
+            confirmationIcon.textContent = form.dataset.confirmIcon === 'logout' ? '↗' : '?';
+            confirmationModal.dataset.confirmKind = form.dataset.confirmIcon || 'default';
             confirmationModal.hidden = false;
             document.body.classList.add('confirmation-open');
             confirmationCancel.focus();
@@ -312,16 +327,42 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!pendingConfirmationForm) {
                 return;
             }
-
             const form = pendingConfirmationForm;
             confirmedForms.add(form);
             closeConfirmation();
+            confirmationModal.dataset.confirmKind = 'default';
             form.requestSubmit();
         });
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && !confirmationModal.hidden) {
                 closeConfirmation();
+                return;
+            }
+
+            if (event.key !== 'Tab' || confirmationModal.hidden) {
+                return;
+            }
+
+            const focusableElements = Array.from(
+                confirmationModal.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
+            ).filter((element) => element instanceof HTMLElement && element.getClientRects().length > 0);
+
+            if (focusableElements.length === 0) {
+                event.preventDefault();
+                return;
+            }
+
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            const activeElementIsInside = focusableElements.includes(document.activeElement);
+
+            if (event.shiftKey && (document.activeElement === firstElement || !activeElementIsInside)) {
+                event.preventDefault();
+                lastElement.focus();
+            } else if (!event.shiftKey && (document.activeElement === lastElement || !activeElementIsInside)) {
+                event.preventDefault();
+                firstElement.focus();
             }
         });
     }

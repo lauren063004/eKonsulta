@@ -168,6 +168,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
+    margin: 0;
     font-family: var(--font);
     color: var(--ink-900);
     background: var(--page);
@@ -8895,10 +8896,6 @@ button.announcement-image-preview-trigger {
 /* =====================================================================
    SHARED APPLICATION UI FOUNDATION
    ===================================================================== */
-body {
-    min-width: 320px;
-}
-
 .app-content {
     padding: clamp(18px, 2.6vw, 32px);
 }
@@ -9575,5 +9572,151 @@ html body .auth-page .auth-card .alert {
 @media (prefers-reduced-motion: reduce) {
     .password-requirements li {
         transition: none;
+    }
+}
+
+html body .register-page {
+    background-image:
+        linear-gradient(135deg, rgba(7, 31, 74, .88), rgba(10, 61, 143, .58)),
+        var(--ek-hero-image) !important;
+}
+
+html body .register-layout .register-card {
+    border-top: 4px solid var(--red-600) !important;
+}
+
+html body .register-page .register-field input:focus,
+html body .register-page .register-field select:focus,
+html body .register-page .register-field textarea:focus {
+    border-color: var(--navy-600);
+    box-shadow: 0 0 0 3px rgba(21, 83, 184, .12);
+}
+
+html body .register-page .register-button {
+    background: var(--navy-700);
+    box-shadow: 0 6px 14px rgba(10, 61, 143, .18);
+}
+
+html body .register-page .register-button:hover {
+    background: var(--navy-800);
+    box-shadow: 0 8px 18px rgba(10, 47, 107, .22);
+}
+
+html body .register-page .register-switch a {
+    color: var(--navy-600);
+}
+
+html body .register-page .register-step-progress span {
+    background: var(--navy-600);
+}
+
+html body .register-page .register-step-indicator li[aria-current="step"] {
+    color: var(--navy-800);
+}
+
+html body .register-page .register-step-indicator li[aria-current="step"] > span,
+html body .register-page .register-step-indicator li.is-complete > span {
+    border-color: var(--navy-600);
+    background: var(--navy-600);
+}
+
+.modal-backdrop:not([hidden]) {
+    padding: 20px;
+    background: rgba(7, 31, 74, .58);
+    backdrop-filter: blur(4px);
+}
+
+.modal-backdrop:not([hidden]) .modal {
+    width: min(100%, 420px);
+    padding: 30px;
+    border: 1px solid #e1e8f1;
+    border-top: 4px solid var(--navy-600);
+    border-radius: 18px;
+    box-shadow: 0 24px 72px rgba(7, 31, 74, .24);
+}
+
+.modal-backdrop[data-confirm-kind="logout"] .modal {
+    border-top-color: var(--red-600);
+}
+
+.modal-backdrop .modal h3 {
+    margin-bottom: 8px;
+    color: var(--navy-900);
+    font-size: 1.2rem;
+    letter-spacing: -.015em;
+}
+
+.modal-backdrop .modal p {
+    color: var(--ink-700);
+    font-size: .94rem;
+    line-height: 1.65;
+}
+
+.modal-backdrop .modal-icon {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 16px;
+    border: 1px solid #dce6f3;
+    border-radius: 14px;
+    background: var(--blue-50);
+    color: var(--navy-700);
+    font-size: 1.35rem;
+}
+
+.modal-backdrop[data-confirm-kind="logout"] .modal-icon {
+    border-color: #f3d4d5;
+    background: #fff3f3;
+    color: var(--red-700);
+}
+
+.modal-backdrop[data-confirm-kind="logout"] .modal-actions .primary-button {
+    border-color: var(--red-600);
+    background: var(--red-600);
+    color: #fff;
+}
+
+.modal-backdrop[data-confirm-kind="logout"] .modal-actions .primary-button:hover {
+    border-color: var(--red-700);
+    background: var(--red-700);
+}
+
+.modal-backdrop .modal-actions {
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-backdrop .modal-actions button {
+    min-height: 44px;
+    padding: 10px 16px;
+}
+
+@media (max-width: 560px) {
+    .modal-backdrop:not([hidden]) {
+        padding: 14px;
+    }
+
+    .modal-backdrop:not([hidden]) .modal {
+        padding: 24px 20px;
+        border-radius: 16px;
+    }
+
+    .modal-backdrop .modal-actions {
+        flex-direction: column;
+    }
+
+    .modal-backdrop .modal-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .app-content .stats-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-backdrop:not([hidden]) .modal {
+        animation: none;
     }
 }

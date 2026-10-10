@@ -129,6 +129,7 @@
                             data-confirm-title="Log out of e-Konsulta?"
                             data-confirm-ok="Yes, log out"
                             data-confirm-cancel="Stay signed in"
+                            data-confirm-icon="logout"
                         >
                             @csrf
                             <button type="submit" class="dropdown-danger" role="menuitem">

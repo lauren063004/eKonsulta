@@ -13,6 +13,10 @@ Users can select **Forgot password?** on the sign-in page, enter their account e
 
 Configure a delivery mailer in the deployment environment for password reset codes to reach users. For example, with an SMTP provider set `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SCHEME`, and `MAIL_FROM_ADDRESS` / `MAIL_FROM_NAME` to the provider's values, then clear cached configuration with `php artisan config:clear` (or rebuild the deployment configuration cache). Never commit provider credentials. The default local `MAIL_MAILER=log` writes reset emails to the application log instead of delivering them.
 
+## Desktop and mobile support
+
+The interface adapts to desktop, tablet, and mobile screens, including phone viewports as narrow as 320 CSS pixels. On smaller screens, dashboard navigation becomes a slide-in menu, content and forms reflow into a single column where needed, and wide data tables remain horizontally scrollable within their containers.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
