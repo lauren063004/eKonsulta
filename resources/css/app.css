@@ -3403,8 +3403,6 @@ input[type="checkbox"], input[type="radio"] { width: 18px; height: 18px; accent-
     }
 
     .consult-layout .patient-panel {
-        position: sticky;
-        top: 92px;
         display: grid;
         gap: 12px;
     }
