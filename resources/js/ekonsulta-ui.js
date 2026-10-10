@@ -69,4 +69,169 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    const imagePreviewModal = document.getElementById('imagePreviewModal');
+    const imagePreviewImage = document.getElementById('imagePreviewModalImage');
+    const imagePreviewCaption = document.getElementById('imagePreviewModalCaption');
+    let imagePreviewTrigger = null;
+
+    if (
+        imagePreviewModal instanceof HTMLDialogElement
+        && imagePreviewImage instanceof HTMLImageElement
+        && imagePreviewCaption instanceof HTMLElement
+    ) {
+        document.addEventListener('click', (event) => {
+            const target = event.target;
+            const trigger = target instanceof Element
+                ? target.closest('[data-image-preview]')
+                : null;
+
+            if (!(trigger instanceof HTMLElement) || !trigger.dataset.imagePreview) {
+                return;
+            }
+
+            imagePreviewTrigger = trigger;
+            imagePreviewImage.src = trigger.dataset.imagePreview;
+            imagePreviewImage.alt = trigger.dataset.imageAlt || '';
+            imagePreviewCaption.textContent = trigger.dataset.imageAlt || '';
+            imagePreviewModal.showModal();
+        });
+
+        imagePreviewModal.querySelector('[data-image-preview-close]')?.addEventListener('click', () => {
+            imagePreviewModal.close();
+        });
+
+        imagePreviewModal.addEventListener('click', (event) => {
+            if (event.target === imagePreviewModal) {
+                imagePreviewModal.close();
+            }
+        });
+
+        imagePreviewModal.addEventListener('close', () => {
+            imagePreviewImage.removeAttribute('src');
+            imagePreviewCaption.textContent = '';
+            imagePreviewTrigger?.focus();
+            imagePreviewTrigger = null;
+        });
+    }
+
+    document.querySelectorAll('input[type="file"][name="image"]').forEach((input) => {
+        const preview = input.closest('.form-field')?.querySelector('[data-upload-preview]');
+        const previewButton = preview?.querySelector('[data-image-preview]');
+        const previewImage = previewButton?.querySelector('img');
+
+        if (
+            !(input instanceof HTMLInputElement)
+            || !(preview instanceof HTMLElement)
+            || !(previewButton instanceof HTMLElement)
+            || !(previewImage instanceof HTMLImageElement)
+        ) {
+            return;
+        }
+
+        let objectUrl = null;
+
+        input.addEventListener('change', () => {
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+                objectUrl = null;
+            }
+
+            const file = input.files?.[0];
+            if (!file) {
+                preview.hidden = true;
+                previewImage.removeAttribute('src');
+                previewButton.dataset.imagePreview = '';
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                preview.hidden = true;
+                previewImage.removeAttribute('src');
+                previewButton.dataset.imagePreview = '';
+                return;
+            }
+
+            objectUrl = URL.createObjectURL(file);
+            previewImage.src = objectUrl;
+            previewButton.dataset.imagePreview = objectUrl;
+            previewButton.dataset.imageAlt = file.name;
+            previewImage.alt = file.name;
+            preview.hidden = false;
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
+        }, { once: true });
+    });
+
+    const confirmationModal = document.getElementById('confirmModal');
+    const confirmationTitle = document.getElementById('confirmTitle');
+    const confirmationMessage = document.getElementById('confirmMessage');
+    const confirmationCancel = document.getElementById('confirmCancel');
+    const confirmationOk = document.getElementById('confirmOk');
+    let pendingConfirmationForm = null;
+    const confirmedForms = new WeakSet();
+
+    if (
+        confirmationModal instanceof HTMLElement
+        && confirmationTitle instanceof HTMLElement
+        && confirmationMessage instanceof HTMLElement
+        && confirmationCancel instanceof HTMLButtonElement
+        && confirmationOk instanceof HTMLButtonElement
+    ) {
+        const closeConfirmation = () => {
+            confirmationModal.hidden = true;
+            document.body.classList.remove('confirmation-open');
+            pendingConfirmationForm = null;
+        };
+
+        document.addEventListener('submit', (event) => {
+            const form = event.target;
+            if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-confirm')) {
+                return;
+            }
+
+            if (confirmedForms.has(form)) {
+                confirmedForms.delete(form);
+                return;
+            }
+
+            event.preventDefault();
+            pendingConfirmationForm = form;
+            confirmationTitle.textContent = form.dataset.confirmTitle || 'Are you sure?';
+            confirmationMessage.textContent = form.dataset.confirm || 'Please confirm this action.';
+            confirmationCancel.textContent = form.dataset.confirmCancel || 'Cancel';
+            confirmationOk.textContent = form.dataset.confirmOk || 'Confirm';
+            confirmationModal.hidden = false;
+            document.body.classList.add('confirmation-open');
+            confirmationCancel.focus();
+        });
+
+        confirmationCancel.addEventListener('click', closeConfirmation);
+        confirmationModal.addEventListener('click', (event) => {
+            if (event.target === confirmationModal) {
+                closeConfirmation();
+            }
+        });
+
+        confirmationOk.addEventListener('click', () => {
+            if (!pendingConfirmationForm) {
+                return;
+            }
+
+            const form = pendingConfirmationForm;
+            confirmedForms.add(form);
+            closeConfirmation();
+            form.requestSubmit();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !confirmationModal.hidden) {
+                closeConfirmation();
+            }
+        });
+    }
 });

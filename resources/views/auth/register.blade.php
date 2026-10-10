@@ -565,6 +565,556 @@
                 font-size: 21px;
             }
         }
+
+        html body .register-page {
+            align-items: flex-start;
+            padding-top: 36px;
+            padding-bottom: 36px;
+            background:
+                linear-gradient(135deg, rgba(13, 54, 82, .72), rgba(26, 97, 119, .5)),
+                var(--ek-hero-image, url("/images/hero-bg.jpg"));
+        }
+
+        html body .register-layout {
+            width: min(1080px, 100%);
+            grid-template-columns: minmax(260px, .72fr) minmax(0, 1.28fr);
+            gap: clamp(24px, 4vw, 48px);
+            align-items: start;
+        }
+
+        html body .register-brand {
+            position: sticky;
+            top: 28px;
+            padding-top: 32px;
+        }
+
+        html body .register-brand-top {
+            margin-bottom: 26px;
+        }
+
+        html body .register-brand h2 {
+            max-width: 390px;
+            font-size: clamp(30px, 3.5vw, 40px);
+            line-height: 1.15;
+        }
+
+        html body .register-brand-description {
+            max-width: 340px;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        html body .register-card {
+            padding: clamp(22px, 3vw, 34px);
+            border: 1px solid rgba(230, 237, 242, .95);
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 18px 48px rgba(14, 37, 54, .2);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        html body .register-header {
+            margin-bottom: 20px;
+        }
+
+        html body .register-header h1 {
+            color: #1e3448;
+            font-size: 25px;
+            letter-spacing: -.55px;
+        }
+
+        html body .register-header p {
+            margin-top: 7px;
+            color: #69798a;
+            font-size: 13px;
+        }
+
+        html body .register-form {
+            gap: 15px;
+        }
+
+        html body .register-section-heading {
+            margin-top: 6px;
+            padding-top: 15px;
+            border-color: #e7edf1;
+        }
+
+        html body .register-section-heading--first {
+            padding-top: 0;
+            border: 0;
+        }
+
+        html body .register-section-heading h2 {
+            color: #2f495e;
+            font-size: 13px;
+            letter-spacing: 0;
+        }
+
+        html body .register-grid {
+            gap: 14px;
+        }
+
+        html body .register-field label {
+            margin-bottom: 6px;
+            color: #34495c;
+            font-size: 12px;
+        }
+
+        html body .register-field input,
+        html body .register-field select,
+        html body .register-field textarea {
+            min-height: 42px;
+            padding-right: 12px;
+            padding-left: 12px;
+            border-color: #d8e0e7;
+            border-radius: 9px;
+            color: #263a4d;
+            font-size: 13px;
+        }
+
+        html body .register-field input:focus,
+        html body .register-field select:focus,
+        html body .register-field textarea:focus {
+            border-color: #579a8b;
+            box-shadow: 0 0 0 3px rgba(48, 133, 116, .12);
+        }
+
+        html body .password-field input {
+            padding-right: 56px;
+        }
+
+        html body .password-toggle {
+            right: 10px;
+            color: #39796e;
+            font-size: 11px;
+        }
+
+        .register-field .password-guidance {
+            margin: 8px 0 0;
+            color: #718090;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .password-rules {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 5px 12px;
+            margin: 9px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .password-rules li {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #788694;
+            font-size: 11px;
+            line-height: 1.4;
+            transition: color .15s ease;
+        }
+
+        .password-rules li::before {
+            display: grid;
+            width: 15px;
+            height: 15px;
+            flex: 0 0 15px;
+            place-items: center;
+            border: 1px solid #ccd5dc;
+            border-radius: 50%;
+            color: transparent;
+            content: "";
+            font-size: 9px;
+        }
+
+        .password-rules li.is-met {
+            color: #287653;
+        }
+
+        .password-rules li.is-met::before {
+            border-color: #65a889;
+            background: #e8f5ee;
+            color: #287653;
+            content: "✓";
+        }
+
+        html body .register-field input.password-is-invalid,
+        html body .register-field input.password-confirmation-mismatch {
+            border-color: #cf4d55;
+            background: #fffafa;
+            box-shadow: 0 0 0 3px rgba(207, 77, 85, .09);
+        }
+
+        html body .register-field input.password-is-valid,
+        html body .register-field input.password-confirmation-match {
+            border-color: #65a889;
+        }
+
+        .password-feedback {
+            min-height: 17px;
+            margin: 6px 0 0;
+            color: #718090;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .password-feedback.is-error {
+            color: #b4232d;
+        }
+
+        .password-feedback.is-success {
+            color: #287653;
+        }
+
+        .number-feedback {
+            min-height: 16px;
+            margin: 5px 0 0;
+            color: #718090;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .number-feedback.is-error {
+            color: #b4232d;
+        }
+
+        html body .register-field input.number-is-invalid {
+            border-color: #cf4d55;
+            background: #fffafa;
+            box-shadow: 0 0 0 3px rgba(207, 77, 85, .09);
+        }
+
+        html body .register-alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        html body .register-button {
+            height: 46px;
+            margin-top: 3px;
+            border-radius: 9px;
+            background: #17645d;
+            box-shadow: 0 5px 13px rgba(23, 100, 93, .17);
+            font-size: 13px;
+            transition: background .15s ease, box-shadow .15s ease;
+        }
+
+        html body .register-button:hover {
+            background: #124f49;
+            box-shadow: 0 7px 16px rgba(23, 100, 93, .2);
+            transform: none;
+        }
+
+        html body .register-switch {
+            font-size: 12px;
+        }
+
+        html body .register-switch a {
+            color: #17645d;
+        }
+
+        @media (max-width: 1000px) {
+            html body .register-page {
+                padding: 25px 18px;
+            }
+
+            html body .register-layout {
+                max-width: 690px;
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            html body .register-brand {
+                position: static;
+                padding: 0;
+            }
+
+            html body .register-brand-top {
+                margin-bottom: 12px;
+            }
+
+            html body .register-brand h2 {
+                max-width: 600px;
+                margin: 0 auto;
+                font-size: 29px;
+            }
+
+            html body .register-brand-description {
+                max-width: 560px;
+                margin: 8px auto 0;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            html body .register-page {
+                padding: 14px 10px;
+            }
+
+            html body .register-layout {
+                gap: 13px;
+            }
+
+            html body .register-brand h2 {
+                font-size: 25px;
+            }
+
+            html body .register-brand-description {
+                display: none;
+            }
+
+            html body .register-card {
+                padding: 19px 16px;
+            }
+
+            html body .register-grid {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
+            }
+
+            .password-rules {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            html body .register-field input,
+            html body .register-field select,
+            html body .register-field textarea {
+                min-height: 44px;
+                font-size: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .password-rules li,
+            html body .register-button {
+                transition: none;
+            }
+        }
+
+        .register-step-indicator {
+            position: relative;
+            margin: 0 0 20px;
+            padding: 0 5px 4px;
+        }
+
+        .register-step-progress {
+            position: absolute;
+            top: 14px;
+            right: 16.5%;
+            left: 16.5%;
+            height: 2px;
+            overflow: hidden;
+            background: #e6ecef;
+        }
+
+        .register-step-progress span {
+            display: block;
+            width: 0;
+            height: 100%;
+            background: #468b7e;
+            transition: width .2s ease;
+        }
+
+        .register-step-indicator ol {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .register-step-indicator li {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: #84919e;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .register-step-indicator li > span {
+            display: grid;
+            width: 29px;
+            height: 29px;
+            place-items: center;
+            border: 1px solid #dce4e8;
+            border-radius: 50%;
+            background: #fff;
+            color: #7b8895;
+            font-size: 11px;
+            font-weight: 700;
+            transition: border-color .2s ease, background .2s ease, color .2s ease;
+        }
+
+        .register-step-indicator li strong {
+            font-weight: 600;
+        }
+
+        .register-step-indicator li[aria-current="step"] {
+            color: #315f58;
+        }
+
+        .register-step-indicator li[aria-current="step"] > span,
+        .register-step-indicator li.is-complete > span {
+            border-color: #468b7e;
+            background: #468b7e;
+            color: #fff;
+        }
+
+        .register-step[hidden],
+        .register-step-navigation[hidden],
+        .register-step-navigation button[hidden] {
+            display: none !important;
+        }
+
+        .register-step {
+            min-height: 330px;
+            animation: register-step-enter .2s ease both;
+        }
+
+        .register-step .register-section-heading {
+            margin-top: 0;
+            margin-bottom: 18px;
+            padding: 0;
+            border: 0;
+        }
+
+        .register-step .register-section-heading h2 {
+            color: #2b4053;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .register-step .register-section-heading p {
+            margin: 5px 0 0;
+            color: #788694;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .register-step .register-grid {
+            gap: 17px 18px;
+        }
+
+        .register-step[data-register-step="3"] > .register-grid + .register-section-heading {
+            margin-top: 26px;
+            padding-top: 20px;
+            border-top: 1px solid #e9eef1;
+        }
+
+        .register-step-navigation {
+            display: grid;
+            grid-template-columns: minmax(90px, 1fr) auto minmax(150px, 1fr);
+            align-items: center;
+            gap: 12px;
+            margin-top: 25px;
+            padding-top: 17px;
+            border-top: 1px solid #edf0f2;
+        }
+
+        .register-step-navigation > span {
+            color: #7d8995;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .register-step-button {
+            min-height: 44px;
+            padding: 0 16px;
+            border: 1px solid #d8e1e5;
+            border-radius: 9px;
+            background: #fff;
+            color: #43596b;
+            cursor: pointer;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 650;
+            transition: border-color .15s ease, background .15s ease;
+        }
+
+        .register-step-button:hover {
+            border-color: #b7cbc6;
+            background: #f7faf9;
+        }
+
+        .register-step-button--back {
+            justify-self: start;
+        }
+
+        .register-step-button--next,
+        .register-step-navigation .register-button {
+            grid-column: 3;
+        }
+
+        .register-step-navigation .register-button {
+            height: 44px;
+            margin: 0;
+        }
+
+        @keyframes register-step-enter {
+            from { opacity: .65; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .register-step-indicator {
+                margin-bottom: 17px;
+            }
+
+            .register-step-indicator li {
+                font-size: 10px;
+            }
+
+            .register-step {
+                min-height: 0;
+            }
+
+            .register-step .register-grid {
+                gap: 13px;
+            }
+
+            .register-step-navigation {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .register-step-navigation > span {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+
+            .register-step-button--back {
+                grid-column: 1;
+                grid-row: 2;
+                width: 100%;
+            }
+
+            .register-step-button--next,
+            .register-step-navigation .register-button {
+                grid-column: 2;
+                grid-row: 2;
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .register-step,
+            .register-step-progress span,
+            .register-step-indicator li > span,
+            .register-step-button {
+                animation: none;
+                transition: none;
+            }
+        }
+
     </style>
 </head>
 
@@ -678,21 +1228,58 @@
                 @endif
 
 
+                @php
+                    $stepTwoFields = ['contact_number', 'barangay', 'health_center_id', 'address'];
+                    $stepThreeFields = [
+                        'emergency_contact_name',
+                        'emergency_contact_number',
+                        'email',
+                        'password',
+                        'password_confirmation',
+                    ];
+                    $initialRegistrationStep = $errors->hasAny($stepThreeFields)
+                        ? 3
+                        : ($errors->hasAny($stepTwoFields) ? 2 : 1);
+                @endphp
+
                 <form
                     method="POST"
                     action="{{ route('register.store') }}"
                     class="register-form"
+                    data-registration-form
+                    data-initial-step="{{ $initialRegistrationStep }}"
                 >
 
                     @csrf
 
+                    <nav class="register-step-indicator" aria-label="Registration progress">
+                        <div class="register-step-progress" aria-hidden="true">
+                            <span data-step-progress></span>
+                        </div>
+                        <ol>
+                            <li data-step-indicator="1" aria-current="step">
+                                <span>1</span>
+                                <strong>Personal</strong>
+                            </li>
+                            <li data-step-indicator="2">
+                                <span>2</span>
+                                <strong>Contact</strong>
+                            </li>
+                            <li data-step-indicator="3">
+                                <span>3</span>
+                                <strong>Account</strong>
+                            </li>
+                        </ol>
+                    </nav>
 
                     {{-- =================================================
                          NAME
                          ================================================= --}}
 
+                    <section class="register-step" data-register-step="1" aria-labelledby="registration-step-one-title">
                     <div class="register-section-heading register-section-heading--first">
-                        <h2>Personal information</h2>
+                        <h2 id="registration-step-one-title">Personal information</h2>
+                        <p>Tell us a little about yourself.</p>
                     </div>
 
                     <div class="register-grid">
@@ -707,9 +1294,11 @@
                                 id="first_name"
                                 type="text"
                                 name="first_name"
+                                data-name-only
                                 value="{{ old('first_name') }}"
                                 placeholder="First name"
                                 autocomplete="given-name"
+                                maxlength="100"
                                 required
                             >
 
@@ -727,9 +1316,11 @@
                                 id="middle_name"
                                 type="text"
                                 name="middle_name"
+                                data-name-only
                                 value="{{ old('middle_name') }}"
                                 placeholder="Middle name"
                                 autocomplete="additional-name"
+                                maxlength="100"
                             >
 
                         </div>
@@ -745,9 +1336,11 @@
                                 id="last_name"
                                 type="text"
                                 name="last_name"
+                                data-name-only
                                 value="{{ old('last_name') }}"
                                 placeholder="Last name"
                                 autocomplete="family-name"
+                                maxlength="100"
                                 required
                             >
 
@@ -824,14 +1417,17 @@
                         </div>
 
                     </div>
+                    </section>
 
 
                     {{-- =================================================
                          CONTACT / LOCATION
                          ================================================= --}}
 
+                    <section class="register-step" data-register-step="2" aria-labelledby="registration-step-two-title">
                     <div class="register-section-heading">
-                        <h2>Contact and health center</h2>
+                        <h2 id="registration-step-two-title">Contact and health center</h2>
+                        <p>We’ll use this to connect you with your local clinic.</p>
                     </div>
 
                     <div class="register-grid">
@@ -844,13 +1440,22 @@
 
                             <input
                                 id="contact_number"
-                                type="text"
+                                type="tel"
                                 name="contact_number"
+                                data-digits-only
+                                data-feedback-target="contact-number-feedback"
                                 value="{{ old('contact_number') }}"
                                 placeholder="09XXXXXXXXX"
                                 autocomplete="tel"
+                                inputmode="numeric"
+                                pattern="[0-9]{11}"
+                                minlength="11"
+                                maxlength="11"
+                                title="Enter exactly 11 digits."
+                                aria-describedby="contact-number-feedback"
                                 required
                             >
+                            <p class="number-feedback" id="contact-number-feedback" aria-live="polite"></p>
 
                         </div>
 
@@ -946,14 +1551,17 @@
                         </div>
 
                     </div>
+                    </section>
 
 
                     {{-- =================================================
                          EMERGENCY CONTACT
                          ================================================= --}}
 
+                    <section class="register-step" data-register-step="3" aria-labelledby="registration-step-three-title">
                     <div class="register-section-heading">
-                        <h2>Emergency contact</h2>
+                        <h2 id="registration-step-three-title">Emergency contact</h2>
+                        <p>Add someone we can contact if needed.</p>
                     </div>
 
                     <div class="register-grid">
@@ -968,8 +1576,10 @@
                                 id="emergency_contact_name"
                                 type="text"
                                 name="emergency_contact_name"
+                                data-name-only
                                 value="{{ old('emergency_contact_name') }}"
                                 placeholder="Full name"
+                                maxlength="255"
                                 required
                             >
 
@@ -984,12 +1594,21 @@
 
                             <input
                                 id="emergency_contact_number"
-                                type="text"
+                                type="tel"
                                 name="emergency_contact_number"
+                                data-digits-only
+                                data-feedback-target="emergency-contact-number-feedback"
                                 value="{{ old('emergency_contact_number') }}"
                                 placeholder="09XXXXXXXXX"
+                                inputmode="numeric"
+                                pattern="[0-9]{11}"
+                                minlength="11"
+                                maxlength="11"
+                                title="Enter exactly 11 digits."
+                                aria-describedby="emergency-contact-number-feedback"
                                 required
                             >
+                            <p class="number-feedback" id="emergency-contact-number-feedback" aria-live="polite"></p>
 
                         </div>
 
@@ -1002,6 +1621,7 @@
 
                     <div class="register-section-heading">
                         <h2>Account security</h2>
+                        <p>Set up the email and password you’ll use to sign in.</p>
                     </div>
 
                     <div class="register-grid">
@@ -1043,6 +1663,8 @@
                                     name="password"
                                     placeholder="Create a password"
                                     autocomplete="new-password"
+                                    aria-describedby="password-guidance password-feedback"
+                                    aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}"
                                     required
                                 >
 
@@ -1055,6 +1677,19 @@
                                 </button>
 
                             </div>
+
+                            <p class="password-guidance" id="password-guidance">Use at least 8 characters and include:</p>
+                            <ul class="password-rules" id="password-rules" aria-live="polite">
+                                <li data-password-rule="length">At least 8 characters</li>
+                                <li data-password-rule="uppercase">An uppercase letter</li>
+                                <li data-password-rule="lowercase">A lowercase letter</li>
+                                <li data-password-rule="number">A number</li>
+                            </ul>
+                            <p class="password-feedback" id="password-feedback" aria-live="polite">
+                                @if($errors->has('password'))
+                                    {{ $errors->first('password') }}
+                                @endif
+                            </p>
 
                         </div>
 
@@ -1077,6 +1712,8 @@
                                     name="password_confirmation"
                                     placeholder="Repeat password"
                                     autocomplete="new-password"
+                                    aria-describedby="password-confirmation-feedback"
+                                    aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}"
                                     required
                                 >
 
@@ -1089,22 +1726,34 @@
                                 </button>
 
                             </div>
+                            <p
+                                class="password-feedback"
+                                id="password-confirmation-feedback"
+                                aria-live="polite"
+                            >@if($errors->has('password')){{ $errors->first('password') }}@endif</p>
 
                         </div>
 
                     </div>
+                    </section>
 
 
                     {{-- =================================================
                          SUBMIT
                          ================================================= --}}
 
-                    <button
-                        type="submit"
-                        class="register-button"
-                    >
-                        Create Patient Account
-                    </button>
+                    <div class="register-step-navigation" data-step-navigation hidden>
+                        <button type="button" class="register-step-button register-step-button--back" data-step-previous hidden>
+                            Back
+                        </button>
+                        <span data-step-caption>Step 1 of 3</span>
+                        <button type="button" class="register-step-button register-step-button--next" data-step-next>
+                            Continue
+                        </button>
+                        <button type="submit" class="register-button" data-registration-submit hidden>
+                            Create Patient Account
+                        </button>
+                    </div>
 
                 </form>
 
@@ -1179,6 +1828,239 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
         });
+
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmationInput = document.getElementById('password_confirmation');
+    const passwordFeedback = document.getElementById('password-feedback');
+    const passwordConfirmationFeedback = document.getElementById('password-confirmation-feedback');
+    const passwordRules = document.querySelectorAll('[data-password-rule]');
+    const registrationForm = document.querySelector('.register-form');
+
+    if (registrationForm) {
+        const steps = Array.from(registrationForm.querySelectorAll('[data-register-step]'));
+        const navigation = registrationForm.querySelector('[data-step-navigation]');
+        const previousButton = registrationForm.querySelector('[data-step-previous]');
+        const nextButton = registrationForm.querySelector('[data-step-next]');
+        const submitButton = registrationForm.querySelector('[data-registration-submit]');
+        const stepCaption = registrationForm.querySelector('[data-step-caption]');
+        const stepProgress = registrationForm.querySelector('[data-step-progress]');
+        const stepIndicators = Array.from(registrationForm.querySelectorAll('[data-step-indicator]'));
+        let activeStep = Number(registrationForm.dataset.initialStep) || 1;
+
+        const showStep = (stepNumber, focusHeading = false) => {
+            activeStep = Math.min(Math.max(stepNumber, 1), steps.length);
+
+            steps.forEach((step) => {
+                step.hidden = Number(step.dataset.registerStep) !== activeStep;
+            });
+
+            stepIndicators.forEach((indicator) => {
+                const number = Number(indicator.dataset.stepIndicator);
+                if (number === activeStep) {
+                    indicator.setAttribute('aria-current', 'step');
+                } else {
+                    indicator.removeAttribute('aria-current');
+                }
+                indicator.classList.toggle('is-complete', number < activeStep);
+            });
+
+            if (stepCaption) {
+                stepCaption.textContent = `Step ${activeStep} of ${steps.length}`;
+            }
+
+            if (stepProgress) {
+                stepProgress.style.width = `${((activeStep - 1) / (steps.length - 1)) * 100}%`;
+            }
+
+            if (previousButton instanceof HTMLButtonElement) {
+                previousButton.hidden = activeStep === 1;
+            }
+            if (nextButton instanceof HTMLButtonElement) {
+                nextButton.hidden = activeStep === steps.length;
+            }
+            if (submitButton instanceof HTMLButtonElement) {
+                submitButton.hidden = activeStep !== steps.length;
+            }
+
+            if (focusHeading) {
+                const heading = steps[activeStep - 1]?.querySelector('h2');
+                if (heading instanceof HTMLElement) {
+                    heading.setAttribute('tabindex', '-1');
+                    heading.focus();
+                }
+            }
+        };
+
+        const validateStep = (step, reportInvalid = true) => {
+            const invalidField = Array.from(step.querySelectorAll('input, select, textarea'))
+                .find((field) => field instanceof HTMLInputElement
+                    || field instanceof HTMLSelectElement
+                    || field instanceof HTMLTextAreaElement
+                    ? !field.checkValidity()
+                    : false);
+
+            if (reportInvalid && invalidField instanceof HTMLElement && 'reportValidity' in invalidField) {
+                invalidField.reportValidity();
+            }
+
+            return !invalidField;
+        };
+
+        navigation.hidden = false;
+        showStep(activeStep);
+
+        nextButton?.addEventListener('click', () => {
+            const currentStep = steps[activeStep - 1];
+            if (currentStep && validateStep(currentStep)) {
+                showStep(activeStep + 1, true);
+            }
+        });
+
+        previousButton?.addEventListener('click', () => {
+            showStep(activeStep - 1, true);
+        });
+
+        registrationForm.addEventListener('submit', (event) => {
+            for (const step of steps) {
+                if (!validateStep(step, false)) {
+                    event.preventDefault();
+                    showStep(Number(step.dataset.registerStep), true);
+                    step.querySelector('input:invalid, select:invalid, textarea:invalid')?.reportValidity();
+                    return;
+                }
+            }
+        });
+
+        registrationForm.addEventListener('keydown', (event) => {
+            if (
+                event.key === 'Enter'
+                && event.target instanceof HTMLElement
+                && !['TEXTAREA', 'BUTTON'].includes(event.target.tagName)
+                && activeStep < steps.length
+            ) {
+                event.preventDefault();
+                nextButton?.click();
+            }
+        });
+    }
+
+    document.querySelectorAll('input[data-name-only]').forEach(function (input) {
+        input.addEventListener('input', function (event) {
+            if (event.isComposing) {
+                return;
+            }
+
+            const originalValue = input.value;
+            const cursorPosition = input.selectionStart ?? originalValue.length;
+            const sanitizedValue = originalValue.replace(/[^\p{L}\p{M}\s.'’-]/gu, '');
+
+            if (sanitizedValue !== originalValue) {
+                const sanitizedPrefix = originalValue
+                    .slice(0, cursorPosition)
+                    .replace(/[^\p{L}\p{M}\s.'’-]/gu, '');
+
+                input.value = sanitizedValue;
+                input.setSelectionRange(sanitizedPrefix.length, sanitizedPrefix.length);
+            }
+        });
+    });
+
+    document.querySelectorAll('input[data-digits-only]').forEach(function (input) {
+        const feedback = document.getElementById(input.dataset.feedbackTarget);
+
+        function updatePhoneNumber() {
+            const digits = input.value.replace(/\D/g, '').slice(0, 11);
+            input.value = digits;
+
+            const isInvalid = digits.length > 0 && digits.length !== 11;
+            input.classList.toggle('number-is-invalid', isInvalid);
+            input.setAttribute('aria-invalid', String(isInvalid));
+            input.setCustomValidity(
+                isInvalid ? 'Enter exactly 11 digits using numbers only.' : ''
+            );
+
+            if (feedback) {
+                feedback.textContent = isInvalid
+                    ? `${11 - digits.length} more digit${11 - digits.length === 1 ? '' : 's'} required.`
+                    : digits.length === 11
+                        ? '11 digits entered.'
+                        : '';
+                feedback.classList.toggle('is-error', isInvalid);
+            }
+        }
+
+        input.addEventListener('input', updatePhoneNumber);
+        input.addEventListener('change', updatePhoneNumber);
+        updatePhoneNumber();
+    });
+
+    function updatePasswordState() {
+        if (!passwordInput || !passwordConfirmationInput) {
+            return;
+        }
+
+        const password = passwordInput.value;
+        const checks = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /\d/.test(password),
+        };
+        const passwordIsValid = Object.values(checks).every(Boolean);
+
+        passwordRules.forEach(function (rule) {
+            const ruleName = rule.dataset.passwordRule;
+            const isMet = Boolean(ruleName && checks[ruleName]);
+
+            rule.classList.toggle('is-met', isMet);
+        });
+
+        passwordInput.classList.toggle('password-is-invalid', password.length > 0 && !passwordIsValid);
+        passwordInput.classList.toggle('password-is-valid', password.length > 0 && passwordIsValid);
+        passwordInput.setAttribute('aria-invalid', String(password.length > 0 && !passwordIsValid));
+        passwordInput.setCustomValidity(
+            password.length > 0 && !passwordIsValid
+                ? 'Use at least 8 characters, including an uppercase letter, a lowercase letter, and a number.'
+                : ''
+        );
+
+        if (passwordFeedback && password.length > 0) {
+            passwordFeedback.textContent = passwordIsValid
+                ? 'Password meets all requirements.'
+                : 'Your password does not meet all requirements yet.';
+            passwordFeedback.classList.toggle('is-error', !passwordIsValid);
+            passwordFeedback.classList.toggle('is-success', passwordIsValid);
+        }
+
+        const confirmation = passwordConfirmationInput.value;
+        const passwordsMatch = confirmation.length > 0 && confirmation === password;
+        const passwordsMismatch = confirmation.length > 0 && confirmation !== password;
+
+        passwordConfirmationInput.classList.toggle('password-confirmation-mismatch', passwordsMismatch);
+        passwordConfirmationInput.classList.toggle('password-confirmation-match', passwordsMatch);
+        passwordConfirmationInput.setAttribute('aria-invalid', String(passwordsMismatch));
+        passwordConfirmationInput.setCustomValidity(
+            passwordsMismatch ? 'Passwords do not match.' : ''
+        );
+
+        if (passwordConfirmationFeedback && confirmation.length > 0) {
+            passwordConfirmationFeedback.textContent = passwordsMatch
+                ? 'Passwords match.'
+                : 'Passwords do not match.';
+            passwordConfirmationFeedback.classList.toggle('is-error', passwordsMismatch);
+            passwordConfirmationFeedback.classList.toggle('is-success', passwordsMatch);
+        } else if (passwordConfirmationFeedback) {
+            passwordConfirmationFeedback.textContent = '';
+            passwordConfirmationFeedback.classList.remove('is-error', 'is-success');
+        }
+    }
+
+    passwordInput?.addEventListener('input', updatePasswordState);
+    passwordConfirmationInput?.addEventListener('input', updatePasswordState);
+    passwordInput?.addEventListener('change', updatePasswordState);
+    passwordConfirmationInput?.addEventListener('change', updatePasswordState);
+    registrationForm?.addEventListener('submit', updatePasswordState);
+    updatePasswordState();
 
 
     /* =========================================================

@@ -305,21 +305,24 @@
             @endisset
 
             @isset($announcements)
-                <section class="dashboard-card">
+                <section class="dashboard-card patient-announcement-preview">
                     <div class="card-header">
                         <div>
                             <h3>Announcements</h3>
                             <p>News from your City Health Office</p>
                         </div>
+                        <a href="{{ route('patient.announcements.index') }}">View All</a>
                     </div>
 
-                    <div class="info-list">
+                    <div class="info-list announcement-preview-list">
                         @forelse($announcements as $announcement)
-                            <div class="info-item">
+                            <div class="info-item announcement-preview-item">
                                 <div class="info-icon">📢</div>
                                 <div>
-                                    <strong>{{ $announcement->title }}</strong>
-                                    <p>{{ $announcement->body }}</p>
+                                    <strong>
+                                        <a href="{{ route('patient.announcements.show', $announcement) }}">{{ $announcement->title }}</a>
+                                    </strong>
+                                    <p>{{ \Illuminate\Support\Str::limit(strip_tags($announcement->content), 100) }}</p>
                                 </div>
                             </div>
                         @empty

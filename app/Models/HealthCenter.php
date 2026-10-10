@@ -47,4 +47,9 @@ class HealthCenter extends Model
     {
         return $this->hasMany(Patient::class);
     }
+
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class);
+    }
 }

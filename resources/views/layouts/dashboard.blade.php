@@ -67,13 +67,24 @@
 
             <div class="topbar-actions">
 
-                @if($authUser->isPatient() && Route::has('patient.notifications'))
-                    <a href="{{ route('patient.notifications') }}" class="icon-button" aria-label="Notifications">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
-                        @if(isset($notificationCount) && $notificationCount > 0)
-                            <span class="badge-count">{{ $notificationCount > 9 ? '9+' : $notificationCount }}</span>
-                        @endif
-                    </a>
+                @if((Route::has('patient.notifications') || Route::has('staff.notifications') || Route::has('admin.notifications')) && ($authUser->isPatient() || $authUser->isStaff() || $authUser->isAdmin()))
+                    @php
+                        $notificationsRoute = match (true) {
+                            $authUser->isPatient() => 'patient.notifications',
+                            $authUser->isStaff() => 'staff.notifications',
+                            $authUser->isAdmin() => 'admin.notifications',
+                            default => null,
+                        };
+                    @endphp
+
+                    @if($notificationsRoute)
+                        <a href="{{ route($notificationsRoute) }}" class="icon-button" aria-label="Notifications">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
+                            @if(isset($notificationCount) && $notificationCount > 0)
+                                <span class="badge-count">{{ $notificationCount > 9 ? '9+' : $notificationCount }}</span>
+                            @endif
+                        </a>
+                    @endif
                 @endif
 
                 {{-- User dropdown --}}
@@ -168,6 +179,12 @@
         </div>
     </div>
 </div>
+
+<dialog class="image-preview-modal" id="imagePreviewModal" aria-label="Image preview">
+    <button type="button" class="image-preview-close" data-image-preview-close aria-label="Close image preview">&times;</button>
+    <img id="imagePreviewModalImage" src="" alt="">
+    <p id="imagePreviewModalCaption"></p>
+</dialog>
 
 @stack('scripts')
 

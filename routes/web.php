@@ -9,6 +9,7 @@ use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\DoctorAppointmentController;
 use App\Http\Controllers\DoctorConsultationController;
 use App\Http\Controllers\DoctorPrescriptionController;
+use App\Http\Controllers\DoctorProfileController;
 use App\Http\Controllers\PatientPrescriptionController;
 use App\Http\Controllers\DoctorPatientController;
 use App\Http\Controllers\StaffDashboardController;
@@ -24,10 +25,14 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\StaffPrescriptionController;
 use App\Http\Controllers\StaffAppointmentScheduleController;
 use App\Http\Controllers\AdminActivityLogController;
+use App\Http\Controllers\AdminAnnouncementController;
 use App\Http\Controllers\AdminDoctorController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\AdminStaffController;
 use App\Http\Controllers\AdminReportController;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\PatientAnnouncementController;
+use App\Http\Controllers\StaffAnnouncementController;
 use App\Http\Controllers\StaffPatientIntakeController;
 use App\Http\Controllers\AdminServiceController;
 
@@ -74,9 +79,21 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::get('/patient/notifications', function () {
-    return view('patient.notifications');
-})->name('patient.notifications');
+Route::middleware(['auth', 'role:patient'])
+    ->group(function () {
+        Route::get('/patient/notifications', [PatientAnnouncementController::class, 'notifications'])
+            ->name('patient.notifications');
+
+        Route::post('/patient/notifications/{notification}/read', [PatientAnnouncementController::class, 'markAsRead'])
+            ->name('patient.notifications.read');
+
+        Route::get('/patient/announcements', [PatientAnnouncementController::class, 'index'])
+            ->name('patient.announcements.index');
+
+        Route::get('/patient/announcements/{announcement}', [PatientAnnouncementController::class, 'show'])
+            ->name('patient.announcements.show');
+    });
+
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -92,6 +109,12 @@ Route::middleware(['auth', 'role:admin'])
 
    Route::get('/dashboard', [AdminDashboardController::class, 'index'])
     ->name('dashboard');
+
+    Route::get('/notifications', [PatientAnnouncementController::class, 'notifications'])
+        ->name('notifications');
+
+    Route::post('/notifications/{notification}/read', [PatientAnnouncementController::class, 'markAsRead'])
+        ->name('notifications.read');
 
 Route::get('/users', [AdminUserController::class, 'index'])
     ->name('users.index');
@@ -147,6 +170,9 @@ Route::patch('/doctors/{doctor}/toggle-status', [AdminDoctorController::class, '
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])
     ->name('activity-logs.index');
 
+    Route::get('/profile', [AdminProfileController::class, 'show'])
+    ->name('profile');
+
     Route::get('/reports', [AdminReportController::class, 'index'])
     ->name('reports.index');
 
@@ -192,6 +218,27 @@ Route::patch('/staff/{staff}/toggle-status', [AdminStaffController::class, 'togg
 
     Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])
         ->name('services.destroy');
+
+    Route::get('/announcements', [AdminAnnouncementController::class, 'index'])
+        ->name('announcements.index');
+
+    Route::get('/announcements/create', [AdminAnnouncementController::class, 'create'])
+        ->name('announcements.create');
+
+    Route::post('/announcements', [AdminAnnouncementController::class, 'store'])
+        ->name('announcements.store');
+
+    Route::get('/announcements/{announcement}/edit', [AdminAnnouncementController::class, 'edit'])
+        ->name('announcements.edit');
+
+    Route::put('/announcements/{announcement}', [AdminAnnouncementController::class, 'update'])
+        ->name('announcements.update');
+
+    Route::patch('/announcements/{announcement}/toggle-status', [AdminAnnouncementController::class, 'toggleStatus'])
+        ->name('announcements.toggle-status');
+
+    Route::delete('/announcements/{announcement}', [AdminAnnouncementController::class, 'destroy'])
+        ->name('announcements.destroy');
 
     });
 
@@ -253,7 +300,10 @@ Route::get('/prescriptions/{prescription}/print', [DoctorPrescriptionController:
         Route::get('/appointments', [DoctorAppointmentController::class, 'index'])
             ->name('appointments.index');
 
-            Route::patch('/appointments/{appointment}/approve', [DoctorAppointmentController::class, 'approve'])
+    Route::get('/profile', [DoctorProfileController::class, 'show'])
+    ->name('profile');
+
+    Route::patch('/appointments/{appointment}/approve', [DoctorAppointmentController::class, 'approve'])
     ->name('appointments.approve');
 
     });
@@ -278,6 +328,12 @@ Route::get('/health-centers/{healthCenter}', [StaffHealthCenterController::class
 Route::get('/dashboard', [StaffDashboardController::class, 'index'])
     ->name('dashboard');
 
+Route::get('/notifications', [PatientAnnouncementController::class, 'notifications'])
+    ->name('notifications');
+
+Route::post('/notifications/{notification}/read', [PatientAnnouncementController::class, 'markAsRead'])
+    ->name('notifications.read');
+
 Route::get('/patients', [StaffPatientController::class, 'index'])
     ->name('patients.index');
 
@@ -295,6 +351,27 @@ Route::get('/consultations', [StaffConsultationController::class, 'index'])
 
 Route::get('/consultations/{consultation}', [StaffConsultationController::class, 'show'])
     ->name('consultations.show');
+
+Route::get('/announcements', [StaffAnnouncementController::class, 'index'])
+    ->name('announcements.index');
+
+Route::get('/announcements/create', [StaffAnnouncementController::class, 'create'])
+    ->name('announcements.create');
+
+Route::post('/announcements', [StaffAnnouncementController::class, 'store'])
+    ->name('announcements.store');
+
+Route::get('/announcements/{announcement}/edit', [StaffAnnouncementController::class, 'edit'])
+    ->name('announcements.edit');
+
+Route::put('/announcements/{announcement}', [StaffAnnouncementController::class, 'update'])
+    ->name('announcements.update');
+
+Route::patch('/announcements/{announcement}/toggle-status', [StaffAnnouncementController::class, 'toggleStatus'])
+    ->name('announcements.toggle-status');
+
+Route::delete('/announcements/{announcement}', [StaffAnnouncementController::class, 'destroy'])
+    ->name('announcements.destroy');
 
 Route::get('/profile', [StaffProfileController::class, 'show'])
     ->name('profile');

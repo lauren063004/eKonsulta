@@ -135,18 +135,21 @@ public function register(Request $request)
     'required',
     'string',
     'max:100',
+    'regex:/^[\p{L}\p{M}\s.\'-]+$/u',
 ],
 
 'middle_name' => [
     'nullable',
     'string',
     'max:100',
+    'regex:/^[\p{L}\p{M}\s.\'-]+$/u',
 ],
 
 'last_name' => [
     'required',
     'string',
     'max:100',
+    'regex:/^[\p{L}\p{M}\s.\'-]+$/u',
 ],
 
 'suffix' => [
@@ -165,8 +168,9 @@ public function register(Request $request)
 
         'password' => [
             'required',
+            'string',
             'confirmed',
-            Password::defaults(),
+            Password::min(8)->mixedCase()->numbers(),
         ],
 
         'date_of_birth' => [
@@ -184,8 +188,7 @@ public function register(Request $request)
 
         'contact_number' => [
             'required',
-            'string',
-            'max:30',
+            'digits:11',
         ],
 
         'address' => [
@@ -210,12 +213,12 @@ public function register(Request $request)
             'required',
             'string',
             'max:255',
+            'regex:/^[\p{L}\p{M}\s.\'-]+$/u',
         ],
 
         'emergency_contact_number' => [
             'required',
-            'string',
-            'max:30',
+            'digits:11',
         ],
     ]);
 

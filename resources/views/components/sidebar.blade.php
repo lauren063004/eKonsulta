@@ -92,25 +92,6 @@
                 <span>Medical Records</span>
             </a>
 
-            <div class="nav-section">
-                <span>Account</span>
-            </div>
-
-            <a
-                href="{{ route('patient.profile') }}"
-                class="nav-link {{ request()->routeIs('patient.profile') ? 'active' : '' }}"
-            >
-                <span>{!! $icons['user'] !!}</span>
-                <span>My Profile</span>
-            </a>
-
-            <a
-                href="{{ route('patient.notifications') }}"
-                class="nav-link {{ request()->routeIs('patient.notifications') ? 'active' : '' }}"
-            >
-                <span>{!! $icons['bell'] !!}</span>
-                <span>Notifications</span>
-            </a>
 
         @endif
 
@@ -192,14 +173,6 @@
             >
                 <span>{!! $icons['calendar'] !!}</span>
                 <span>Appointments</span>
-            </a>
-
-            <a
-                href="{{ route('staff.profile') }}"
-                class="nav-link {{ request()->routeIs('staff.profile') ? 'active' : '' }}"
-            >
-                <span>{!! $icons['user'] !!}</span>
-                <span>My Profile</span>
             </a>
 
             <a
@@ -304,6 +277,14 @@
             </a>
 
             <a
+                href="{{ route('admin.announcements.index') }}"
+                class="nav-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}"
+            >
+                <span>{!! $icons['bell'] !!}</span>
+                <span>Announcements</span>
+            </a>
+
+            <a
                 href="{{ route('admin.reports.index') }}"
                 class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
             >
@@ -330,20 +311,10 @@
 
     <div class="sidebar-bottom">
 
-        {{-- Signed-in user (uses auth()->user() already used elsewhere in your views) --}}
-       
-
         <div class="system-status">
             <span class="status-dot"></span>
             <span>System Online</span>
         </div>
-
-        <form method="POST" action="{{ route('logout') }}">
-
-            @csrf
-
-
-        </form>
 
     </div>
 

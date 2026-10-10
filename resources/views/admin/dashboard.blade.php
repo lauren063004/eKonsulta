@@ -213,6 +213,15 @@
                 <small>Manage staff members</small>
             </a>
 
+            <a
+                href="{{ route('admin.announcements.create') }}"
+                class="quick-action"
+            >
+                <span>&#128226;</span>
+                <strong>Create Announcement</strong>
+                <small>Share an update with patients and staff</small>
+            </a>
+
 
             <a
                 href="{{ route('admin.reports.index') }}"

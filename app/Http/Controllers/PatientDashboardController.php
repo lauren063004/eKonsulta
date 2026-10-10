@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\Appointment;
 use App\Models\Consultation;
 use App\Models\Prescription;
@@ -29,6 +30,7 @@ class PatientDashboardController extends Controller
                 'prescriptionCount' => 0,
                 'notificationCount' => 0,
                 'nextAppointment' => null,
+                'announcements' => collect(),
             ]);
         }
 
@@ -92,12 +94,19 @@ class PatientDashboardController extends Controller
             ->whereNull('read_at')
             ->count();
 
+        $announcements = Announcement::visibleToUser($user)
+            ->with('healthCenter')
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
         return view('patient.dashboard', compact(
             'upcomingAppointments',
             'nextAppointment',
             'consultationCount',
             'prescriptionCount',
-            'notificationCount'
+            'notificationCount',
+            'announcements'
         ));
     }
 }
