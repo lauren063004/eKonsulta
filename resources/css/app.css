@@ -8481,3 +8481,416 @@ button.announcement-image-preview-trigger {
         transition: none;
     }
 }
+
+/* Shared staff and doctor workspace polish */
+.doctor-app-content > .dashboard-card,
+.doctor-app-content > .card,
+.staff-app-content > .dashboard-card,
+.staff-app-content > .card {
+    padding: clamp(20px, 2.6vw, 32px);
+    border-color: #e3eaf4;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(20, 45, 84, .055);
+}
+
+.doctor-app-content .card-header,
+.staff-app-content .card-header {
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+}
+
+.doctor-app-content .card-header h2,
+.doctor-app-content .card-header h3,
+.staff-app-content .card-header h2,
+.staff-app-content .card-header h3 {
+    color: var(--navy-900);
+    font-size: clamp(1.12rem, 1.4vw, 1.35rem);
+    letter-spacing: -.02em;
+}
+
+.doctor-app-content .card-header p,
+.staff-app-content .card-header p {
+    max-width: 620px;
+    margin-top: 5px;
+    color: var(--ink-500);
+    line-height: 1.65;
+}
+
+.doctor-app-content .list-search,
+.staff-app-content .list-search {
+    max-width: 560px;
+    margin-bottom: 24px;
+}
+
+.doctor-app-content .form-section,
+.staff-app-content .form-section,
+.doctor-app-content .intake-section,
+.staff-app-content .intake-section,
+.doctor-app-content .medical-section,
+.staff-app-content .medical-section,
+.doctor-app-content .medical-record-section,
+.staff-app-content .medical-record-section {
+    padding: 22px;
+    border: 1px solid #e4ebf5;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(20, 45, 84, .035);
+}
+
+.doctor-app-content .form-section + .form-section,
+.staff-app-content .form-section + .form-section,
+.doctor-app-content .intake-section + .intake-section,
+.staff-app-content .intake-section + .intake-section {
+    margin-top: 18px;
+}
+
+.doctor-app-content .form-section-head,
+.staff-app-content .form-section-head {
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.doctor-app-content .form-section-head h4,
+.staff-app-content .form-section-head h4,
+.doctor-app-content .intake-section > h3,
+.staff-app-content .intake-section > h3 {
+    color: var(--navy-900);
+}
+
+.doctor-app-content .form-group > label,
+.staff-app-content .form-group > label {
+    margin-bottom: 8px;
+    color: #263852;
+    font-size: .87rem;
+}
+
+.doctor-app-content .form-group textarea,
+.staff-app-content .form-group textarea {
+    min-height: 116px;
+    line-height: 1.65;
+}
+
+.doctor-app-content .form-group input:not([type="checkbox"]),
+.doctor-app-content .form-group select,
+.doctor-app-content .form-group textarea,
+.staff-app-content .form-group input:not([type="checkbox"]),
+.staff-app-content .form-group select,
+.staff-app-content .form-group textarea {
+    border-color: #d6e0ee;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.doctor-app-content .form-actions,
+.staff-app-content .form-actions {
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid #e9eef5;
+}
+
+.doctor-app-content .form-actions .primary-button,
+.doctor-app-content .form-actions .secondary-button,
+.staff-app-content .form-actions .primary-button,
+.staff-app-content .form-actions .secondary-button {
+    min-height: 46px;
+    padding-inline: 22px;
+}
+
+.doctor-app-content .appointment-preview,
+.staff-app-content .appointment-preview,
+.doctor-app-content .consultation-list-card,
+.staff-app-content .consultation-list-card,
+.doctor-app-content .patient-card,
+.staff-app-content .patient-card {
+    border-color: #e3eaf4;
+    border-radius: 15px;
+    box-shadow: 0 3px 14px rgba(20, 45, 84, .04);
+}
+
+.doctor-app-content .appointment-preview:hover,
+.staff-app-content .appointment-preview:hover,
+.doctor-app-content .consultation-list-card:hover,
+.staff-app-content .consultation-list-card:hover,
+.doctor-app-content .patient-card:hover,
+.staff-app-content .patient-card:hover {
+    border-color: #c9d7e9;
+    box-shadow: 0 8px 22px rgba(20, 45, 84, .075);
+}
+
+.clinical-workspace .card-header {
+    margin-bottom: 24px;
+}
+
+.consult-layout {
+    grid-template-columns: minmax(260px, .72fr) minmax(0, 1.65fr);
+    align-items: start;
+    gap: 22px;
+}
+
+.consultation-create-page .patient-panel {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid #dce7f5;
+    border-radius: 16px;
+    background: linear-gradient(160deg, #f5f9ff, #fff 72%);
+}
+
+.consultation-create-page .patient-panel-head {
+    justify-content: flex-start;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2eaf4;
+}
+
+.consultation-create-page .patient-panel-head > div:last-child > strong {
+    display: block;
+    color: var(--navy-900);
+    font-size: 1.02rem;
+    line-height: 1.4;
+}
+
+.consultation-create-page .patient-panel-head small {
+    display: block;
+    margin-top: 4px;
+    font-size: .8rem;
+}
+
+.consultation-create-page .patient-fact {
+    background: #fff;
+}
+
+.consultation-main-column {
+    display: grid;
+    min-width: 0;
+    gap: 18px;
+}
+
+.consultation-main-column > .dashboard-card {
+    margin: 0;
+    padding: 22px;
+    border-color: #e4ebf5;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgba(20, 45, 84, .035);
+}
+
+.consultation-main-column > .dashboard-card .card-header {
+    margin-bottom: 18px;
+}
+
+.clinical-form {
+    display: grid;
+    gap: 16px;
+}
+
+.clinical-form .form-section {
+    margin: 0;
+}
+
+.clinical-form .form-section-head .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: .86rem;
+}
+
+.prescription-context-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, .8fr) minmax(0, 1.4fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.prescription-patient-summary,
+.prescription-consultation-summary {
+    min-width: 0;
+    margin: 0 !important;
+    padding: 20px;
+    border: 1px solid #e2eaf4;
+    border-radius: 15px;
+    background: #f7faff;
+}
+
+.prescription-patient-summary h4,
+.prescription-consultation-summary h4 {
+    margin: 0 0 12px;
+    color: var(--navy-900);
+    font-size: 1rem;
+}
+
+.prescription-patient-summary p,
+.prescription-consultation-summary p {
+    margin: 8px 0 0;
+    color: var(--ink-700);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.prescription-entry-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 20px;
+    padding: 22px;
+    border: 1px solid #e4ebf5;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.prescription-entry-form > .form-group:nth-last-of-type(-n+2),
+.prescription-entry-form > div:last-child {
+    grid-column: 1 / -1;
+}
+
+.prescription-entry-form > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 0 !important;
+    padding-top: 18px;
+    border-top: 1px solid #e9eef5;
+}
+
+.prescription-entry-form > div:last-child .secondary-button {
+    margin-left: 0 !important;
+}
+
+.intake-patient-summary {
+    padding: 20px;
+    background: #f7faff;
+}
+
+.intake-patient-summary .appointment-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: 8px 18px;
+}
+
+.intake-patient-summary .appointment-details > p {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid #e4ebf5;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ink-700);
+    overflow-wrap: anywhere;
+}
+
+.intake-form > hr {
+    display: none;
+}
+
+.intake-form .intake-section {
+    margin: 18px 0;
+}
+
+.intake-form .intake-section > h3 {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9eef5;
+}
+
+.intake-form .form-grid {
+    gap: 16px;
+}
+
+.appointment-detail-card + .appointment-detail-card {
+    margin-top: 18px;
+}
+
+.appointment-detail-card .patient-details,
+.appointment-detail-card .appointment-details {
+    color: var(--ink-700);
+    line-height: 1.7;
+}
+
+.appointment-detail-card .patient-details > p,
+.appointment-detail-card .appointment-details > p {
+    padding: 10px 12px;
+    border-bottom: 1px solid #edf1f7;
+    overflow-wrap: anywhere;
+}
+
+.consultation-detail-page .consultation-information {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 12px;
+}
+
+.consultation-detail-page .consultation-information > div {
+    padding: 15px;
+    border: 1px solid #e4ebf5;
+    border-radius: 12px;
+    background: #f8faff;
+}
+
+.consultation-detail-page .consultation-information > div > span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--ink-500);
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.consultation-detail-page .consultation-information > div > p {
+    margin: 0;
+    color: var(--ink-700);
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .consult-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .prescription-context-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .doctor-app-content > .dashboard-card,
+    .doctor-app-content > .card,
+    .staff-app-content > .dashboard-card,
+    .staff-app-content > .card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .doctor-app-content .card-header,
+    .staff-app-content .card-header {
+        align-items: flex-start;
+        margin-bottom: 18px;
+        padding-bottom: 16px;
+    }
+
+    .doctor-app-content .form-section,
+    .staff-app-content .form-section,
+    .doctor-app-content .intake-section,
+    .staff-app-content .intake-section,
+    .doctor-app-content .medical-section,
+    .staff-app-content .medical-section,
+    .doctor-app-content .medical-record-section,
+    .staff-app-content .medical-record-section {
+        padding: 16px;
+    }
+
+    .prescription-entry-form {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 16px;
+    }
+
+    .prescription-entry-form > .form-group,
+    .prescription-entry-form > div:last-child {
+        grid-column: 1;
+    }
+
+    .prescription-entry-form > div:last-child > * {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}

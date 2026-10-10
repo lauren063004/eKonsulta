@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="dashboard-card">
+<div class="dashboard-card clinical-workspace prescription-create-page">
 
 
 <div class="card-header">
@@ -23,7 +23,9 @@
 
 {{-- Patient Information --}}
 
-<div class="appointment-details" style="margin-bottom: 25px;">
+<div class="prescription-context-grid">
+
+<div class="appointment-details prescription-patient-summary">
 
     <h4>Patient Information</h4>
 
@@ -51,7 +53,7 @@
 
 {{-- Consultation Summary --}}
 
-<div class="dashboard-card" style="margin-bottom: 25px;">
+<div class="dashboard-card prescription-consultation-summary">
 
     <h4>Consultation Summary</h4>
 
@@ -78,10 +80,12 @@
 
 </div>
 
+ </div>
 
 {{-- Prescription Form --}}
 
 <form
+    class="prescription-entry-form"
     method="POST"
     action="{{ route('doctor.appointments.prescription.store', $appointment) }}"
 >

@@ -4,7 +4,7 @@
 @section('page-title', 'Appointment Details')
 
 @section('content')
-<div class="dashboard-card">
+<div class="dashboard-card appointment-detail-card">
 
     <div class="card-header">
         <div>

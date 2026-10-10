@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="dashboard-card">
+<div class="dashboard-card clinical-workspace schedule-create-page">
 
 <div class="card-header">
 

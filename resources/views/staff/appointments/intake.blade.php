@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="dashboard-card">
+<div class="dashboard-card clinical-workspace staff-intake-page">
 
     <div class="card-header">
 
@@ -53,7 +53,7 @@
 
 
     {{-- Patient Information --}}
-    <div class="intake-section">
+    <div class="intake-section intake-patient-summary">
 
         <h3>👤 Patient Information</h3>
 
@@ -89,6 +89,7 @@
 
     {{-- Intake Form --}}
     <form
+        class="intake-form"
         action="{{ route('staff.appointments.intake.store', $appointment) }}"
         method="POST"
     >

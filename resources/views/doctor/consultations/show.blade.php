@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="dashboard-card">
+    <div class="dashboard-card consultation-detail-page">
 
         <div class="card-header">
 

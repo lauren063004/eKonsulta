@@ -6,7 +6,7 @@
 
 @section('content')
 
-<section class="dashboard-card">
+<section class="dashboard-card appointment-detail-card">
 
     <div class="card-header">
         <div>
@@ -65,7 +65,7 @@
 </section>
 
 
-<section class="dashboard-card">
+<section class="dashboard-card appointment-detail-card">
 
     <div class="card-header">
 
@@ -115,7 +115,7 @@
 </section>
 
 
-<section class="dashboard-card">
+<section class="dashboard-card appointment-detail-card">
 
     <div class="card-header">
 
@@ -153,7 +153,7 @@
 
 @if($appointment->status === 'approved')
 
-<section class="dashboard-card">
+<section class="dashboard-card appointment-detail-card">
 
     <div class="card-header">
 

@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="dashboard-card">
+    <div class="dashboard-card clinical-workspace consultation-create-page">
 
         <div class="card-header">
             <div>
@@ -68,7 +68,6 @@
                     <div class="patient-fact">
                         <span>Health Center</span>
                         <strong>
-                            ðŸ¥
                             {{ $appointment->healthCenter->name }}
                         </strong>
                     </div>
@@ -77,7 +76,6 @@
                 <div class="patient-fact">
                     <span>Appointment Time</span>
                     <strong>
-                        ðŸ•
                         {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A') }}
                     </strong>
                 </div>
@@ -97,6 +95,7 @@
 
             </aside>
 
+            <div class="consultation-main-column">
 
             {{-- Consultation Form --}}
             {{-- Staff Patient Intake --}}
@@ -208,6 +207,7 @@
                 </div>
             @endif
             <form
+                class="clinical-form"
                 action="{{ route('doctor.appointments.consultation.store', $appointment) }}"
                 method="POST"
             >
@@ -327,6 +327,7 @@
 
             </form>
 
+            </div>
         </div>
 
     </div>
